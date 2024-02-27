@@ -1,7 +1,6 @@
 #Her prøver vi oss på pygame
 
 print("halla!!!!")
-
 # Simple pygame program
 
 # Import and initialize the pygame library
