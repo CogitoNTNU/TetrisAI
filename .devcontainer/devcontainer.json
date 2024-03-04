@@ -3,7 +3,20 @@
 {
 	"name": "Python 3",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "mcr.microsoft.com/devcontainers/python:1-3.12-bullseye"
+	"image": "mcr.microsoft.com/devcontainers/python:1-3.12-bullseye",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"streetsidesoftware.code-spell-checker",
+				"ms-azuretools.vscode-docker",
+				"DavidAnson.vscode-markdownlint",
+				"esbenp.prettier-vscode",
+				"ms-python.python",
+				"ms-python.vscode-pylance",
+				"ms-python.debugpy"
+			]
+		}
+	}
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
