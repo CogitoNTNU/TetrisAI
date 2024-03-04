@@ -27,6 +27,13 @@ The following extensions come with the dev container:
 
 You can add more extensions by going to the "Extensions" tab in vscode and clicking on the "Install in Container" button for the extensions you cant live without.
 
+## Dependencies
+When you build the container, the dependencies will be installed. If you use a new pip dependency, make sure to add it to the `requirements.txt` file. This can be done by running 
+```bash
+pip freeze > requirements.txt
+``` 
+in the dev container, and then committing the changes.
+
 ## Structural Changes
 
 In case of structural changes to the project, like adding a new service, or changing `devcontainer.json`, you will need to rebuild the dev container. You can do this by clicking on the "Rebuild Container" button in the "Remote Explorer" tab in vscode.
