@@ -1,0 +1,11 @@
+assosiasjoner:
+Firekanter, tenke, stress, satistying, rotasjon, musikk, farger
+
+funskjoner:
+rotere, fastdrop, til sidene, lager blokker, hold, se neste blokk, økende vanskelighet/tempo, stacking av blokker, clear rekker(tetris)
+
+Ideer:
+gambling, randomness (ekstrem du kan velge block type i bytte mot kontroll), ekstra powerups, reverse tetris (du dropper blokkene) 1v1 tetris med sabotasje, battleroyal, 
+hot potato med tetris (flere spillere), målbasert tetris, 3D tetris, grådig cooperativ tetris (samme brett men kun en får poeng for clear)
+
+
