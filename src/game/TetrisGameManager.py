@@ -1,3 +1,5 @@
+import keyboard
+
 baseScore = 100
 DOWN = (0, 1)
 LEFT = (-1, 0)
@@ -6,57 +8,63 @@ RIGHT = (1, 0)
 
 class TetrisGameManager:
 
-    current_piece = None
-    new_piece = None
+    currentPiece = None
+    nextPiece = None
     score = 0
+    updateTimer = 1
+    streak = 1
 
     def __init__(self, board):
         self.board = board
         self.score = 0
 
-    def rotate_piece(self, direction):
-        self.current_piece.rotate(direction)
+    def rotatePiece(self, direction):
+        self.currentPiece.rotate(direction)
 
 
-    def move_piece(self, direction):
+    def movePiece(self, direction):
 
-        self.current_piece.move(direction)
+        if self.legalMove(direction):
+            self.currentPiece.move(direction)
 
-    def drop_piece(self, newPiece):
-        if self.legal_move(DOWN):
-            self.move_piece(DOWN)
+    def dropPiece(self, newPiece):
+        self.movePiece(DOWN)
 
-    def is_game_over(self):
-        return self.board.is_game_over()
+    def isGameOver(self):
+        return self.board.isGameOver()
 
-    def start_game(self):
-        self.current_piece = self.next_piece()
-        self.next_piece = self.next_piece()
+    def startGame(self):
+        self.currentPiece = self.newPiece()
+        self.nextPiece = self.newPiece()
 
+    def newPiece(self):
+        return self.pieces.getNewPiece()
 
-    def legal_move(self, x, y):
-        return self.board.legal_move(x, y)
+    def legalMove(self, x, y):
+        return self.board.legalMove(x, y)
 
-    def clear_lines(self):
-        lines_cleared = self.board.clear_lines()
-        self.update_score(lines_cleared)
+    def clearLines(self):
+        linesCleared = self.board.checkGameState()
+        if linesCleared == 4:
+            self.streak += 1
+        else:
+            self.streak = 1
+            
+        self.updateScore(linesCleared)
 
-    def update_score(self, lines_cleared):
-        self.score += baseScore**lines_cleared
+    def updateScore(self, linesCleared):
+        self.score += self.streak*(baseScore**linesCleared)
 
-    def place_piece(self, direction):
+    def placePiece(self, direction):
         x = direction[0]
         y = direction[1]
-        if self.legal_move(x, y):
-            self.board.place_piece(x, y, self.current_piece)
-
-        if self.is_game_over():
-            self.stop_game()
+        if self.legalMove(x, y):
+            self.board.placePiece(x, y, self.currentPiece)
+            self.currentPiece = self.nextPiece
+            self.next_piece = self.nextPiece()
+        if self.isGameOver():
+            self.stopGame()
         
-    def new_piece(self):
-        return self.pieces.get_new_piece()
-    
-    def stop_game(self):
+        
+    def stopGame(self):
         self.board.stop_game()
-
-print(DOWN.index(1))
