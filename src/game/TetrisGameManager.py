@@ -1,9 +1,18 @@
-import keyboard
+import keyboard as kb
+import time as t
 
 baseScore = 100
 DOWN = (0, 1)
 LEFT = (-1, 0)
 RIGHT = (1, 0)
+
+""" TODO:   Timer for piece drop 
+            keyboard input for piece movement
+            keyboard input for piece rotation
+            keyboard input for piece drop
+            keyboard input for game start
+            soft drop and hard drop implementation
+            """
 
 
 class TetrisGameManager:
@@ -43,14 +52,13 @@ class TetrisGameManager:
     def legalMove(self, x, y):
         return self.board.legalMove(x, y)
 
-    def clearLines(self):
-        linesCleared = self.board.checkGameState()
-        if linesCleared == 4:
-            self.streak += 1
-        else:
-            self.streak = 1
-            
-        self.updateScore(linesCleared)
+    # def clearLines(self):
+    #     linesCleared = self.board.checkGameState()
+    #     if linesCleared == 4:
+    #         self.streak += 1
+    #     else:
+    #         self.streak = 1
+              
 
     def updateScore(self, linesCleared):
         self.score += self.streak*(baseScore**linesCleared)
@@ -64,6 +72,9 @@ class TetrisGameManager:
             self.next_piece = self.nextPiece()
         if self.isGameOver():
             self.stopGame()
+        linesCleared = self.board.checkGameState()
+        if linesCleared:
+            self.updateScore(linesCleared)
         
         
     def stopGame(self):
