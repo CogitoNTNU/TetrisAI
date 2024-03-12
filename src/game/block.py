@@ -1,9 +1,9 @@
 class Block:
-    def __init__self(self, x, y, blockType):
+    def __init__(self, x, y, blockType):
         self.x = x
         self.y = y
         self.type = blockType
-        self.color = blockType
+        self.color = self.colors[blockType]
         self.rotation = 0
     
 
@@ -52,6 +52,21 @@ class Block:
     def set_y(self, y):
         self.y = y
 
+    def get_position(self):
+        return self.x, self.y
     
+    def image(self):
+        return self.figures[self.type][self.rotation]
+    
+    def get_block_coordinates(self):
+        # Calculate the coordinates for each block in the figure
+        positions = self.figures[self.type][self.rotation]
+        for i in range(4):
+            for j in range(4):
+        # If the block is in the figure, calculate the coordinates
+        ## TODO: Fix the coordinates
+
+   
+
     
 
