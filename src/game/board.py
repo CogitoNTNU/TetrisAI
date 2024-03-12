@@ -36,7 +36,7 @@ class Board:
             #block.position = [(x,y),(x,y)(x,y),(x,y)]
             
             for gridPositions in block.getPosition(): #må ha noe bedre logikk for å fjerne gamle posisjoner
-                for x, y in gridPositions:
+                for x, y in gridPositions
                     self.matrix[x][y] = "O"
             
             for gridPositions in block.getPosition():
