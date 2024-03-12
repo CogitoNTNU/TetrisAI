@@ -1,6 +1,8 @@
 import pygame
 
 '''
+Denne skriver ut brettet i terminal bare. 
+
 Vi lager brettet med en matrise. Det er O overalt i matrisen. legger du en brikke så nendrer vi i matrisen.
 Dersom en hel rad i matrisen er full, så fjerner vi denne raden og flytter alt sammen nedover + oppdatererr poengsummen"
 En brikke i matrisen represneteres med x-er. 
@@ -14,6 +16,16 @@ class Board:
 
     def __init__(self):
         self.matrix = [["O" for _ in range(self.columns)] for _ in range(self.rows)]
+        
+    def spawnNewBlock(self):
+        block = Block()
+        self.placeBlock(Block())
+        if block.isValidMove():
+            self.placeBlock(block)
+                        
+                        #vi oppretter en nyt blokk
+                        #vi får tilbakemelding om hvilke blokk denne vil være og hvilke koordinater den skal ha.
+                        #Dersom det er plass så plasserer vi den.
 
     def print_matrix(self):
         for row in self.matrix:
@@ -21,27 +33,46 @@ class Board:
             
     def placeBlock(self, block):
         if block.isValidMove():
-            block.position = [(x,y),(x,y)(x,y),(x,y)]
+            #block.position = [(x,y),(x,y)(x,y),(x,y)]
             
-            for gridPositions in block.position:
+            for gridPositions in block.getPosition(): #må ha noe bedre logikk for å fjerne gamle posisjoner
+                for x, y in gridPositions:
+                    self.matrix[x][y] = "O"
+            
+            for gridPositions in block.getPosition():
                 for x, y in gridPositions:
                     self.matrix[x][y] = "X"
-                    
-            #logikk for å sette tilbake til 0
         
-    def rotater_brikke(self):
-        self.plaser_brikke(self, center, block, rotation +1)
+    def rotateBlockRight(self, block):
+        if block.rotateRight().isValidMove():
+            self.plaser_brikke(block.rotateRight())
             
+    def moveBlockDown(self, block):
+        if block.moveDown().isValidMove():
+            self.plaser_brikke(block.moveDown())
+    
+    def moveBlockLeft(self, block):
+        if block.moveLeft().isValidMove():
+            self.plaser_brikke(block.moveLeft())
+            
+    def moveBlockRight(self, block): 
+        if block.moveRight().isValidMove():
+            self.plaser_brikke(block.moveRight())
+        
+    def rotateBlockLeft(self, block):
+        if block.rotateLeft().isValidMove():
+            self.plaser_brikke(block.roterLeft())
+                
     def gameOver(self):
         return self.gameOver
         
     def isvalidMove(self, block):
-        #block.position
-        #block skal gi oss 4 kordinater
-        #hvis kordinatene er ledig, returer true
-        
-        pass
-    
+        for gridPositions in block.position:
+            for x, y in gridPositions:
+                if self.matrix[x][y] != "O":
+                    return False
+        return True
+
     def clearRow(self, rownumber): #tar vare på alt under randen som skal fjernes og legger alt over den som skal fjernes over + lager ny tom rad
         newMatrix = self.matrix[0, rownumber] + self.matrix[rownumber+1, self.rows] + ["O" for _ in range(self.columns)]
         self.Matrix = newMatrix
@@ -54,8 +85,10 @@ class Board:
                 self.clearRow(row)
                 amount += 1
         return amount
+   
     
     
+#for å teste greiene
     
 #     def plaser_brikke():
 #         def plaser_brikke(self):
@@ -74,3 +107,26 @@ class Board:
 
 my_board = Board()
 my_board.print_matrix()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
