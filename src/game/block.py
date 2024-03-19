@@ -65,8 +65,3 @@ class Block:
             for j in range(4):
         # If the block is in the figure, calculate the coordinates
         ## TODO: Fix the coordinates
-
-   
-
-    
-
