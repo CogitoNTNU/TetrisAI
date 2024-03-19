@@ -63,5 +63,6 @@ class Block:
         positions = self.figures[self.type][self.rotation]
         for i in range(4):
             for j in range(4):
+                return
         # If the block is in the figure, calculate the coordinates
         ## TODO: Fix the coordinates
