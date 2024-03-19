@@ -141,8 +141,7 @@ class TetrisGameManager:
         checkTime = self.currentTime + 1000
         newTime = int(round(t.time() * 1000))
         if (checkTime > newTime):
-            #TODO Implement functionality
-            pass
+            self.movePiece(DOWN)
 
         
         return True
