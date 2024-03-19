@@ -1,9 +1,20 @@
+import random
+
+import random
+
 class Block:
+
     def __init__(self, x, y, blockType):
         self.x = x
         self.y = y
+        self.type = random.randint(0, 6)        
+
+        self.color = self.colors[random.randint(0,6)]        
+        # self.type = random.randint(0,6)
         self.type = blockType
         self.color = self.colors[blockType]
+        # self.color = random.choice(self.colors)
+        # self.rotation = random.randint(0, len(self.figures[self.type]) - 1)
         self.rotation = 0
     
 
@@ -28,41 +39,26 @@ class Block:
         (255, 255, 0)   # O
     ]
 
+
+    def set_coordinates(self, x, y):
+        self.x = x
+        self.y = y
+
     def rotate_left(self):
         self.rotation = (self.rotation + 1) % len(self.figures[self.type])
 
     def rotate_right(self):
         self.rotation = (self.rotation - 1) % len(self.figures[self.type])
 
-    def get_block(self):
-        return self.figures[self.type][self.rotation]
-    
-    def get_color(self):
-        return self.colors[self.type]
-    
-    def get_x(self):
-        return self.x
-    
-    def get_y(self):
-        return self.y
-    
-    def set_x(self, x):
-        self.x = x
+    def image(self): return self.figures[self.type][self.rotation]
 
-    def set_y(self, y):
-        self.y = y
+    def move_down(self):
+        self.y += 1
+    
+    def move_left(self):
+        self.x -= 1
 
-    def get_position(self):
-        return self.x, self.y
+    def move_right(self):
+        self.x += 1
+
     
-    def image(self):
-        return self.figures[self.type][self.rotation]
-    
-    def get_block_coordinates(self):
-        # Calculate the coordinates for each block in the figure
-        positions = self.figures[self.type][self.rotation]
-        for i in range(4):
-            for j in range(4):
-                return
-        # If the block is in the figure, calculate the coordinates
-        ## TODO: Fix the coordinates

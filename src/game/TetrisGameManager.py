@@ -1,5 +1,8 @@
 from pynput.keyboard import Key, Listener
 import time as t
+from Board import Board
+import sys
+
 
 baseScore = 100
 DOWN = (0, 1)
@@ -14,7 +17,6 @@ RIGHT = (1, 0)
             soft drop and hard drop implementation
             """
 
-
 class TetrisGameManager:
 
     currentPiece = None
@@ -23,6 +25,7 @@ class TetrisGameManager:
     updateTimer = 1
     streak = 1
     currentTime = None
+    board = None
 
     def __init__(self, board):
         self.board = board
@@ -35,65 +38,99 @@ class TetrisGameManager:
 
         
     def onPress(self, key):
+
         switcher = {
-    
+            Key.down: self.movePiece("DOWN"),
+            Key.left: self.movePiece("LEFT"),
+            Key.right: self.movePiece("RIGHT"),
+            Key.space: "HardDrop",
+            Key.esc: self.stopGame(),
+            Key.up: self.rotatePiece("UP"),
         }
-    
+
+        # Default action if key not found
+        default_action = lambda: "Key not recognized"
+
+        # Get the function to execute based on the key, or default action
+        switcher.get(key, default_action)
+        print("_____________________________________________________")
+        self.board.printBoard()
+        #print(action)
+        # Execute the function
+        #return action
+
     def onRelease(self, key):
         pass
 
-
     def rotatePiece(self, direction):
-        self.currentPiece.rotate(direction)
-
+        pass
+        # self.currentPiece.rotate(direction)
 
     def movePiece(self, direction):
+        if self.legalMove():
+            if direction == "DOWN":
+                self.board.moveBlockDown()
+            elif direction == "LEFT":
+                self.board.moveBlockLeft()
+            elif direction == "RIGHT":
+                self.board.moveBlockRight()
 
-        if self.legalMove(direction):
-            self.currentPiece.move(direction)
+        # if self.legalMove():
+        #     self.board.moveBlockDown(direction)
 
     def dropPiece(self, newPiece):
-        self.movePiece(DOWN)
+        self.movePiece("DOWN")
 
     def isGameOver(self):
-        return self.board.isGameOver()
+        return self.board.validMove()
+        #return self.board.isGameOver()
 
     def startGame(self):
         self.currentPiece = self.newPiece()
         self.nextPiece = self.newPiece()
-        
-        while not self.isGameOver():
-            action = input("Enter action: ") ## valid commands: [moveLeft, moveRight, moveDown, softDrop, hardDrop, quitGame, rotateLeft, rotateRight, rotate180]
-            if action == "moveLeft" and self.legalMove(LEFT):
-                self.movePiece(LEFT)
-            elif action == "moveRight" and self.legalMove(RIGHT):
-                self.movePiece(RIGHT)
-            elif action == "moveDown" and self.legalMove(DOWN):
-                self.dropPiece(DOWN)
-            elif action == "softDrop":
-                self.softDrop()
-            elif action == "h":
-                self.hardDrop()
-            elif action == "rotateLeft":
-                self.rotatePiece(-1)
-            elif action == "rotateRight":
-                self.rotatePiece(1)
-            elif action == "rotate180":
-                self.rotatePiece(2)
-            elif action == "q":
-                self.stopGame()
-                break
-            else:
-                self.moveDown()
+        self.board.printBoard()
 
+        with Listener(
+        on_press=self.onPress,
+        on_release=self.onRelease) as listener:
+            listener.join()
+            while not self.isGameOver():
+                #action = input("Enter action: ") ## valid commands: [moveLeft, moveRight, moveDown, softDrop, hardDrop, quitGame, rotateLeft, rotateRight, rotate180]
+                if action == "moveLeft" and self.legalMove():
+                    self.movePiece(LEFT)
+                elif action == "moveRight" and self.legalMove():
+                    self.movePiece(RIGHT)
+                elif action == "moveDown" and self.legalMove():
+                    self.dropPiece(DOWN)
+                elif action == "softDrop":
+                    self.softDrop()
+                elif action == "h":
+                    self.hardDrop()
+                elif action == "rotateLeft":
+                    self.rotatePiece(-1)
+                elif action == "rotateRight":
+                    self.rotatePiece(1)
+                elif action == "rotate180":
+                    self.rotatePiece(2)
+                elif action == "q":
+                    self.stopGame()
+                    break
+                else:
+                    self.checkTimer()
+                
+                t.sleep(0.1)  # Add a small delay to reduce CPU usage
+            
+            # Stop the listener when the game is over
+            listener.stop()
 
         
 
     def newPiece(self):
-        return self.pieces.getNewPiece()
+        pass
+        #return self.pieces.getNewPiece()
 
-    def legalMove(self, x, y):
-        return self.board.legalMove(x, y)
+    def legalMove(self):
+        return self.board.validMove()
 
     # def clearLines(self):
     #     linesCleared = self.board.checkGameState()
@@ -141,15 +178,19 @@ class TetrisGameManager:
         checkTime = self.currentTime + 1000
         newTime = int(round(t.time() * 1000))
         if (checkTime > newTime):
-            self.movePiece(DOWN)
+            self.movePiece("DOWN")
+            print("Timer checked")
 
         
         return True
         
     def stopGame(self):
+        print("Game Over")
+        sys.exit()
         self.board.stop_game()
 
+if __name__ == "__main__":
+    board = Board()
+    game = TetrisGameManager(board)
+    game.startGame()
 
-    if __name__ == "__main__":
-        millisec = int(round(t.time() * 1000))
-        print(millisec)
