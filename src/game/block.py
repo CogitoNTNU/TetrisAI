@@ -44,21 +44,79 @@ class Block:
         self.x = x
         self.y = y
 
-    def rotate_left(self):
-        self.rotation = (self.rotation + 1) % len(self.figures[self.type])
+    def rotate_left(self,  undo: bool = False):
+        if not undo:
+            self.rotation = (self.rotation - 1) % len(self.figures[self.type])
+        else:
+            self.rotate_right()
+        
 
-    def rotate_right(self):
-        self.rotation = (self.rotation - 1) % len(self.figures[self.type])
+    def rotate_right(self, undo: bool = False):
+        if not undo:
+            self.rotation = (self.rotation + 1) % len(self.figures[self.type])
+        else:
+            self.rotate_left()
 
     def image(self): return self.figures[self.type][self.rotation]
 
-    def move_down(self):
-        self.y += 1
-    
-    def move_left(self):
-        self.x -= 1
+    def move_up(self, undo: bool = False):
+        if not undo:
+            self.y -= 1
+        else:
+            self.move_down()
 
-    def move_right(self):
-        self.x += 1
+    def move_down(self, undo: bool = False):
+        if not undo:
+            self.y += 1
+        else:
+            self.move_up()
+    
+    def move_left(self, undo: bool = False):
+        if not undo:
+            self.x -= 1
+        else:  
+            self.move_right()
+
+    def move_right(self, undo: bool = False):
+        if not undo:
+            self.x += 1
+        else:
+            self.move_left()
+
+    def getBottom():
+        pass
+
+        
+    def getListCoordinates(self):
+        imageList = self.image()
+        listCoordinates = []
+        for i in range(len(imageList)):
+            x = 0
+            y = 0
+            listNr = imageList[i]
+            restList = imageList[i] % 4
+            divList = imageList[i] // 4
+
+            if restList == 0:
+                y = self.y + divList - 1
+                x = self.x - 1
+            
+            elif restList == 1:
+                y = self.y + divList - 1
+                x = self.x
+            
+            elif restList == 2:
+                y = self.y + divList - 1
+                x = self.x + 1
+
+            elif restList == 3:
+                y = self.y + divList - 1
+                x = self.x + 2
+
+            listCoordinates.append((x, y))
+
+        return listCoordinates
+
+            
 
     

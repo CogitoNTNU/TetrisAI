@@ -32,6 +32,7 @@ class TetrisGameManager:
         self.board = board
         self.score = 0
         self.currentTime = int(round(t.time() * 1000))
+        self.board.setGameOver(False)
 
         self.switcher = {
             Key.down: lambda: self.movePiece("DOWN"),
@@ -55,8 +56,7 @@ class TetrisGameManager:
         # Get the function to execute based on the key, or default action
         action = self.switcher.get(key, default_action)
         action()
-        print("_____________________________________________________")
-        self.board.printBoard()
+        #self.board.printBoard()
         #print(action)
         # Execute the function
         #return action
@@ -65,28 +65,27 @@ class TetrisGameManager:
         pass
 
     def rotatePiece(self, direction):
-        pass
+        if direction == "UP":
+            self.board.rotateBlockRight()
+        self.board.printBoard()
         # self.currentPiece.rotate(direction)
 
     def movePiece(self, direction):
-        print("Moving piece")
         print(direction)
-        if self.legalMove():
-            if direction == "DOWN":
-                self.board.moveBlockDown()
-            elif direction == "LEFT":
-                self.board.moveBlockLeft()
-            elif direction == "RIGHT":
-                self.board.moveBlockRight()
+        if direction == "DOWN":
+            self.board.moveBlockDown()
+        elif direction == "LEFT":
+            self.board.moveBlockLeft()
+        elif direction == "RIGHT":
+            self.board.moveBlockRight()
 
-        # if self.legalMove():
-        #     self.board.moveBlockDown(direction)
+        self.board.printBoard()
 
     def dropPiece(self, newPiece):
         self.movePiece("DOWN")
 
     def isGameOver(self):
-        return self.board.validMove()
+        return self.board.isGameOver()
         #return self.board.isGameOver()
 
     def startGame(self):
@@ -94,47 +93,26 @@ class TetrisGameManager:
         self.nextPiece = self.newPiece()
         self.board.printBoard()
 
-        with Listener(
-        on_press=self.onPress,
-        on_release=self.onRelease) as listener:
-            listener.join()
-            while not self.isGameOver():
-                # action = 1#input("Enter action: ") ## valid commands: [moveLeft, moveRight, moveDown, softDrop, hardDrop, quitGame, rotateLeft, rotateRight, rotate180]
-                # if action == "moveLeft" and self.legalMove():
-                #     self.movePiece(LEFT)
-                # elif action == "moveRight" and self.legalMove():
-                #     self.movePiece(RIGHT)
-                # elif action == "moveDown" and self.legalMove():
-                #     self.dropPiece(DOWN)
-                # elif action == "softDrop":
-                #     self.softDrop()
-                # elif action == "h":
-                #     self.hardDrop()
-                # elif action == "rotateLeft":
-                #     self.rotatePiece(-1)
-                # elif action == "rotateRight":
-                #     self.rotatePiece(1)
-                # elif action == "rotate180":
-                #     self.rotatePiece(2)
-                # elif action == "q":
-                #     self.stopGame()
-                #     break
-                # else:
-                #     self.checkTimer()
-                
-                t.sleep(0.1)  # Add a small delay to reduce CPU usage
+        listener = Listener(
+            on_press=self.onPress, 
+            on_release=self.onRelease)
+        listener.start()
+
+        while not self.board.gameOver:
             
-            # Stop the listener when the game is over
-            listener.stop()
+            #self.checkTimer()
+            
+            t.sleep(0.1)  # Add a small delay to reduce CPU usage
+            
+        # Stop the listener when the game is over
+        print("Stopping listener")
+        listener.stop()
 
         
 
     def newPiece(self):
         pass
         #return self.pieces.getNewPiece()
-
-    def legalMove(self):
-        return self.board.validMove()
 
     # def clearLines(self):
     #     linesCleared = self.board.checkGameState()
@@ -168,7 +146,7 @@ class TetrisGameManager:
         else:
             self.movePiece(DOWN)
             return False
-        if self.isGameOver():
+        if self.board.gameOver:
             self.stopGame()
             return True
         clearLines = self.board.checkGameState()
@@ -179,19 +157,21 @@ class TetrisGameManager:
         
     
     def checkTimer(self):
-        checkTime = self.currentTime + 1000
+        checkTime = self.currentTime + 1000/self.updateTimer
         newTime = int(round(t.time() * 1000))
-        if (checkTime > newTime):
-            self.movePiece("DOWN")
-            print("Timer checked")
+        if (checkTime < newTime):
+            self.currentTime = newTime
+            #self.movePiece("DOWN")
+            #print("Timer checked")
+            #self.board.printBoard()
 
         
         return True
         
     def stopGame(self):
         #print("Game Over")
+        self.board.setGameOver(True)
         sys.exit()
-        self.board.stop_game()
 
 if __name__ == "__main__":
     board = Board()
