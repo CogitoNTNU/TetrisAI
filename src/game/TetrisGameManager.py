@@ -1,6 +1,6 @@
 from pynput.keyboard import Key, Listener
 import time as t
-from Board import Board
+from board import Board
 import sys
 
 
@@ -26,11 +26,21 @@ class TetrisGameManager:
     streak = 1
     currentTime = None
     board = None
+    switcher = None
 
     def __init__(self, board):
         self.board = board
         self.score = 0
         self.currentTime = int(round(t.time() * 1000))
+
+        self.switcher = {
+            Key.down: lambda: self.movePiece("DOWN"),
+            Key.left: lambda: self.movePiece("LEFT"),
+            Key.right: lambda: self.movePiece("RIGHT"),
+            Key.space: lambda: "HardDrop",
+            Key.esc: lambda: self.stopGame(),
+            Key.up: lambda: self.rotatePiece("UP"),
+        }
 
         # while True:
         #     with Listener(on_press=self.on_press, on_release=self.on_release) as listener:
@@ -39,20 +49,12 @@ class TetrisGameManager:
         
     def onPress(self, key):
 
-        switcher = {
-            Key.down: self.movePiece("DOWN"),
-            Key.left: self.movePiece("LEFT"),
-            Key.right: self.movePiece("RIGHT"),
-            Key.space: "HardDrop",
-            Key.esc: self.stopGame(),
-            Key.up: self.rotatePiece("UP"),
-        }
-
         # Default action if key not found
         default_action = lambda: "Key not recognized"
 
         # Get the function to execute based on the key, or default action
-        switcher.get(key, default_action)
+        action = self.switcher.get(key, default_action)
+        action()
         print("_____________________________________________________")
         self.board.printBoard()
         #print(action)
@@ -67,6 +69,8 @@ class TetrisGameManager:
         # self.currentPiece.rotate(direction)
 
     def movePiece(self, direction):
+        print("Moving piece")
+        print(direction)
         if self.legalMove():
             if direction == "DOWN":
                 self.board.moveBlockDown()
@@ -95,28 +99,28 @@ class TetrisGameManager:
         on_release=self.onRelease) as listener:
             listener.join()
             while not self.isGameOver():
-                #action = input("Enter action: ") ## valid commands: [moveLeft, moveRight, moveDown, softDrop, hardDrop, quitGame, rotateLeft, rotateRight, rotate180]
-                if action == "moveLeft" and self.legalMove():
-                    self.movePiece(LEFT)
-                elif action == "moveRight" and self.legalMove():
-                    self.movePiece(RIGHT)
-                elif action == "moveDown" and self.legalMove():
-                    self.dropPiece(DOWN)
-                elif action == "softDrop":
-                    self.softDrop()
-                elif action == "h":
-                    self.hardDrop()
-                elif action == "rotateLeft":
-                    self.rotatePiece(-1)
-                elif action == "rotateRight":
-                    self.rotatePiece(1)
-                elif action == "rotate180":
-                    self.rotatePiece(2)
-                elif action == "q":
-                    self.stopGame()
-                    break
-                else:
-                    self.checkTimer()
+                # action = 1#input("Enter action: ") ## valid commands: [moveLeft, moveRight, moveDown, softDrop, hardDrop, quitGame, rotateLeft, rotateRight, rotate180]
+                # if action == "moveLeft" and self.legalMove():
+                #     self.movePiece(LEFT)
+                # elif action == "moveRight" and self.legalMove():
+                #     self.movePiece(RIGHT)
+                # elif action == "moveDown" and self.legalMove():
+                #     self.dropPiece(DOWN)
+                # elif action == "softDrop":
+                #     self.softDrop()
+                # elif action == "h":
+                #     self.hardDrop()
+                # elif action == "rotateLeft":
+                #     self.rotatePiece(-1)
+                # elif action == "rotateRight":
+                #     self.rotatePiece(1)
+                # elif action == "rotate180":
+                #     self.rotatePiece(2)
+                # elif action == "q":
+                #     self.stopGame()
+                #     break
+                # else:
+                #     self.checkTimer()
                 
                 t.sleep(0.1)  # Add a small delay to reduce CPU usage
             
@@ -185,7 +189,7 @@ class TetrisGameManager:
         return True
         
     def stopGame(self):
-        print("Game Over")
+        #print("Game Over")
         sys.exit()
         self.board.stop_game()
 
