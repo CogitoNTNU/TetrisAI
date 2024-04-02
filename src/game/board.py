@@ -1,6 +1,6 @@
 import pygame
 import random
-from Block import Block
+from block import Block
 
 '''
 Denne skriver ut brettet i terminal bare. 
@@ -24,6 +24,8 @@ class Board:
                 newLine.append(0)
             self.board.append(newLine)
 
+        self.block = Block(0,5, random.randint(0,6))
+
 
     def printBoard(self):
         for row in self.board:
@@ -37,7 +39,7 @@ class Board:
             
     def moveBlockDown(self):
         if self.block.moveDown().validMove():
-            self.placeBlock(block.move_down())
+            self.placeBlock(self.block.move_down())
      
 
     
@@ -53,7 +55,7 @@ class Board:
         
     def rotateBlockLeft(self):
         if self.block.rotateLeft().validMove():
-            self.plaser_brikke(self.block.roter_left())
+            self.placeBlock(self.block.rotate_left())
           
                 
     def gameOver(self):
