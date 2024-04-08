@@ -1,8 +1,8 @@
 from pynput.keyboard import Key, Listener
 import time as t
-from board import Board
 import sys
 
+from src.game.board import Board
 
 baseScore = 100
 DOWN = (0, 1)
