@@ -1,7 +1,5 @@
 import random
 
-import random
-
 class Block:
 
     def __init__(self, x, y, blockType):
@@ -57,7 +55,8 @@ class Block:
         else:
             self.rotateLeft()
 
-    def image(self): return self.figures[self.type][self.rotation]
+    def image(self): 
+        return self.figures[self.type][self.rotation]
 
     def moveUp(self, undo: bool = False):
         if not undo:
