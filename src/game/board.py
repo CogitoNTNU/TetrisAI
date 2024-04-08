@@ -72,7 +72,7 @@ class Board:
 
 
     def rotateBlockRight(self):
-        if self.validMove(self.block.rotateRight):
+        if self.validRotation(self.block.rotateRight):
             self.placeBlock()
           
 
@@ -110,12 +110,30 @@ class Board:
         pass
 
 
-    def validMove(self, simulateimulatedMove: Callable):
+    def validMove(self, simulatedMove):
         # if simulated move fails = move out of bounds and should be disallowed
-        simulateimulatedMove()
+        block_indices = [i for i in range(16) if i in self.block.image()]
         
-        for row in range(4, 1, -1):
-            for column in range(4, 1, -1):
+        moving_direction = [0, 0]
+        moving_direction[0] = 1 if simulatedMove == self.block.moveRight else -1 if simulatedMove == self.block.moveLeft else 0
+        moving_direction[1] = 1 if simulatedMove == self.block.moveDown else 0
+        
+        for index in block_indices:
+            print(self.block.y + (index // 4) + moving_direction[1], self.rows - 1)
+            print(self.block.x + (index % 4) + moving_direction[0], self.columns - 1)
+            if (
+                self.block.y + (index // 4) + moving_direction[1] < 0 or
+                self.block.y + (index // 4) + moving_direction[1] > self.rows - 2 or
+                self.block.x + (index % 4) + moving_direction[0] < 0 or
+                self.block.x + (index % 4) + moving_direction[0] > self.columns - 2
+            ):
+                
+                return False
+
+        simulatedMove()
+        
+        for row in range(4):
+            for column in range(4):
                 if row * 4 + column in self.block.image():
                     if (
                         row + self.block.y > self.rows - 1 or
@@ -124,10 +142,45 @@ class Board:
                         column + self.block.x < 0 or
                         self.prevBoard[row + self.block.y][column + self.block.x] > 0
                        ):
-                        simulateimulatedMove(Undo = True)
+                        simulatedMove(Undo = True)
                         return False
         return True  # Return True if the move is valid
 
+
+    def validRotation(self, simulatedRotation):
+        # if simulated move fails = move out of bounds and should be disallowed
+        block_indices = [i for i in range(16) if i in self.block.image()]
+        rotation = 1 if simulatedRotation.__name__ == 'rotateRight' else -1 if simulatedRotation.__name__ == 'rotateLeft' else 0
+        new_block_indices = self.figures[self.type][(self.rotation + rotation) % 4]
+        
+        # TODO: Implement valid rotation check similar to validMove
+        # Should push the block to closest valid position for the rotation in a given radius (but not able to go through walls)
+
+        
+        for index in block_indices:
+            if (
+                self.block.y + (index // 4) < 0 or
+                self.block.y + (index // 4) > self.rows - 2 or
+                self.block.x + (index % 4) < 0 or
+                self.block.x + (index % 4) > self.columns - 2
+            ):
+                return False
+
+        simulatedRotation()
+        
+        for row in range(4):
+            for column in range(4):
+                if row * 4 + column in self.block.image():
+                    if (
+                        row + self.block.y > self.rows - 1 or
+                        row + self.block.y < 0 or
+                        column + self.block.x > self.columns - 1 or
+                        column + self.block.x < 0 or
+                        self.prevBoard[row + self.block.y][column + self.block.x] > 0
+                       ):
+                        simulatedRotation(Undo = True)
+                        return False
+        return True
 
     def clearRow(self, rownumber):
         # Fjerner den angitte raden og legger til en ny tom rad ved bunnen av matrisen

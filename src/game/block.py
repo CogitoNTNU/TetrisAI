@@ -44,7 +44,7 @@ class Block:
 
     def rotateLeft(self,  undo: bool = False):
         if not undo:
-            self.rotation = (self.rotation - 1) % len(self.figures[self.type])
+            self.rotation = (self.rotation - 1) % len(self.figures[self.type]) 
         else:
             self.rotateRight()
         

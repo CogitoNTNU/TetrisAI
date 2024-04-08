@@ -14,24 +14,15 @@ def aggregate_heights(gameState: Board) -> int:
         for j in range(gameState.columns):
             if gameState.board[i][j] > 0:
                 if checkedList[j] == 0:
-                    checkedList[j] = gameState.rows - i+1
+                    checkedList[j] = gameState.rows - i
     return sum(checkedList)
-                    
-                    
 
-
-if __name__ == "__main__":
-    board = Board()
-    board.board =\
-    [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-    [0, 0, 1, 0, 0, 0, 0, 0, 0, 0], 
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-    [0, 1, 0, 1, 0, 0, 0, 0, 0, 0], 
-    [1, 0, 0, 0, 0, 0, 1, 0, 0, 0], 
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-    [0, 0, 0, 0, 1, 0, 0, 0, 0, 0], 
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
-
-    assert aggregate_heights(board) == 27
+def max_height(gameState: Board) -> int:
+    """ Returns the maximum height of the columns in the game state. """
+    checkedList = [0 for i in range(gameState.columns)]
+    for i in range(gameState.rows):
+        for j in range(gameState.columns):
+            if gameState.board[i][j] > 0:
+                if checkedList[j] == 0:
+                    checkedList[j] = gameState.rows - i
+    return max(checkedList)
