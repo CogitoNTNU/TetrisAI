@@ -69,7 +69,7 @@ class Block:
         if not undo:
             self.y += 1
         else:
-            self.moLeUp()
+            self.moveUp()
     
     def moveLeft(self, undo: bool = False):
         if not undo:
