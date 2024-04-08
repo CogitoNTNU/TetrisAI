@@ -1,7 +1,7 @@
 import pygame
 import random
 import copy
-from block import Block
+from src.game.block import Block
 
 '''
 Denne skriver ut brettet i terminal bare. 
