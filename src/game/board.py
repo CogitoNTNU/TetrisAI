@@ -28,7 +28,8 @@ class Board:
 
         self.prevBoard = copy.deepcopy(self.board)
 
-        self.block = Block(0,5, random.randint(0,6))
+        self.block = Block(3,0,0)
+        # self.block = Block(3,0, random.randint(0,6))
         self.placeBlock()
 
     def printBoard(self):
@@ -106,16 +107,20 @@ class Board:
     def validMove(self, simulateimulatedMove):
         # if simulated move fails = move out of bounds and should be disallowed
         simulateimulatedMove()
-        for i in range(4):
-            for j in range(4):
-                if i * 4 + j in self.block.image():
-                    if i + self.block.y > self.rows - 1 or \
-                            j + self.block.x > self.columns - 1 or \
-                            j + self.block.x < 0 or \
-                            self.board[i + self.block.y][j + self.block.x] > 0:
-                        simulateimulatedMove(undo=True)
+        
+        for row in range(4, 1, -1):
+            for column in range(4, 1, -1):
+                if row * 4 + column in self.block.image():
+                    if (
+                        row + self.block.y > self.rows - 1 or
+                        row + self.block.y < 0 or
+                        column + self.block.x > self.columns - 1 or
+                        column + self.block.x < 0 or
+                        self.prevBoard[row + self.block.y][column + self.block.x] > 0
+                       ):
+                        simulateimulatedMove(Undo = True)
                         return False
-        return True
+        return True  # Return True if the move is valid
 
 
     def clearRow(self, rownumber):
