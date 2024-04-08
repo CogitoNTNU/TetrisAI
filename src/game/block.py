@@ -1,7 +1,5 @@
 import random
 
-import random
-
 class Block:
 
     def __init__(self, x, y, blockType):
