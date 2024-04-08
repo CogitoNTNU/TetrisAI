@@ -19,9 +19,9 @@ class Block:
     
 
     figures = [
-        [[1, 5, 9, 13], [4, 5, 6, 7]],   # I
-        [[4, 5, 9, 10], [2, 6, 5, 9]],   # Z 
-        [[6, 7, 9, 10], [1, 5, 6, 10]],  # S
+        [[1, 5, 9, 13], [4, 5, 6, 7], [2, 6, 10, 14], [8, 9, 10, 11]],   # I
+        [[4, 5, 9, 10], [2, 6, 5, 9], [0, 1, 5, 6], [1, 5, 4, 8]],   # Z 
+        [[9, 10, 6, 7], [1, 5, 6, 10], [5, 6, 2, 3], [2, 6, 7, 11]],  # S
         [[1, 2, 5, 9], [0, 4, 5, 6], [1, 5, 9, 8], [4, 5, 6, 10]],   #L
         [[1, 2, 6, 10], [5, 6, 7, 9], [2, 6, 10, 11], [3, 5, 6, 7]], # J
         [[1, 4, 5, 6], [1, 4, 5, 9], [4, 5, 6, 9], [1, 5, 6, 9]], # T
@@ -40,48 +40,48 @@ class Block:
     ]
 
 
-    def set_coordinates(self, x, y):
+    def setCoordinates(self, x, y):
         self.x = x
         self.y = y
 
-    def rotate_left(self,  undo: bool = False):
+    def rotateLeft(self,  undo: bool = False):
         if not undo:
             self.rotation = (self.rotation - 1) % len(self.figures[self.type])
         else:
-            self.rotate_right()
+            self.rotateRight()
         
 
-    def rotate_right(self, undo: bool = False):
+    def rotateRight(self, undo: bool = False):
         if not undo:
             self.rotation = (self.rotation + 1) % len(self.figures[self.type])
         else:
-            self.rotate_left()
+            self.rotateLeft()
 
     def image(self): return self.figures[self.type][self.rotation]
 
-    def move_up(self, undo: bool = False):
+    def moveUp(self, undo: bool = False):
         if not undo:
             self.y -= 1
         else:
-            self.move_down()
+            self.moveDown()
 
-    def move_down(self, undo: bool = False):
+    def moveDown(self, undo: bool = False):
         if not undo:
             self.y += 1
         else:
-            self.move_up()
+            self.moLeUp()
     
-    def move_left(self, undo: bool = False):
+    def moveLeft(self, undo: bool = False):
         if not undo:
             self.x -= 1
         else:  
-            self.move_right()
+            self.moveRight()
 
-    def move_right(self, undo: bool = False):
+    def moveRight(self, undo: bool = False):
         if not undo:
             self.x += 1
         else:
-            self.move_left()
+            self.moveLeft()
 
     def getBottom():
         pass

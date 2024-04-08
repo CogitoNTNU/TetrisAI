@@ -40,7 +40,7 @@ class TetrisGameManager:
             Key.right: lambda: self.movePiece("RIGHT"),
             Key.space: lambda: "HardDrop",
             Key.esc: lambda: self.stopGame(),
-            Key.up: lambda: self.rotatePiece("UP"),
+            Key.up: lambda: self.movePiece("UP"),
         }
 
         # while True:
@@ -64,11 +64,11 @@ class TetrisGameManager:
     def onRelease(self, key):
         pass
 
-    def rotatePiece(self, direction):
-        if direction == "UP":
-            self.board.rotateBlockRight()
-        self.board.printBoard()
-        # self.currentPiece.rotate(direction)
+    # def rotatePiece(self, direction):
+    #     if direction == "UP":
+    #         self.board.rotateBlockRight()
+    #     self.board.printBoard()
+    #     # self.currentPiece.rotate(direction)
 
     def movePiece(self, direction):
         print(direction)
@@ -78,6 +78,8 @@ class TetrisGameManager:
             self.board.moveBlockLeft()
         elif direction == "RIGHT":
             self.board.moveBlockRight()
+        elif direction == "UP":
+            self.board.rotateBlockRight()
 
         self.board.printBoard()
 
@@ -100,7 +102,7 @@ class TetrisGameManager:
 
         while not self.board.gameOver:
             
-            #self.checkTimer()
+            self.checkTimer()
             
             t.sleep(0.1)  # Add a small delay to reduce CPU usage
             
@@ -161,9 +163,9 @@ class TetrisGameManager:
         newTime = int(round(t.time() * 1000))
         if (checkTime < newTime):
             self.currentTime = newTime
-            #self.movePiece("DOWN")
-            #print("Timer checked")
-            #self.board.printBoard()
+            self.movePiece("DOWN")
+            print("Timer checked")
+            self.board.printBoard()
 
         
         return True

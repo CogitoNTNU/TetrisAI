@@ -1,5 +1,6 @@
 import pygame
 import random
+import copy
 from block import Block
 
 '''
@@ -25,7 +26,7 @@ class Board:
                 newLine.append(0)
             self.board.append(newLine)
 
-        self.prevBoard = self.board
+        self.prevBoard = copy.deepcopy(self.board)
 
         self.block = Block(0,5, random.randint(0,6))
         self.placeBlock()
@@ -46,31 +47,31 @@ class Board:
 
 
     def rotateBlockRight(self):
-        if self.validMove(self.block.rotate_right):
+        if self.validMove(self.block.rotateRight):
             self.placeBlock()
           
 
             
     def moveBlockDown(self):
-        if self.validMove(self.block.move_down):
+        if self.validMove(self.block.moveDown):
             self.placeBlock()
      
 
     
     def moveBlockLeft(self):
-        if self.validMove(self.block.move_left):
+        if self.validMove(self.block.moveLeft):
             self.placeBlock()
       
         
             
     def moveBlockRight(self): 
-        if self.validMove(self.block.move_right):
+        if self.validMove(self.block.moveRight):
             self.placeBlock()
           
          
         
     def rotateBlockLeft(self):
-        if self.validMove(self.block.rotate_left):
+        if self.validMove(self.block.rotateLeft):
             self.placeBlock()
           
                 
@@ -102,8 +103,14 @@ class Board:
     #                         self.board[i + self.block.y][j + self.block.x] > 0:
     #                     return False  # Returnerer False ved kollisjon eller ugyldig trekk
 
-    def validMove(self, f):
-        f()
+    def validMove(self, simulateimulatedMove):
+        # if simulated move fails = move out of bounds and should be disallowed
+        try:
+            simulateimulatedMove()
+        except:
+            simulateimulatedMove(undo=True)
+            return False
+        
         for i in range(4):
             for j in range(4):
                 if i * 4 + j in self.block.image():
@@ -113,7 +120,7 @@ class Board:
                             self.board[i + self.block.y][j + self.block.x] > 0:
         
                         return True
-        f(undo=True)
+        simulateimulatedMove(undo=True)
         return False  # Return True if the move is valid
 
 
@@ -137,14 +144,10 @@ class Board:
             self.clearRow(rowIndex)  # Fjerner raden basert på dens indeks
             amount += 1  # Øker telleren for antall fjernede rader
         return amount   # Returnerer totalt antall fjernede rader
-    
-
-
-    
 
     
     def placeBlock(self):
-        self.board = self.prevBoard
+        self.board = copy.deepcopy(self.prevBoard)
         # if self.validMove():
         for i in range(4):
             for j in range(4):
@@ -154,26 +157,11 @@ class Board:
     
     def newBlock(self):
         self.block = Block(0,5, random.randint(0,6))
-
-    
         for i in range(4):
             for j in range(4):
                 if i * 4 + j in self.block.image():
                     self.board[i + self.block.y][j + self.block.x] = 1 #self.block.color
         return self.checkGameState() #hvis denne sjekkes hver gang og gir false, var det ikke mulig å plassere blokken og spillet er over ffs.
-    
-    def newBlock(self):
-        self.block = Block(0,5, random.randint(0,6))
-
-    
-        for i in range(4):
-            for j in range(4):
-                if i * 4 + j in self.block.image():
-                    self.board[i + self.block.y][j + self.block.x] = 1 #self.block.color
-        return self.checkGameState() #hvis denne sjekkes hver gang og gir false, var det ikke mulig å plassere blokken og spillet er over ffs.
-    
-    def newBlock(self):
-        self.block = Block(0,5, random.randint(0,6))
 
     
 
