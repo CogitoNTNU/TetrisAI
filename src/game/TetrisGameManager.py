@@ -35,7 +35,7 @@ class TetrisGameManager:
         self.board.setGameOver(False)
 
         self.switcher = {
-            Key.down: lambda: self.movePiece("DOWN"),
+            Key.f1: lambda: self.movePiece("DOWN"),
             Key.left: lambda: self.movePiece("LEFT"),
             Key.right: lambda: self.movePiece("RIGHT"),
             Key.space: lambda: "HardDrop",
@@ -161,11 +161,11 @@ class TetrisGameManager:
     def checkTimer(self):
         checkTime = self.currentTime + 1000/self.updateTimer
         newTime = int(round(t.time() * 1000))
-        if (checkTime < newTime):
-            self.currentTime = newTime
-            self.movePiece("DOWN")
-            print("Timer checked")
-            self.board.printBoard()
+        # if (checkTime < newTime):
+        #     self.currentTime = newTime
+        #     self.movePiece("DOWN")
+        #     print("Timer checked")
+        #     self.board.printBoard()
 
         
         return True

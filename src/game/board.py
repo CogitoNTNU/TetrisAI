@@ -105,12 +105,7 @@ class Board:
 
     def validMove(self, simulateimulatedMove):
         # if simulated move fails = move out of bounds and should be disallowed
-        try:
-            simulateimulatedMove()
-        except:
-            simulateimulatedMove(undo=True)
-            return False
-        
+        simulateimulatedMove()
         for i in range(4):
             for j in range(4):
                 if i * 4 + j in self.block.image():
@@ -118,10 +113,9 @@ class Board:
                             j + self.block.x > self.columns - 1 or \
                             j + self.block.x < 0 or \
                             self.board[i + self.block.y][j + self.block.x] > 0:
-        
-                        return True
-        simulateimulatedMove(undo=True)
-        return False  # Return True if the move is valid
+                        simulateimulatedMove(undo=True)
+                        return False
+        return True
 
 
     def clearRow(self, rownumber):
