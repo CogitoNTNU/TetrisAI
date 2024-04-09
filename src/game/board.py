@@ -140,18 +140,16 @@ class Board:
             self.checkGameState()
         )  # hvis denne sjekkes hver gang og gir false, var det ikke mulig å plassere blokken og spillet er over ffs.
 
-    def newBlock(self):
-        """Creates a new block and places it on the board"""
-        self.block = Block(0, 5, random.randint(0, 6))
+    def _shiftToNewBlock(self):
+        """Places the current block on the board and sets the next block as the current block"""
+        self.block = self.nextBlock
+        self.nextBlock = Block(0, 5, random.randint(0, 6))
         for i in range(4):
             for j in range(4):
                 if i * 4 + j in self.block.image():
                     self.board[i + self.block.y][
                         j + self.block.x
                     ] = 1  # self.block.color
-        return (
-            self.checkGameState()
-        )  # hvis denne sjekkes hver gang og gir false, var det ikke mulig å plassere blokken og spillet er over ffs.
 
     def checkGameState(self) -> int:
         amount = 0
