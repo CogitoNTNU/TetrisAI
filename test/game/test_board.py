@@ -15,6 +15,7 @@ import copy
 #
 #     assert len(possible_moves) == 9
 
+
 def test_board_equal_for_the_same_object():
     board1 = Board()
     assert board1 == board1
@@ -186,15 +187,16 @@ def test_transition_model_x_direction():
 def test_transition_model_complex_target():
     current_board: Board = Board()
     target_board: Board = copy.deepcopy(current_board)
-    actions = [
-        Action.MOVE_RIGHT,
-        Action.MOVE_RIGHT,
-        Action.MOVE_RIGHT,
+    actual_actions = [
         Action.ROTATE_CLOCKWISE,
+        Action.MOVE_RIGHT,
+        Action.MOVE_RIGHT,
+        Action.MOVE_RIGHT,
     ]
-    for action in actions:
+    for action in actual_actions:
         target_board.doAction(action)
 
     actions = transition_model(current_board, target_board)
     assert isinstance(actions, list)
-    assert len(actions) == len(actions)
+    assert len(actions) == len(actual_actions)
+    assert actions == actual_actions
