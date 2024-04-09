@@ -33,3 +33,26 @@ class Agent(ABC):
         """
         pass
 
+
+def play_game(agent: Agent, board: Board) -> Board:
+    """
+    Plays a game of Tetris with the given agent.
+
+    Args:
+        agent (Agent): The agent to play the game.
+        board (Board): The initial state of the board.
+
+    Returns:
+        The final state of the board after the game is over.
+    """
+    while not board.isGameOver():
+        result = agent.result(board)
+        print(f"[Agent] Move: {result}")
+        if isinstance(result, list):
+            for action in result:
+                board.doAction(action)
+        else:
+            board.doAction(result)
+
+        board.printBoard()
+    return board
