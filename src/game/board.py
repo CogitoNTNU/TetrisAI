@@ -6,6 +6,8 @@ from src.game.block import Block
 
 
 class Action(Enum):
+    """Enumeration for the possible actions that can be performed on the board"""
+
     MOVE_LEFT = auto()
     MOVE_RIGHT = auto()
     ROTATE_CLOCKWISE = auto()
@@ -15,10 +17,27 @@ class Action(Enum):
 
 
 class Board:
+    """
+    Represents the Tetris game board, handling block placements, movements, and rotations, as well as checking for game over conditions.
+
+    Attributes:
+        rows (int): Number of rows in the game board.
+        columns (int): Number of columns in the game board.
+        gameOver (bool): Flag indicating if the game is over.
+        rowsRemoved (int): Count of the total rows removed during the game.
+        board (list[list[int]]): The game board matrix, where 0 indicates an empty cell and 1 indicates a filled cell.
+        prevBoard (list[list[int]]): A copy of the game board before the latest block placement, used to check for valid movements and intersections.
+        block (Block): The current block being controlled by the player.
+        nextBlock (Block): The next block that will be introduced to the board after the current block is placed.
+    """
+
     rows = 20
     columns = 10
 
     def __init__(self):
+        """
+        Initializes a new game board instance, setting up an empty board, placing the first block, and selecting the next block.
+        """
         self.gameOver = False
         self.rowsRemoved = 0
 
@@ -44,7 +63,12 @@ class Board:
         return copy.deepcopy(self.board)
 
     def doAction(self, action: Action) -> None:
-        """Performs the specified action on the board"""
+        """
+        Performs the specified action on the current block and updates the game board accordingly.
+
+        Args:
+            action (Action): The action to perform, as defined in the Action enumeration.
+        """
 
         # Move the new block according to the action
         new_block = self.block.copy()
@@ -73,7 +97,15 @@ class Board:
             self.placeBlock()
 
     def isValidBlockPosition(self, block: Block) -> bool:
-        """Checks if the block can move in the specified direction"""
+        """
+        Checks if the given block's position is valid (not out of bounds, not intersecting with existing blocks, and not causing a game over).
+
+        Args:
+            block (Block): The block to check.
+
+        Returns:
+            bool: True if the block's position is valid, False otherwise.
+        """
 
         if self._outOfBounds(block):
             print("[DEBUG] Out of bounds")
@@ -123,9 +155,6 @@ class Board:
 
     def isGameOver(self):
         return self.gameOver
-
-    def blockLanded(self):
-        pass
 
     def placeBlock(self):
         """Places the current block on the board"""
@@ -216,13 +245,14 @@ class Board:
 
 def transition_model(current_state: Board, target_state: Board) -> list[Action]:
     """
-    Returns the sequence of actions needed to transition from the current state to the target state.
+    Calculates the sequence of actions required to transition from the current board state to the target board state.
 
     Args:
-        new_state: The new state to transition to
+        current_state (Board): The current state of the Tetris board.
+        target_state (Board): The desired target state of the board.
 
     Returns:
-        The resulting state
+        list[Action]: A list of actions that need to be performed to achieve the target state.
     """
 
     actions = []
