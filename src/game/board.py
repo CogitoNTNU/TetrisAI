@@ -23,6 +23,17 @@ class Action(Enum):
     """ Move the block one step down """
 
 
+def get_all_actions() -> list[Action]:
+    return [
+        Action.MOVE_LEFT,
+        Action.MOVE_RIGHT,
+        Action.ROTATE_CLOCKWISE,
+        Action.ROTATE_COUNTERCLOCKWISE,
+        Action.HARD_DROP,
+        Action.SOFT_DROP,
+    ]
+
+
 class Board:
     """
     Represents the Tetris game board, handling block placements, movements, and rotations, as well as checking for game over conditions.
