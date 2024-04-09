@@ -243,9 +243,15 @@ class Board:
 
         return possibleMoves
 
-    def __eq__(self, value: "Board") -> bool:
-        for i in range(2):
-            pass
+    def __eq__(self, other: "Board") -> bool:
+        if not isinstance(other, Board):
+            return False
+
+        # Check if the blocks are the same
+        for r in range(self.ROWS):
+            for c in range(self.COLUMNS):
+                if self.board[r][c] != other.board[r][c]:
+                    return False
 
         return True
 
@@ -278,6 +284,7 @@ def transition_model(current_state: Board, target_state: Board) -> list[Action]:
     actions = []
 
     if current_state == target_state:
+        print("No transition needed")
         return actions
 
     # Find where the last block is in the target state
