@@ -37,7 +37,7 @@ class Board:
         block (Block): The current block being controlled by the player.
         nextBlock (Block): The next block that will be introduced to the board after the current block is placed.
     """
-    
+
     ROWS = 20
     COLUMNS = 10
 
@@ -58,7 +58,6 @@ class Board:
             self.block = block
         self.prevBoard = copy.deepcopy(self.board)
 
-        
         self._placeBlock()
 
         self.nextBlock = Block(0, 5, random.randint(0, 6))
@@ -217,7 +216,6 @@ class Board:
         newMatrix.append([0 for _ in range(self.COLUMNS)])
         self.board = newMatrix  # Oppdaterer matrisen med den nye matrisen
         self.rowsRemoved += 1  # Oppdaterer antall fjernede rader
-        
 
     def getPossibleMoves(self) -> list["Board"]:
         possibleMoves = []
@@ -234,7 +232,7 @@ class Board:
             for column in range(self.COLUMNS):
                 moveBoard = copy.deepcopy(self)
                 moveBoard.block.setCoordinates(column - 1, 0)
-            
+
             if moveBoard.isValidBlockPosition(moveBoard.block):
                 moveBoard.doAction(Action.HARD_DROP)
 
@@ -248,7 +246,7 @@ class Board:
     def __eq__(self, value: "Board") -> bool:
         for i in range(2):
             pass
-        
+
         return True
 
     def printBoard(self):
