@@ -2,7 +2,7 @@ from pynput.keyboard import Key, Listener
 import time as t
 import sys
 
-from src.game.board import Board
+from src.game.board import Action, Board
 
 baseScore = 100
 DOWN = (0, 1)
@@ -22,26 +22,20 @@ class TetrisGameManager:
 
     currentPiece = None
     nextPiece = None
-    score = 0
     updateTimer = 1
     streak = 1
-    currentTime = None
-    board = None
-    switcher = None
 
-    def __init__(self, board):
+    def __init__(self, board: Board):
         self.board = board
         self.score = 0
         self.currentTime = int(round(t.time() * 1000))
-        self.board.setGameOver(False)
 
         self.switcher = {
-            Key.f1: lambda: self.movePiece("DOWN"),
-            Key.left: lambda: self.movePiece("LEFT"),
-            Key.right: lambda: self.movePiece("RIGHT"),
-            Key.space: lambda: "HardDrop",
-            Key.esc: lambda: self.stopGame(),
-            Key.up: lambda: self.movePiece("UP"),
+            Key.f1: Action.SOFT_DROP,
+            Key.left: Action.MOVE_LEFT,
+            Key.right: Action.MOVE_RIGHT,
+            Key.space: Action.DROP,
+            Key.up: Action.ROTATE_CLOCKWISE,
         }
 
         # while True:
@@ -55,40 +49,20 @@ class TetrisGameManager:
 
         # Get the function to execute based on the key, or default action
         action = self.switcher.get(key, default_action)
-        action()
-        # self.board.printBoard()
-        # print(action)
-        # Execute the function
-        # return action
+        self.movePiece(action)
 
     def onRelease(self, key):
         pass
 
-    # def rotatePiece(self, direction):
-    #     if direction == "UP":
-    #         self.board.rotateBlockRight()
-    #     self.board.printBoard()
-    #     # self.currentPiece.rotate(direction)
-
     def movePiece(self, direction):
+        print("Moving piece by action: ")
         print(direction)
-        if direction == "DOWN":
-            self.board.moveBlockDown()
-        elif direction == "LEFT":
-            self.board.moveBlockLeft()
-        elif direction == "RIGHT":
-            self.board.moveBlockRight()
-        elif direction == "UP":
-            self.board.rotateBlockRight()
+        self.board.doAction(direction)
 
         self.board.printBoard()
 
-    def dropPiece(self, newPiece):
-        self.movePiece("DOWN")
-
     def isGameOver(self):
         return self.board.isGameOver()
-        # return self.board.isGameOver()
 
     def startGame(self):
         self.currentPiece = self.newPiece()
@@ -112,26 +86,8 @@ class TetrisGameManager:
         pass
         # return self.pieces.getNewPiece()
 
-    # def clearLines(self):
-    #     linesCleared = self.board.checkGameState()
-    #     if linesCleared == 4:
-    #         self.streak += 1
-    #     else:
-    #         self.streak = 1
-
     def updateScore(self, linesCleared):
         self.score += self.streak * (baseScore**linesCleared)
-
-    def softDrop(self):
-        if self.legalMove(DOWN):
-            self.dropPiece()
-        else:
-            self.placePiece(DOWN)
-
-    def hardDrop(self):
-        while self.legalMove(DOWN):
-            self.dropPiece()
-        self.placePiece(DOWN)
 
     def placePiece(self, direction):
         x = direction[0]
@@ -165,11 +121,5 @@ class TetrisGameManager:
 
     def stopGame(self):
         # print("Game Over")
-        self.board.setGameOver(True)
+        self.board.gameOver = True
         sys.exit()
-
-
-if __name__ == "__main__":
-    board = Board()
-    game = TetrisGameManager(board)
-    game.startGame()

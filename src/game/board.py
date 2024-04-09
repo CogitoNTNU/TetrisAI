@@ -1,17 +1,8 @@
-from typing import Callable
-import pygame
 import random
 import copy
 from enum import Enum, auto
 
 from src.game.block import Block
-
-"""
-Denne skriver ut brettet i terminal bare. 
-Vi lager brettet med en matrise. Det er 0 overalt i matrisen. legger du en brikke så nendrer vi i matrisen.
-Dersom en hel rad i matrisen er full, så fjerner vi denne raden og flytter alt sammen nedover + oppdatererr poengsummen"
-En brikke i matrisen represneteres med 1-er. 
-"""
 
 
 class Action(Enum):
@@ -21,160 +12,121 @@ class Action(Enum):
     ROTATE_COUNTERCLOCKWISE = auto()
     DROP = auto()
     SOFT_DROP = auto()
-    HOLD = auto()
 
 
 class Board:
     rows = 20
     columns = 10
-    gameOver = False
-    rowsRemoved = 0
-    board = []
-    block = None
-    nextBlock = None
 
     def __init__(self):
-        for i in range(0, self.rows - 1):
-            newLine = []
-            for j in range(0, self.columns - 1):
-                newLine.append(0)
-            self.board.append(newLine)
+        self.gameOver = False
+        self.rowsRemoved = 0
 
+        self.board = self._initBoard()
         self.prevBoard = copy.deepcopy(self.board)
 
         self.block = Block(3, 0, 0)
-        # self.block = Block(3,0, random.randint(0,6))
         self.placeBlock()
 
         self.nextBlock = Block(0, 5, random.randint(0, 6))
 
-    def getBoard(self):
+    def _initBoard(self) -> list[list[int]]:
+        """Initializes an empty the board"""
+        board = []
+        for r in range(0, self.rows):
+            row = []
+            for c in range(0, self.columns):
+                row.append(0)
+            board.append(row)
+        return board
+
+    def getBoard(self) -> list[list[int]]:
         return copy.deepcopy(self.board)
 
-    def printBoard(self):
-        print("___________________________________")
-        for row in self.board:
-            print("|" + "   ".join(self.checkCharacter(cell) for cell in row) + "|")
+    def doAction(self, action: Action) -> None:
+        """Performs the specified action on the board"""
 
-        print("‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾")
+        # Move the new block according to the action
+        new_block = self.block.copy()
+        match action:
+            case Action.MOVE_LEFT:
+                new_block.moveLeft()
+            case Action.MOVE_RIGHT:
+                new_block.moveRight()
+            case Action.ROTATE_CLOCKWISE:
+                new_block.rotateRight()
+            case Action.ROTATE_COUNTERCLOCKWISE:
+                new_block.rotateLeft()
+            case Action.DROP:
+                # TODO: Correct THE HARD DROP
+                while True:
+                    new_block.moveDown()
+                    if not self.isValidBlockPosition(new_block):
+                        new_block.moveUp()
+                        break
+            case Action.SOFT_DROP:
+                new_block.moveDown()
 
-    def setBlock(self, block: Block) -> None:
-        self.nextBlock = block
-
-    def checkCharacter(self, character):
-        if character == 1:
-            return "■"
-        else:
-            return "▧"
-
-    def rotateBlockRight(self):
-        if self.validRotation(self.block.rotateRight):
+        # Given the new block position, check if it is valid and update the board
+        if self.isValidBlockPosition(new_block):
+            print("Valid move")
+            self.block = new_block
             self.placeBlock()
 
-    def moveBlockDown(self):
-        if self.validMove(self.block.moveDown):
-            self.placeBlock()
+    def isValidBlockPosition(self, block: Block) -> bool:
+        """Checks if the block can move in the specified direction"""
 
-    def moveBlockLeft(self):
-        if self.validMove(self.block.moveLeft):
-            self.placeBlock()
+        if self._outOfBounds(block):
+            print("[DEBUG] Out of bounds")
+            return False
 
-    def moveBlockRight(self):
-        if self.validMove(self.block.moveRight):
-            self.placeBlock()
+        if self._intersects(block):
+            print("[DEBUG] Intersects")
+            return False
 
-    def rotateBlockLeft(self):
-        if self.validMove(self.block.rotateLeft):
-            self.placeBlock()
+        if self.isGameOver():
+            return False
+
+        return True
+
+    def _outOfBounds(self, block: Block) -> bool:
+        """Checks if the block is out of bounds"""
+        for row in range(4):
+            for column in range(4):
+                if row * 4 + column in block.image():
+                    if (
+                        row + block.y > self.rows - 1
+                        or row + block.y < 0
+                        or column + block.x > self.columns - 1
+                        or column + block.x < 0
+                    ):
+                        return True
+
+        return False
+
+    def _intersects(self, block: Block) -> bool:
+        """Checks if the block intersects with the board"""
+        for row in range(4):
+            for column in range(4):
+                if row * 4 + column in block.image():
+                    if (
+                        row + block.y > self.columns - 1
+                        or row + block.y < 0
+                        or column + block.x > self.rows - 1
+                        or column + block.x < 0
+                        or self.prevBoard[row + block.y][column + block.x] > 0
+                    ):
+                        return True
+        return False
 
     def isGameOver(self):
         return self.gameOver
 
-    def setGameOver(self, state):
-        self.gameOver = state
-
     def blockLanded(self):
         pass
 
-    def validMove(self, simulatedMove):
-        # if simulated move fails = move out of bounds and should be disallowed
-        block_indices = [i for i in range(16) if i in self.block.image()]
-
-        moving_direction = [0, 0]
-        moving_direction[0] = (
-            1
-            if simulatedMove == self.block.moveRight
-            else -1 if simulatedMove == self.block.moveLeft else 0
-        )
-        moving_direction[1] = 1 if simulatedMove == self.block.moveDown else 0
-
-        for index in block_indices:
-            print(self.block.y + (index // 4) + moving_direction[1], self.rows - 1)
-            print(self.block.x + (index % 4) + moving_direction[0], self.columns - 1)
-            if (
-                self.block.y + (index // 4) + moving_direction[1] < 0
-                or self.block.y + (index // 4) + moving_direction[1] > self.rows - 2
-                or self.block.x + (index % 4) + moving_direction[0] < 0
-                or self.block.x + (index % 4) + moving_direction[0] > self.columns - 2
-            ):
-
-                return False
-
-        simulatedMove()
-
-        for row in range(4):
-            for column in range(4):
-                if row * 4 + column in self.block.image():
-                    if (
-                        row + self.block.y > self.rows - 1
-                        or row + self.block.y < 0
-                        or column + self.block.x > self.columns - 1
-                        or column + self.block.x < 0
-                        or self.prevBoard[row + self.block.y][column + self.block.x] > 0
-                    ):
-                        simulatedMove(Undo=True)
-                        return False
-        return True  # Return True if the move is valid
-
-    def validRotation(self, simulatedRotation):
-        # if simulated move fails = move out of bounds and should be disallowed
-        block_indices = [i for i in range(16) if i in self.block.image()]
-        rotation = (
-            1
-            if simulatedRotation.__name__ == "rotateRight"
-            else -1 if simulatedRotation.__name__ == "rotateLeft" else 0
-        )
-        new_block_indices = self.figures[self.type][(self.rotation + rotation) % 4]
-
-        # TODO: Implement valid rotation check similar to validMove
-        # Should push the block to closest valid position for the rotation in a given radius (but not able to go through walls)
-
-        for index in block_indices:
-            if (
-                self.block.y + (index // 4) < 0
-                or self.block.y + (index // 4) > self.rows - 2
-                or self.block.x + (index % 4) < 0
-                or self.block.x + (index % 4) > self.columns - 2
-            ):
-                return False
-
-        simulatedRotation()
-
-        for row in range(4):
-            for column in range(4):
-                if row * 4 + column in self.block.image():
-                    if (
-                        row + self.block.y > self.rows - 1
-                        or row + self.block.y < 0
-                        or column + self.block.x > self.columns - 1
-                        or column + self.block.x < 0
-                        or self.prevBoard[row + self.block.y][column + self.block.x] > 0
-                    ):
-                        simulatedRotation(Undo=True)
-                        return False
-        return True
-
-    def clearRow(self, rownumber):
+    def clearRow(self, rownumber: int):
+        """Clears the specified row and moves all rows above down one step"""
         # Fjerner den angitte raden og legger til en ny tom rad ved bunnen av matrisen
         newMatrix = self.board[:rownumber] + self.board[rownumber + 1 :]
         newMatrix.append([0 for _ in range(self.columns)])
@@ -239,7 +191,7 @@ class Board:
                     moveBoard.block.rotateRight()
                 moveBoard.placeBlock()
 
-                while moveBoard.validMove(moveBoard.block.moveDown):
+                while moveBoard.isValidBlockPosition(moveBoard.block.moveDown):
                     moveBoard.block.moveDown()
 
                 possibleMoves.append(copy.deepcopy(moveBoard))
@@ -251,6 +203,19 @@ class Board:
                 continue
             else:
                 break
+
+    def printBoard(self):
+        print("_______________________________________")
+        for row in self.board:
+            print("|" + "   ".join(self.checkCharacter(cell) for cell in row) + "|")
+
+        print("‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾")
+
+    def checkCharacter(self, character) -> str:
+        if character == 1:
+            return "■"
+        else:
+            return "▧"
 
 
 def transition_model(current_state: Board, target_state: Board) -> list[Action]:

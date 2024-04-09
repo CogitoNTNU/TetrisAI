@@ -34,15 +34,20 @@ class Block:
         self.type = random.randint(0, 6) if blockType is None else blockType
         self.color = COLORS[self.type]
 
+    def copy(self) -> "Block":
+        block = Block(self.x, self.y, self.type)
+        block.rotation = self.rotation
+        return block
+
     def setCoordinates(self, x: int, y: int):
         self.x = x
         self.y = y
 
     def rotateLeft(self):
-        self.rotation = (self.rotation - 1) % len(self.figures[self.type])
+        self.rotation = (self.rotation - 1) % len(FIGURES[self.type])
 
     def rotateRight(self):
-        self.rotation = (self.rotation + 1) % len(self.figures[self.type])
+        self.rotation = (self.rotation + 1) % len(FIGURES[self.type])
 
     def moveUp(self):
         self.y -= 1

@@ -1,31 +1,8 @@
+from src.game.TetrisGameManager import TetrisGameManager
 from src.game.board import Board
-from src.agents.heuristic import *
 
-def test_heuristic():
+
+if __name__ == "__main__":
     board = Board()
-    board.board =\
-    [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-    [0, 0, 1, 0, 0, 0, 0, 0, 0, 0], 
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-    [0, 1, 0, 1, 0, 0, 0, 0, 0, 0], 
-    [1, 0, 0, 0, 0, 0, 1, 0, 1, 0], 
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-    [0, 0, 0, 0, 1, 0, 0, 0, 0, 0], 
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
-
-    print(aggregate_heights(board))
-    print(max_height(board))
-    
-test_heuristic()
+    game = TetrisGameManager(board)
+    game.startGame()
