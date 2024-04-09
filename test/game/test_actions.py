@@ -267,7 +267,7 @@ def test_slide_left_block_on_top_of_another_block():
 def test_slide_right_block_on_top_of_another_block():
     initBlock = Block(3, 0, 5)
 
-    innitBoard = [
+    initBoard = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -289,7 +289,7 @@ def test_slide_right_block_on_top_of_another_block():
         [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ]
-    board: Board = Board(board=innitBoard, block=initBlock)
+    board: Board = Board(board=initBoard, block=initBlock)
     expected_board = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -305,17 +305,17 @@ def test_slide_right_block_on_top_of_another_block():
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 1, 1, 1, 0, 0, 0, 0],
-        [0, 0, 0, 0, 1, 1, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+        [0, 0, 0, 0, 1, 1, 1, 0, 0, 0],
+        [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ]
     board.printBoard()
-    board.doAction(Action.HARD_DROP)
-    board.printBoard()
     board.doAction(Action.MOVE_RIGHT)
+    board.printBoard()
+    board.doAction(Action.HARD_DROP)
     board.printBoard()
     for board_row, expected_row in zip(board.board, expected_board):
         assert board_row == expected_row, "Board did not match expected board"
