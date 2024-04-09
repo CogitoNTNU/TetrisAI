@@ -1,5 +1,6 @@
 import random
 import copy
+
 from enum import Enum, auto
 
 from src.game.block import Block
@@ -8,12 +9,12 @@ from src.game.block import Block
 class Action(Enum):
     """Enumeration for the possible actions that can be performed on the board"""
 
-    MOVE_LEFT = auto()
-    MOVE_RIGHT = auto()
-    ROTATE_CLOCKWISE = auto()
-    ROTATE_COUNTERCLOCKWISE = auto()
-    DROP = auto()
-    SOFT_DROP = auto()
+    MOVE_LEFT = auto()                  # Move the block to the left
+    MOVE_RIGHT = auto()                 # Move the block to the right
+    ROTATE_CLOCKWISE = auto()           # Rotate the block clockwise
+    ROTATE_COUNTERCLOCKWISE = auto()    # Rotate the block counterclockwise
+    HARD_DROP = auto()                  # Instantly drop the block to the lowest possible position
+    SOFT_DROP = auto()                  # Move the block one step down
 
 
 class Board:
@@ -21,8 +22,8 @@ class Board:
     Represents the Tetris game board, handling block placements, movements, and rotations, as well as checking for game over conditions.
 
     Attributes:
-        rows (int): Number of rows in the game board.
-        columns (int): Number of columns in the game board.
+        ROWS (int): Number of rows in the game board.
+        COLUMNS (int): Number of columns in the game board.
         gameOver (bool): Flag indicating if the game is over.
         rowsRemoved (int): Count of the total rows removed during the game.
         board (list[list[int]]): The game board matrix, where 0 indicates an empty cell and 1 indicates a filled cell.
@@ -30,9 +31,9 @@ class Board:
         block (Block): The current block being controlled by the player.
         nextBlock (Block): The next block that will be introduced to the board after the current block is placed.
     """
-
-    rows = 20
-    columns = 10
+    
+    ROWS = 20
+    COLUMNS = 10
 
     def __init__(self):
         """
@@ -52,9 +53,9 @@ class Board:
     def _initBoard(self) -> list[list[int]]:
         """Initializes an empty the board"""
         board = []
-        for r in range(0, self.rows):
+        for r in range(0, self.ROWS):
             row = []
-            for c in range(0, self.columns):
+            for c in range(0, self.COLUMNS):
                 row.append(0)
             board.append(row)
         return board
@@ -81,7 +82,7 @@ class Board:
                 new_block.rotateRight()
             case Action.ROTATE_COUNTERCLOCKWISE:
                 new_block.rotateLeft()
-            case Action.DROP:
+            case Action.HARD_DROP:
                 while True:
                     new_block.moveDown()
                     if not self.isValidBlockPosition(new_block):
@@ -126,9 +127,9 @@ class Board:
             for column in range(4):
                 if row * 4 + column in block.image():
                     if (
-                        row + block.y > self.rows - 1
+                        row + block.y > self.ROWS - 1
                         or row + block.y < 0
-                        or column + block.x > self.columns - 1
+                        or column + block.x > self.COLUMNS - 1
                         or column + block.x < 0
                     ):
                         return True
@@ -196,38 +197,44 @@ class Board:
         return amount  # Returnerer totalt antall fjernede rader
 
     def _clearRow(self, rownumber: int):
-        """Clears the specified row and moves all rows above down one step"""
+        """Clears the specified row and moves all ROWS above down one step"""
         # Fjerner den angitte raden og legger til en ny tom rad ved bunnen av matrisen
         newMatrix = self.board[:rownumber] + self.board[rownumber + 1 :]
-        newMatrix.append([0 for _ in range(self.columns)])
+        newMatrix.append([0 for _ in range(self.COLUMNS)])
         self.board = newMatrix  # Oppdaterer matrisen med den nye matrisen
         self.rowsRemoved += 1  # Oppdaterer antall fjernede rader
 
     def getPossibleMoves(self) -> list["Board"]:
         possibleMoves = []
-        firstRotation = self.block.rotation
-        currentRotation = firstRotation
 
-        while True:
-            for i in range(self.columns):
+        # Number of rotations which gives unique block positions
+        if self.block.type < 3:
+            rotations = 2
+        elif self.block.type < 6:
+            rotations = 4
+        else:
+            rotations = 1
+
+        for _ in range(rotations):
+            for column in range(self.COLUMNS):
                 moveBoard = copy.deepcopy(self)
-                moveBoard.block.setCoordinates(i, 0)
-                for j in range(currentRotation):
-                    moveBoard.block.rotateRight()
-                moveBoard._placeBlock()
+                moveBoard.block.setCoordinates(column - 1, 0)
+            
+            if moveBoard.isValidBlockPosition(moveBoard.block):
+                moveBoard.doAction(Action.HARD_DROP)
 
-                while moveBoard.isValidBlockPosition(moveBoard.block.moveDown):
-                    moveBoard.block.moveDown()
-
-                possibleMoves.append(copy.deepcopy(moveBoard))
+                if moveBoard.board not in possibleMoves:
+                    possibleMoves.append(copy.deepcopy(moveBoard.board))
 
             moveBoard.block.rotateRight()
-            currentRotation += 1
 
-            if moveBoard.block.rotation != firstRotation:
-                continue
-            else:
-                break
+        return possibleMoves
+
+    def __eq__(self, value: "Board") -> bool:
+        for i in range(2):
+            pass
+        
+        return True
 
     def printBoard(self):
         print("_______________________________________")

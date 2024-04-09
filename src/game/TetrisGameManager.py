@@ -34,7 +34,7 @@ class TetrisGameManager:
             Key.down: Action.SOFT_DROP,
             Key.left: Action.MOVE_LEFT,
             Key.right: Action.MOVE_RIGHT,
-            Key.space: Action.DROP,
+            Key.space: Action.HARD_DROP,
             Key.up: Action.ROTATE_CLOCKWISE,
         }
 

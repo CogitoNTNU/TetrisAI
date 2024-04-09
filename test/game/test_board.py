@@ -15,6 +15,10 @@ import copy
 #
 #     assert len(possible_moves) == 9
 
+def test_board_equal_for_the_same_object():
+    board1 = Board()
+    assert board1 == board1
+
 
 def test_clear_row():
     board: Board = Board()
