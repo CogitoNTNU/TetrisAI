@@ -5,9 +5,6 @@ import sys
 from src.game.board import Action, Board
 
 baseScore = 100
-DOWN = (0, 1)
-LEFT = (-1, 0)
-RIGHT = (1, 0)
 
 """ TODO:   Timer for piece drop 
             keyboard input for piece movement
@@ -37,10 +34,6 @@ class TetrisGameManager:
             Key.space: Action.HARD_DROP,
             Key.up: Action.ROTATE_CLOCKWISE,
         }
-
-        # while True:
-        #     with Listener(on_press=self.on_press, on_release=self.on_release) as listener:
-        #         listener.join()
 
     def onPress(self, key):
         # Default action if key not found
