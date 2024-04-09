@@ -58,7 +58,6 @@ class Board:
             case Action.ROTATE_COUNTERCLOCKWISE:
                 new_block.rotateLeft()
             case Action.DROP:
-                # TODO: Correct THE HARD DROP
                 while True:
                     new_block.moveDown()
                     if not self.isValidBlockPosition(new_block):
@@ -105,19 +104,21 @@ class Board:
         return False
 
     def _intersects(self, block: Block) -> bool:
-        """Checks if the block intersects with the board"""
+        """Checks if the block intersects with another block on the board"""
         ##  TODO: Fix this
-        # for row in range(4):
-        #     for column in range(4):
-        #         if row * 4 + column in block.image():
-        #             if (
-        #                 row + block.y > self.columns - 1
-        #                 or row + block.y < 0
-        #                 or column + block.x > self.rows - 1
-        #                 or column + block.x < 0
-        #                 or self.prevBoard[row + block.y][column + block.x] > 0
-        #             ):
-        #                 return True
+        for row in range(4):
+            for column in range(4):
+                if row * 4 + column in block.image():
+                    # Check if the block intersects with the board
+                    # That is, if the block is on top of another block that is not itself
+                    blockOverlaps = self.prevBoard[row + block.y][column + block.x] > 0
+                    isItSelf = (
+                        block.x + column != self.block.x
+                        or block.y + row != self.block.y
+                    )
+
+                    if blockOverlaps and not isItSelf:
+                        return True
         return False
 
     def isGameOver(self):
@@ -134,7 +135,7 @@ class Board:
         self.board = newMatrix  # Oppdaterer matrisen med den nye matrisen
         self.rowsRemoved += 1  # Oppdaterer antall fjernede rader
 
-    def checkGameState(self):
+    def checkGameState(self) -> int:
         amount = 0
         fullRows = []
 
@@ -145,7 +146,6 @@ class Board:
                 fullRows.append(
                     rowIndex
                 )  # Legger til indeksen til listen over fulle rader
-
         for rowIndex in reversed(
             fullRows
         ):  # Går gjennom listen over fulle rader i reversert rekkefølge for å fjerne dem
