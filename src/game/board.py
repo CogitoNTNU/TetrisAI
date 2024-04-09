@@ -35,17 +35,24 @@ class Board:
     ROWS = 20
     COLUMNS = 10
 
-    def __init__(self):
+    def __init__(self, board=None, block=None):
         """
         Initializes a new game board instance, setting up an empty board, placing the first block, and selecting the next block.
         """
         self.gameOver = False
         self.rowsRemoved = 0
 
-        self.board = self._initBoard()
+        if board == None:
+            self.board = self._initBoard()
+        else:
+            self.board = board
+        if block == None:
+            self.block = Block(3, 0, 0)
+        else:
+            self.block = block
         self.prevBoard = copy.deepcopy(self.board)
 
-        self.block = Block(3, 0, 0)
+        
         self._placeBlock()
 
         self.nextBlock = Block(0, 5, random.randint(0, 6))
@@ -85,6 +92,7 @@ class Board:
             case Action.HARD_DROP:
                 while True:
                     new_block.moveDown()
+                    self.printBoard()
                     if not self.isValidBlockPosition(new_block):
                         new_block.moveUp()
                         break
@@ -147,7 +155,7 @@ class Board:
                     blockOverlaps = self.prevBoard[row + block.y][column + block.x] > 0
                     isItSelf = (
                         block.x + column == self.block.x
-                        or block.y + row == self.block.y
+                        and block.y + row == self.block.y
                     )
 
                     if blockOverlaps and not isItSelf:
@@ -197,12 +205,13 @@ class Board:
         return amount  # Returnerer totalt antall fjernede rader
 
     def _clearRow(self, rownumber: int):
-        """Clears the specified row and moves all ROWS above down one step"""
+        """Clears the specified row and moves all rows above down one step"""
         # Fjerner den angitte raden og legger til en ny tom rad ved bunnen av matrisen
         newMatrix = self.board[:rownumber] + self.board[rownumber + 1 :]
         newMatrix.append([0 for _ in range(self.COLUMNS)])
         self.board = newMatrix  # Oppdaterer matrisen med den nye matrisen
         self.rowsRemoved += 1  # Oppdaterer antall fjernede rader
+        
 
     def getPossibleMoves(self) -> list["Board"]:
         possibleMoves = []
