@@ -1,12 +1,13 @@
 from src.agents.agent import Agent
-from src.game.board import Board
+from src.game.board import Action, Board, get_all_actions
 
-from random import random
+from random import choice
+
 
 class RandomAgent(Agent):
     """Random agent that selects a random move from the list of possible moves"""
 
-    def result(board: Board) -> Board:
-        possible_moves = board.getPossibleMoves()
-        move = random.choice(possible_moves)
-        return board.makeMove(move)
+    def result(self, board: Board) -> Action:
+        possible_moves = get_all_actions()
+        move = choice(possible_moves)
+        return move
