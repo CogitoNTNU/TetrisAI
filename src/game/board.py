@@ -113,8 +113,8 @@ class Board:
                     # That is, if the block is on top of another block that is not itself
                     blockOverlaps = self.prevBoard[row + block.y][column + block.x] > 0
                     isItSelf = (
-                        block.x + column != self.block.x
-                        or block.y + row != self.block.y
+                        block.x + column == self.block.x
+                        or block.y + row == self.block.y
                     )
 
                     if blockOverlaps and not isItSelf:
@@ -127,13 +127,31 @@ class Board:
     def blockLanded(self):
         pass
 
-    def clearRow(self, rownumber: int):
-        """Clears the specified row and moves all rows above down one step"""
-        # Fjerner den angitte raden og legger til en ny tom rad ved bunnen av matrisen
-        newMatrix = self.board[:rownumber] + self.board[rownumber + 1 :]
-        newMatrix.append([0 for _ in range(self.columns)])
-        self.board = newMatrix  # Oppdaterer matrisen med den nye matrisen
-        self.rowsRemoved += 1  # Oppdaterer antall fjernede rader
+    def placeBlock(self):
+        """Places the current block on the board"""
+        self.board = copy.deepcopy(self.prevBoard)
+        for i in range(4):
+            for j in range(4):
+                if i * 4 + j in self.block.image():
+                    self.board[i + self.block.y][
+                        j + self.block.x
+                    ] = 1  # self.block.color
+        return (
+            self.checkGameState()
+        )  # hvis denne sjekkes hver gang og gir false, var det ikke mulig å plassere blokken og spillet er over ffs.
+
+    def newBlock(self):
+        """Creates a new block and places it on the board"""
+        self.block = Block(0, 5, random.randint(0, 6))
+        for i in range(4):
+            for j in range(4):
+                if i * 4 + j in self.block.image():
+                    self.board[i + self.block.y][
+                        j + self.block.x
+                    ] = 1  # self.block.color
+        return (
+            self.checkGameState()
+        )  # hvis denne sjekkes hver gang og gir false, var det ikke mulig å plassere blokken og spillet er over ffs.
 
     def checkGameState(self) -> int:
         amount = 0
@@ -149,35 +167,17 @@ class Board:
         for rowIndex in reversed(
             fullRows
         ):  # Går gjennom listen over fulle rader i reversert rekkefølge for å fjerne dem
-            self.clearRow(rowIndex)  # Fjerner raden basert på dens indeks
+            self._clearRow(rowIndex)  # Fjerner raden basert på dens indeks
             amount += 1  # Øker telleren for antall fjernede rader
         return amount  # Returnerer totalt antall fjernede rader
 
-    def placeBlock(self):
-        """Places the current block on the board"""
-        self.board = copy.deepcopy(self.prevBoard)
-        # if self.validMove():
-        for i in range(4):
-            for j in range(4):
-                if i * 4 + j in self.block.image():
-                    self.board[i + self.block.y][
-                        j + self.block.x
-                    ] = 1  # self.block.color
-        return (
-            self.checkGameState()
-        )  # hvis denne sjekkes hver gang og gir false, var det ikke mulig å plassere blokken og spillet er over ffs.
-
-    def newBlock(self):
-        self.block = Block(0, 5, random.randint(0, 6))
-        for i in range(4):
-            for j in range(4):
-                if i * 4 + j in self.block.image():
-                    self.board[i + self.block.y][
-                        j + self.block.x
-                    ] = 1  # self.block.color
-        return (
-            self.checkGameState()
-        )  # hvis denne sjekkes hver gang og gir false, var det ikke mulig å plassere blokken og spillet er over ffs.
+    def _clearRow(self, rownumber: int):
+        """Clears the specified row and moves all rows above down one step"""
+        # Fjerner den angitte raden og legger til en ny tom rad ved bunnen av matrisen
+        newMatrix = self.board[:rownumber] + self.board[rownumber + 1 :]
+        newMatrix.append([0 for _ in range(self.columns)])
+        self.board = newMatrix  # Oppdaterer matrisen med den nye matrisen
+        self.rowsRemoved += 1  # Oppdaterer antall fjernede rader
 
     def getPossibleMoves(self) -> list["Board"]:
         possibleMoves = []

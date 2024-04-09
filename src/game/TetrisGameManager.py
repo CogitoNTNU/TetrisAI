@@ -43,7 +43,6 @@ class TetrisGameManager:
         #         listener.join()
 
     def onPress(self, key):
-
         # Default action if key not found
         default_action = lambda: "Key not recognized"
 
@@ -54,11 +53,8 @@ class TetrisGameManager:
     def onRelease(self, key):
         pass
 
-    def movePiece(self, direction):
-        print("Moving piece by action: ")
-        print(direction)
+    def movePiece(self, direction: Action):
         self.board.doAction(direction)
-
         self.board.printBoard()
 
     def isGameOver(self):
@@ -89,25 +85,6 @@ class TetrisGameManager:
     def updateScore(self, linesCleared):
         self.score += self.streak * (baseScore**linesCleared)
 
-    def placePiece(self, direction):
-        x = direction[0]
-        y = direction[1]
-        if not self.legalMove(x, y):
-            self.board.placePiece(x, y, self.currentPiece)
-            self.currentPiece = self.nextPiece
-            self.next_piece = self.nextPiece()
-        else:
-            self.movePiece(DOWN)
-            return False
-        if self.board.gameOver:
-            self.stopGame()
-            return True
-        clearLines = self.board.checkGameState()
-        if clearLines:
-            self.board.clearLines(clearLines)
-            self.updateScore(clearLines)
-        return True
-
     def checkTimer(self):
         checkTime = self.currentTime + 1000 / self.updateTimer
         newTime = int(round(t.time() * 1000))
@@ -120,6 +97,5 @@ class TetrisGameManager:
         return True
 
     def stopGame(self):
-        # print("Game Over")
         self.board.gameOver = True
         sys.exit()
