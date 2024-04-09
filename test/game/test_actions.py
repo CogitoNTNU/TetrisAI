@@ -19,7 +19,7 @@ def test_move_left():
     assert board.block == expected_block
 
 
-def test_drop():
+def test_hard_drop():
     board: Board = Board()
     expected_board = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -43,8 +43,6 @@ def test_drop():
         [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
     ]
-    for _ in range(board.rows - 1):
-        board.block.moveDown()
 
     board.doAction(Action.DROP)
     for board_row, expected_row in zip(board.board, expected_board):
@@ -145,6 +143,7 @@ def test_try_to_move_block_out_of_bound_right():
 
 def test_try_to_rotate_block_out_of_bound():
     board: Board
+    # TODO: CREATE THIS TEST test_try_to_rotate_block_out_of_bound
     pass
 
 
