@@ -106,17 +106,18 @@ class Board:
 
     def _intersects(self, block: Block) -> bool:
         """Checks if the block intersects with the board"""
-        for row in range(4):
-            for column in range(4):
-                if row * 4 + column in block.image():
-                    if (
-                        row + block.y > self.columns - 1
-                        or row + block.y < 0
-                        or column + block.x > self.rows - 1
-                        or column + block.x < 0
-                        or self.prevBoard[row + block.y][column + block.x] > 0
-                    ):
-                        return True
+        ##  TODO: Fix this
+        # for row in range(4):
+        #     for column in range(4):
+        #         if row * 4 + column in block.image():
+        #             if (
+        #                 row + block.y > self.columns - 1
+        #                 or row + block.y < 0
+        #                 or column + block.x > self.rows - 1
+        #                 or column + block.x < 0
+        #                 or self.prevBoard[row + block.y][column + block.x] > 0
+        #             ):
+        #                 return True
         return False
 
     def isGameOver(self):
