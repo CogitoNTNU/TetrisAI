@@ -31,7 +31,7 @@ class TetrisGameManager:
         self.currentTime = int(round(t.time() * 1000))
 
         self.switcher = {
-            Key.f1: Action.SOFT_DROP,
+            Key.down: Action.SOFT_DROP,
             Key.left: Action.MOVE_LEFT,
             Key.right: Action.MOVE_RIGHT,
             Key.space: Action.DROP,
