@@ -45,7 +45,7 @@ class Board:
         self.prevBoard = copy.deepcopy(self.board)
 
         self.block = Block(3, 0, 0)
-        self.placeBlock()
+        self._placeBlock()
 
         self.nextBlock = Block(0, 5, random.randint(0, 6))
 
@@ -94,7 +94,7 @@ class Board:
         if self.isValidBlockPosition(new_block):
             print("Valid move")
             self.block = new_block
-            self.placeBlock()
+            self._placeBlock()
 
     def isValidBlockPosition(self, block: Block) -> bool:
         """
@@ -156,7 +156,7 @@ class Board:
     def isGameOver(self):
         return self.gameOver
 
-    def placeBlock(self):
+    def _placeBlock(self):
         """Places the current block on the board"""
         self.board = copy.deepcopy(self.prevBoard)
         for i in range(4):
@@ -177,7 +177,7 @@ class Board:
                         j + self.block.x
                     ] = 1  # self.block.color
 
-    def checkGameState(self) -> int:
+    def _checkGameState(self) -> int:
         amount = 0
         fullRows = []
 
@@ -214,7 +214,7 @@ class Board:
                 moveBoard.block.setCoordinates(i, 0)
                 for j in range(currentRotation):
                     moveBoard.block.rotateRight()
-                moveBoard.placeBlock()
+                moveBoard._placeBlock()
 
                 while moveBoard.isValidBlockPosition(moveBoard.block.moveDown):
                     moveBoard.block.moveDown()
@@ -232,11 +232,11 @@ class Board:
     def printBoard(self):
         print("_______________________________________")
         for row in self.board:
-            print("|" + "   ".join(self.checkCharacter(cell) for cell in row) + "|")
+            print("|" + "   ".join(self._checkCharacter(cell) for cell in row) + "|")
 
         print("‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾")
 
-    def checkCharacter(self, character) -> str:
+    def _checkCharacter(self, character) -> str:
         if character == 1:
             return "■"
         else:
