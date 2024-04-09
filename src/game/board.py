@@ -136,9 +136,6 @@ class Board:
                     self.board[i + self.block.y][
                         j + self.block.x
                     ] = 1  # self.block.color
-        return (
-            self.checkGameState()
-        )  # hvis denne sjekkes hver gang og gir false, var det ikke mulig å plassere blokken og spillet er over ffs.
 
     def _shiftToNewBlock(self):
         """Places the current block on the board and sets the next block as the current block"""
