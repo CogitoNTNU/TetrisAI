@@ -9,12 +9,18 @@ from src.game.block import Block
 class Action(Enum):
     """Enumeration for the possible actions that can be performed on the board"""
 
-    MOVE_LEFT = auto()                  # Move the block to the left
-    MOVE_RIGHT = auto()                 # Move the block to the right
-    ROTATE_CLOCKWISE = auto()           # Rotate the block clockwise
-    ROTATE_COUNTERCLOCKWISE = auto()    # Rotate the block counterclockwise
-    HARD_DROP = auto()                  # Instantly drop the block to the lowest possible position
-    SOFT_DROP = auto()                  # Move the block one step down
+    MOVE_LEFT = auto()
+    """ Move the block to the left """
+    MOVE_RIGHT = auto()
+    """ Move the block to the right """
+    ROTATE_CLOCKWISE = auto()
+    """ Rotate the block clockwise """
+    ROTATE_COUNTERCLOCKWISE = auto()
+    """ Rotate the block counterclockwise """
+    HARD_DROP = auto()
+    """ Instantly drop the block to the lowest possible position """
+    SOFT_DROP = auto()
+    """ Move the block one step down """
 
 
 class Board:
