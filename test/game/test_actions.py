@@ -305,10 +305,10 @@ def test_slide_right_block_on_top_of_another_block():
         [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 1, 1, 0, 0, 0, 0],
     ]
-
+    board.printBoard()
     board.doAction(Action.DROP)
     board.printBoard()
-    board.doAction(Action.MOVE_LEFT)
+    board.doAction(Action.MOVE_RIGHT)
     board.printBoard()
     for board_row, expected_row in zip(board.board, expected_board):
         assert board_row == expected_row, "Board did not match expected board"
