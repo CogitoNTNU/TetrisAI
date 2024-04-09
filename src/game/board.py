@@ -131,7 +131,7 @@ class Board:
         # Fjerner den angitte raden og legger til en ny tom rad ved bunnen av matrisen
         newMatrix = self.board[:rownumber] + self.board[rownumber + 1 :]
         newMatrix.append([0 for _ in range(self.columns)])
-        self.matrix = newMatrix  # Oppdaterer matrisen med den nye matrisen
+        self.board = newMatrix  # Oppdaterer matrisen med den nye matrisen
         self.rowsRemoved += 1  # Oppdaterer antall fjernede rader
 
     def checkGameState(self):
