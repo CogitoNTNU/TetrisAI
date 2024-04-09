@@ -102,7 +102,7 @@ def test_try_to_move_block_out_of_bound_left():
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ]
 
-    for _ in range(board.columns + 1):
+    for _ in range(board.COLUMNS + 1):
         board.doAction(Action.MOVE_LEFT)
 
     for board_row, expected_row in zip(board.board, expected_board):
@@ -135,7 +135,7 @@ def test_try_to_move_block_out_of_bound_right():
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ]
 
-    for _ in range(board.columns + 1):
+    for _ in range(board.COLUMNS + 1):
         board.doAction(Action.MOVE_RIGHT)
 
     for board_row, expected_row in zip(board.board, expected_board):
@@ -172,12 +172,12 @@ def test_drop_block_on_top_of_another_block():
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
     ]
 
-    innitBlock = Block(3,0,0)
+    innitBlock = Block(3, 0, 0)
 
     board: Board = Board(board=innitBoard, block=innitBlock)
-    
+
     board.printBoard()
-  
+
     expected_board = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -202,15 +202,15 @@ def test_drop_block_on_top_of_another_block():
     ]
     board.doAction(Action.HARD_DROP)
     board.printBoard()
-  
+
     for board_row, expected_row in zip(board.board, expected_board):
         assert board_row == expected_row, "Board did not match expected board"
 
 
 def test_slide_left_block_on_top_of_another_block():
-    
-    innitBlock = Block(3,0,0)
-    innitBoard= [
+
+    innitBlock = Block(3, 0, 0)
+    innitBoard = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -265,10 +265,7 @@ def test_slide_left_block_on_top_of_another_block():
 
 
 def test_slide_right_block_on_top_of_another_block():
-    
-    initBlock = Block(3,0,5)
-    
-    
+    initBlock = Block(3, 0, 5)
 
     innitBoard = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
