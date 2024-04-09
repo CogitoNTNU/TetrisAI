@@ -200,14 +200,7 @@ def test_drop_block_on_top_of_another_block():
         [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
     ]
-<<<<<<< HEAD
-
     board.doAction(Action.HARD_DROP)
-=======
-  
-    board.doAction(Action.DROP)
-   
->>>>>>> 3abdfc4f8a48faf26d77a51abea4dedde4d018d9
     board.printBoard()
   
     for board_row, expected_row in zip(board.board, expected_board):
