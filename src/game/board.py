@@ -73,6 +73,7 @@ class Board:
 
         self._placeBlock()
 
+        self.prevBlock = self.block.copy()
         self.nextBlock = Block(self.START_X, self.START_Y, random.randint(0, 6))
 
     def _initBoard(self) -> list[list[int]]:
@@ -206,6 +207,7 @@ class Board:
 
     def _shiftToNewBlock(self):
         """Places the current block on the board and sets the next block as the current block"""
+        self.prevBlock = self.block.copy()
         self.block = self.nextBlock
         self.nextBlock = Block(self.START_X, self.START_Y, random.randint(0, 6))
         for i in range(4):
@@ -316,7 +318,7 @@ def transition_model(current_state: Board, target_state: Board) -> list[Action]:
         return actions
 
     # Find where the last block is in the target state
-    target_block = target_state.block
+    target_block = target_state.prevBlock
 
     # Find the correct rotation
     needed_rotation = target_block.rotation - current_state.block.rotation
@@ -327,5 +329,7 @@ def transition_model(current_state: Board, target_state: Board) -> list[Action]:
         actions += [Action.MOVE_RIGHT] * (target_block.x - current_state.block.x)
     elif current_state.block.x > target_block.x:
         actions += [Action.MOVE_LEFT] * (current_state.block.x - target_block.x)
+    # Move the block down to the correct y position
+    actions.append(Action.HARD_DROP)
 
     return actions
