@@ -2,8 +2,24 @@ from src.game.board import Action, Board
 from src.game.block import Block
 
 
+def non_random_board(init_board=None, first_block=None, next_block=None) -> Board:
+    board: Board
+
+    initial_block = Block(3, 0, 0)
+    if first_block is not None:
+        initial_block = first_block
+    if init_board is not None:
+        board = Board(board=init_board, block=initial_block)
+    else:
+        board = Board(block=initial_block)
+    board.nextBlock = Block(0, 0, 6)
+    if next_block is not None:
+        board.nextBlock = next_block
+    return board
+
+
 def test_move_down():
-    board: Board = Board()
+    board: Board = non_random_board()
     expected_block = board.block.copy()
     expected_block.moveDown()
 
@@ -12,7 +28,7 @@ def test_move_down():
 
 
 def test_move_left():
-    board: Board = Board()
+    board: Board = non_random_board()
     expected_block = board.block.copy()
     expected_block.moveLeft()
 
@@ -21,10 +37,10 @@ def test_move_left():
 
 
 def test_hard_drop():
-    board: Board = Board()
+    board: Board = non_random_board()
     expected_board = [
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+        [0, 1, 1, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -51,7 +67,7 @@ def test_hard_drop():
 
 
 def test_move_right():
-    board: Board = Board()
+    board: Board = non_random_board()
     expected_block = board.block.copy()
     expected_block.moveRight()
 
@@ -60,7 +76,7 @@ def test_move_right():
 
 
 def test_rotate_clockwise():
-    board: Board = Board()
+    board: Board = non_random_board()
     expected_block = board.block.copy()
     expected_block.rotateRight()
 
@@ -69,7 +85,7 @@ def test_rotate_clockwise():
 
 
 def test_rotate_counter_clockwise():
-    board: Board = Board()
+    board: Board = non_random_board()
     expected_block = board.block.copy()
     expected_block.rotateLeft()
 
@@ -78,7 +94,7 @@ def test_rotate_counter_clockwise():
 
 
 def test_try_to_move_block_out_of_bound_left():
-    board: Board = Board()
+    board: Board = non_random_board()
     expected_board = [
         [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -111,7 +127,7 @@ def test_try_to_move_block_out_of_bound_left():
 
 
 def test_try_to_move_block_out_of_bound_right():
-    board: Board = Board()
+    board: Board = non_random_board()
     expected_board = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
@@ -149,7 +165,7 @@ def test_try_to_rotate_block_out_of_bound():
 
 
 def test_drop_block_on_top_of_another_block():
-    innitBoard = [
+    initBoard = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -172,15 +188,13 @@ def test_drop_block_on_top_of_another_block():
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
     ]
 
-    innitBlock = Block(3, 0, 0)
-
-    board: Board = Board(board=innitBoard, block=innitBlock)
+    board = non_random_board(initBoard)
 
     board.printBoard()
 
     expected_board = [
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+        [0, 1, 1, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -208,8 +222,6 @@ def test_drop_block_on_top_of_another_block():
 
 
 def test_slide_left_block_on_top_of_another_block():
-
-    innitBlock = Block(3, 0, 0)
     innitBoard = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -232,10 +244,10 @@ def test_slide_left_block_on_top_of_another_block():
         [0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ]
-    board: Board = Board(board=innitBoard, block=innitBlock)
+    board: Board = non_random_board(innitBoard)
     expected_board = [
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+        [0, 1, 1, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -255,10 +267,12 @@ def test_slide_left_block_on_top_of_another_block():
         [0, 0, 0, 1, 1, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
     ]
-
-    board.doAction(Action.HARD_DROP)
+    needed_downs = 16
+    for _ in range(needed_downs):
+        board.doAction(Action.SOFT_DROP)
     board.printBoard()
     board.doAction(Action.MOVE_LEFT)
+    board.doAction(Action.SOFT_DROP)
     board.printBoard()
     for board_row, expected_row in zip(board.board, expected_board):
         assert board_row == expected_row, "Board did not match expected board"
@@ -289,10 +303,10 @@ def test_slide_right_block_on_top_of_another_block():
         [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ]
-    board: Board = Board(board=initBoard, block=initBlock)
+    board: Board = non_random_board(initBoard, initBlock)
     expected_board = [
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+        [0, 1, 1, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -322,8 +336,6 @@ def test_slide_right_block_on_top_of_another_block():
 
 
 def test_slide_right_block_on_under_another_block():
-    initBlock = Block(3, 0, 5)
-
     initBoard = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -346,7 +358,9 @@ def test_slide_right_block_on_under_another_block():
         [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ]
-    board: Board = Board(board=initBoard, block=initBlock)
+    first_block = Block(3, 0, 5)
+    second_block = Block(3, 0, 6)
+    board = non_random_board(initBoard, first_block, second_block)
     expected_board = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
