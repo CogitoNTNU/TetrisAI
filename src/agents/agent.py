@@ -34,25 +34,30 @@ class Agent(ABC):
         pass
 
 
-def play_game(agent: Agent, board: Board) -> Board:
+def play_game(agent: Agent, board: Board, actions_per_drop: int = 1) -> Board:
     """
     Plays a game of Tetris with the given agent.
 
     Args:
         agent (Agent): The agent to play the game.
         board (Board): The initial state of the board.
+        actions_per_drop (int, optional): The number of actions to perform per soft drop. Defaults to 1.
 
     Returns:
         The final state of the board after the game is over.
     """
     while not board.isGameOver():
-        result = agent.result(board)
-        print(f"[Agent] Move: {result}")
-        if isinstance(result, list):
-            for action in result:
-                board.doAction(action)
-        else:
-            board.doAction(result)
-
+        # Get the result of the agent's action
+        for _ in range(actions_per_drop):
+            result = agent.result(board)
+            # Perform the action(s) on the board
+            if isinstance(result, list):
+                for action in result:
+                    board.doAction(action)
+            else:
+                board.doAction(result)
+        # Advance the game by one frame
+        board.doAction(Action.SOFT_DROP)
         board.printBoard()
+
     return board
