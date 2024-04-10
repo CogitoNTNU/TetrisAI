@@ -8,6 +8,7 @@ class RandomAgent(Agent):
     """Random agent that selects a random move from the list of possible moves"""
 
     def result(self, board: Board) -> Action:
-        possible_moves = get_all_actions()
-        move = choice(possible_moves)
-        return move
+        # TODO: Get all possible actions
+
+        # TODO: Return a random action
+        pass
