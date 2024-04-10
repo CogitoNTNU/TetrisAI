@@ -51,8 +51,10 @@ class Board:
 
     ROWS = 20
     COLUMNS = 10
+    START_X = 3
+    START_Y = 0
 
-    def __init__(self, board=None, block=None):
+    def __init__(self, board: list[list[int]] = None, block: Block = None):
         """
         Initializes a new game board instance, setting up an empty board, placing the first block, and selecting the next block.
         """
@@ -64,14 +66,14 @@ class Board:
         else:
             self.board = board
         if block == None:
-            self.block = Block(3, 0, 0)
+            self.block = Block(self.START_X, self.START_Y, 0)
         else:
             self.block = block
         self.prevBoard = copy.deepcopy(self.board)
 
         self._placeBlock()
 
-        self.nextBlock = Block(0, 5, random.randint(0, 6))
+        self.nextBlock = Block(self.START_X, self.START_Y, random.randint(0, 6))
 
     def _initBoard(self) -> list[list[int]]:
         """Initializes an empty the board"""
@@ -108,7 +110,6 @@ class Board:
             case Action.HARD_DROP:
                 while True:
                     new_block.moveDown()
-                    self.printBoard()
                     if not self.isValidBlockPosition(new_block):
                         new_block.moveUp()
                         break
@@ -117,9 +118,21 @@ class Board:
 
         # Given the new block position, check if it is valid and update the board
         if self.isValidBlockPosition(new_block):
-            print("Valid move")
             self.block = new_block
             self._placeBlock()
+
+        # For blocks reaching the bottom of the board, place the block and introduce a new one
+        if (
+            not self.isValidBlockPosition(new_block)
+            and action == Action.SOFT_DROP
+            or action == Action.HARD_DROP
+        ):
+            self._placeBlock()
+            self._checkGameOver()
+            # Store the previous board state before the new block placement
+            self.prevBoard = copy.deepcopy(self.board)
+            self._checkForFullRows()
+            self._shiftToNewBlock()
 
     def isValidBlockPosition(self, block: Block) -> bool:
         """
@@ -194,7 +207,7 @@ class Board:
     def _shiftToNewBlock(self):
         """Places the current block on the board and sets the next block as the current block"""
         self.block = self.nextBlock
-        self.nextBlock = Block(0, 5, random.randint(0, 6))
+        self.nextBlock = Block(self.START_X, self.START_Y, random.randint(0, 6))
         for i in range(4):
             for j in range(4):
                 if i * 4 + j in self.block.image():
@@ -202,33 +215,37 @@ class Board:
                         j + self.block.x
                     ] = 1  # self.block.color
 
-    def _checkGameState(self) -> int:
+    def _checkGameOver(self):
+        """Checks if the game is over"""
+        for cell in self.board[0]:
+            if cell > 0:
+                self.gameOver = True
+                break
+
+    def _checkForFullRows(self) -> int:
+        """Checks the board for full rows and removes them, returning the number of rows removed"""
         amount = 0
         fullRows = []
-
-        for rowIndex, row in enumerate(
-            self.board
-        ):  # Itererer over matrisen for å finne fulle rader
-            if 0 not in row:  # Sjekker om raden er full
-                fullRows.append(
-                    rowIndex
-                )  # Legger til indeksen til listen over fulle rader
-        for rowIndex in reversed(
-            fullRows
-        ):  # Går gjennom listen over fulle rader i reversert rekkefølge for å fjerne dem
-            self._clearRow(rowIndex)  # Fjerner raden basert på dens indeks
-            amount += 1  # Øker telleren for antall fjernede rader
-        return amount  # Returnerer totalt antall fjernede rader
+        # Find all full rows
+        for rowIndex, row in enumerate(self.board):
+            # Check if the row is full
+            if 0 not in row:
+                fullRows.append(rowIndex)
+        # Remove all full rows
+        for rowIndex in reversed(fullRows):
+            self._clearRow(rowIndex)
+            amount += 1
+        return amount
 
     def _clearRow(self, rownumber: int):
         """Clears the specified row and moves all rows above down one step"""
-        # Fjerner den angitte raden og legger til en ny tom rad ved bunnen av matrisen
+        # Remove the row and add a new empty row at the top
         newMatrix = self.board[:rownumber] + self.board[rownumber + 1 :]
         newMatrix.append([0 for _ in range(self.COLUMNS)])
-        self.board = newMatrix  # Oppdaterer matrisen med den nye matrisen
-        self.rowsRemoved += 1  # Oppdaterer antall fjernede rader
+        self.board = newMatrix
+        self.rowsRemoved += 1
 
-    def getPossibleMoves(self) -> list["Board"]:
+    def getPossibleBoards(self) -> list["Board"]:
         possibleMoves = []
 
         # Number of rotations which gives unique block positions

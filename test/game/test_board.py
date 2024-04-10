@@ -69,7 +69,7 @@ def test_clear_row():
     ]
     lines_to_remove = 1
     board.printBoard()
-    rows_removed = board._checkGameState()
+    rows_removed = board._checkForFullRows()
     board.printBoard()
     for expected_row, board_row in zip(expected_board, board.board):
         assert expected_row == board_row
@@ -125,7 +125,7 @@ def test_clear_rows():
     ]
     lines_to_remove = 3
     board.printBoard()
-    rows_removed = board._checkGameState()
+    rows_removed = board._checkForFullRows()
     board.printBoard()
     for expected_row, board_row in zip(expected_board, board.board):
         assert expected_row == board_row
@@ -159,7 +159,7 @@ def test_do_not_clear_not_full_row():
     ]
     lines_to_remove = 0
     board.printBoard()
-    rows_removed = board._checkGameState()
+    rows_removed = board._checkForFullRows()
     board.printBoard()
 
     assert rows_removed == lines_to_remove
@@ -192,6 +192,7 @@ def test_transition_model_complex_target():
         Action.MOVE_RIGHT,
         Action.MOVE_RIGHT,
         Action.MOVE_RIGHT,
+        Action.HARD_DROP,
     ]
     for action in actual_actions:
         target_board.doAction(action)
