@@ -201,3 +201,22 @@ def test_transition_model_complex_target():
     assert isinstance(actions, list)
     assert len(actions) == len(actual_actions)
     assert actions == actual_actions
+
+
+def test_transition_model_left_movement():
+    current_board: Board = Board()
+    target_board: Board = copy.deepcopy(current_board)
+    actual_actions = [
+        Action.ROTATE_CLOCKWISE,
+        Action.ROTATE_CLOCKWISE,
+        Action.MOVE_LEFT,
+        Action.HARD_DROP,
+    ]
+    for action in actual_actions:
+        target_board.doAction(action)
+
+    actions = transition_model(current_board, target_board)
+    assert isinstance(actions, list)
+    assert len(actions) == len(actual_actions)
+    print(actual_actions)
+    assert actions == actual_actions
