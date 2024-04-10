@@ -220,3 +220,56 @@ def test_transition_model_left_movement():
     assert len(actions) == len(actual_actions)
     print(actual_actions)
     assert actions == actual_actions
+
+
+def test_transition_model_execution():
+    current_board: Board = Board()
+    target_board: Board = copy.deepcopy(current_board)
+    actual_actions = [
+        Action.ROTATE_CLOCKWISE,
+        Action.ROTATE_CLOCKWISE,
+        Action.MOVE_LEFT,
+        Action.HARD_DROP,
+    ]
+    for action in actual_actions:
+        target_board.doAction(action)
+
+    actions = transition_model(current_board, target_board)
+    for action in actions:
+        current_board.doAction(action)
+    assert current_board == target_board
+
+
+def test_transition_model_execution_complex():
+    current_board: Board = Board()
+    target_board: Board = copy.deepcopy(current_board)
+    actual_actions = [
+        Action.ROTATE_CLOCKWISE,
+        Action.MOVE_LEFT,
+        Action.MOVE_LEFT,
+        Action.ROTATE_COUNTERCLOCKWISE,
+        Action.MOVE_RIGHT,
+        Action.HARD_DROP,
+    ]
+    for action in actual_actions:
+        target_board.doAction(action)
+
+    actions = transition_model(current_board, target_board)
+    for action in actions:
+        current_board.doAction(action)
+    assert current_board == target_board
+
+
+def test_transition_model_execution_of_invalid_move_sequence():
+    current_board: Board = Board()
+    target_board: Board = copy.deepcopy(current_board)
+    actual_actions = [Action.MOVE_LEFT] * 20
+    actual_actions += [Action.MOVE_RIGHT] * 20
+    actual_actions += [Action.HARD_DROP]
+    for action in actual_actions:
+        target_board.doAction(action)
+
+    actions = transition_model(current_board, target_board)
+    for action in actions:
+        current_board.doAction(action)
+    assert current_board == target_board
