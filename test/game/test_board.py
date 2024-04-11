@@ -4,6 +4,19 @@ from src.game.board import Action, Board, transition_model
 import copy
 
 
+def test_get_possible_boards_for_line():
+    i_block = Block(0, 3, 0)
+    board: Board = Board(block=i_block)
+    possible_boards = board.getPossibleBoards()
+    assert isinstance(possible_boards, list)
+    for move in possible_boards:
+        assert isinstance(move, Board)
+
+    standing_up_right = 9
+    laying_down_right = 7
+    assert len(possible_boards) == standing_up_right + laying_down_right
+
+
 def test_get_possible_moves_for_square():
     first_block = Block(0, 3, 6)
     board: Board = Board(block=first_block)
