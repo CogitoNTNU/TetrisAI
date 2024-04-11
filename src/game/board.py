@@ -258,8 +258,8 @@ class Board:
         else:
             rotations = 1
 
+        rotationBoard = copy.deepcopy(self)
         for _ in range(rotations):
-            rotationBoard = copy.deepcopy(self)
             for column in range(self.COLUMNS):
                 moveBoard = copy.deepcopy(rotationBoard)
 
