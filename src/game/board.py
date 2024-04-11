@@ -259,17 +259,26 @@ class Board:
             rotations = 1
 
         for _ in range(rotations):
+            rotationBoard = copy.deepcopy(self)
             for column in range(self.COLUMNS):
-                moveBoard = copy.deepcopy(self)
-                moveBoard.block.setCoordinates(column - 1, 0)
+                moveBoard = copy.deepcopy(rotationBoard)
 
-            if moveBoard.isValidBlockPosition(moveBoard.block):
+                # Calibrate the to the left
+                toLeft = moveBoard.block.x
+                for _ in range(toLeft):
+                    moveBoard.doAction(Action.MOVE_LEFT)
+                # Move the block to the correct column
+                for _ in range(column):
+                    moveBoard.doAction(Action.MOVE_RIGHT)
+
                 moveBoard.doAction(Action.HARD_DROP)
+                if not moveBoard.isValidBlockPosition(moveBoard.block):
+                    continue
 
-                if moveBoard.board not in possibleMoves:
-                    possibleMoves.append(copy.deepcopy(moveBoard.board))
+                if moveBoard not in possibleMoves:
+                    possibleMoves.append(moveBoard)
 
-            moveBoard.block.rotateRight()
+            rotationBoard.doAction(Action.ROTATE_CLOCKWISE)
 
         return possibleMoves
 
