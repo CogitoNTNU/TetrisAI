@@ -1,4 +1,4 @@
-from src.game.board import Action, Tetris
+from src.game.tetris import Action, Tetris
 from src.game.block import Block
 
 

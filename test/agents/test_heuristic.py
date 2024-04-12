@@ -1,4 +1,4 @@
-from src.game.board import Tetris
+from src.game.tetris import Tetris
 from src.agents.heuristic import *
 
 
@@ -199,7 +199,8 @@ def test_max_height_takes_highest():
     assert (
         max_height(board) == 20
     ), "Expected max height of 20 for a single column with height 20"
-    
+
+
 def test_lines_cleared():
     board = Tetris()
     board.board = [
@@ -224,9 +225,9 @@ def test_lines_cleared():
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     ]
-    assert (
-        lines_cleaned(board) == 1 )
-    
+    assert lines_cleaned(board) == 1
+
+
 def test_no_lines_cleared():
     board = Tetris()
     board.board = [
@@ -251,8 +252,8 @@ def test_no_lines_cleared():
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ]
-    assert (
-        lines_cleaned(board) == 0 )
+    assert lines_cleaned(board) == 0
+
 
 def test_twenty_lines_cleared():
     board = Tetris()
@@ -278,9 +279,9 @@ def test_twenty_lines_cleared():
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     ]
-    assert (
-        lines_cleaned(board) == 20 )
-    
+    assert lines_cleaned(board) == 20
+
+
 def test_ten_lines_cleared():
     board = Tetris()
     board.board = [
@@ -305,8 +306,8 @@ def test_ten_lines_cleared():
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     ]
-    assert (
-        lines_cleaned(board) == 10 )
+    assert lines_cleaned(board) == 10
+
 
 def test_bumpiness_empty():
     board = Tetris()
@@ -332,10 +333,9 @@ def test_bumpiness_empty():
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ]
-    assert (
-        bumpiness(board) == 0 )
-  
-  
+    assert bumpiness(board) == 0
+
+
 def test_bumpiness_five():
     board = Tetris()
     board.board = [
@@ -360,9 +360,9 @@ def test_bumpiness_five():
         [0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     ]
-    assert (
-        bumpiness(board) == 2 )
-    
+    assert bumpiness(board) == 2
+
+
 def test_bumpiness_nine():
     board = Tetris()
     board.board = [
@@ -387,9 +387,9 @@ def test_bumpiness_nine():
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [1, 0, 1, 0, 1, 0, 1, 0, 1, 0],
     ]
-    assert (
-        bumpiness(board) == 9 )
-    
+    assert bumpiness(board) == 9
+
+
 def test_bumpiness_with_holes():
     board = Tetris()
     board.board = [
@@ -414,9 +414,9 @@ def test_bumpiness_with_holes():
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [1, 1, 1, 0, 1, 0, 1, 0, 1, 0],
     ]
-    assert (
-        bumpiness(board) == 0 )
-    
+    assert bumpiness(board) == 0
+
+
 def test_bumpiness_40():
     board = Tetris()
     board.board = [
@@ -441,9 +441,9 @@ def test_bumpiness_40():
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [1, 0, 1, 0, 1, 0, 1, 0, 1, 0],
     ]
-    assert (
-        bumpiness(board) == 40 )
-    
+    assert bumpiness(board) == 40
+
+
 def test_aggregate_height_zero():
     board = Tetris()
     board.board = [
@@ -468,9 +468,9 @@ def test_aggregate_height_zero():
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ]
-    assert (
-        aggregate_height(board) == 0 )
-    
+    assert aggregate_height(board) == 0
+
+
 def test_aggregate_height_full():
     board = Tetris()
     board.board = [
@@ -495,9 +495,9 @@ def test_aggregate_height_full():
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ]
-    assert (
-        aggregate_height(board) == 200 )
-    
+    assert aggregate_height(board) == 200
+
+
 def test_aggregate_height_half():
     board = Tetris()
     board.board = [
@@ -522,9 +522,9 @@ def test_aggregate_height_half():
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ]
-    assert (
-        aggregate_height(board) == 100 )
-    
+    assert aggregate_height(board) == 100
+
+
 def test_no_holes():
     board = Tetris()
     board.board = [
@@ -549,9 +549,9 @@ def test_no_holes():
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ]
-    assert (
-        find_holes(board) == 0
-    ), "Expected 0 holes"
+    assert find_holes(board) == 0, "Expected 0 holes"
+
+
 def test_no_holes():
     board = Tetris()
     board.board = [
@@ -576,6 +576,4 @@ def test_no_holes():
         [0, 0, 0, 1, 1, 1, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 1, 0, 0, 0, 1],
     ]
-    assert (
-        find_holes(board) == 24
-    ), "Expected 24 holes"
+    assert find_holes(board) == 24, "Expected 24 holes"

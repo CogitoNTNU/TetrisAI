@@ -1,5 +1,5 @@
 from src.game.block import Block
-from src.game.board import Action, Tetris, transition_model
+from src.game.tetris import Action, Tetris, transition_model
 
 import copy
 
