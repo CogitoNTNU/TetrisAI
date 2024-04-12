@@ -147,11 +147,9 @@ class Tetris:
         """
 
         if self._outOfBounds(block):
-            print("[DEBUG] Out of bounds")
             return False
 
         if self._intersects(block):
-            print("[DEBUG] Intersects")
             return False
 
         if self.isGameOver():
