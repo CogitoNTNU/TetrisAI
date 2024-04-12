@@ -6,7 +6,7 @@ class for all agents in the simulation.
 from abc import ABC, abstractmethod
 from typing import Any, Union
 
-from src.game.board import Action, Tetris
+from src.game.tetris import Action, Tetris
 
 
 class Agent(ABC):

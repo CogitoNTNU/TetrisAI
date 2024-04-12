@@ -1,5 +1,5 @@
 from src.agents.agent import Agent
-from src.game.board import Action, Tetris, get_all_actions
+from src.game.tetris import Action, Tetris, get_all_actions
 
 from random import choice
 

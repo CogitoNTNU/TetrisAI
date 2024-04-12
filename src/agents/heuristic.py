@@ -1,6 +1,6 @@
 """ The heuristic module contains the heuristics used by the agents. """
 
-from src.game.board import Tetris
+from src.game.tetris import Tetris
 
 
 def utility(gameState: Tetris) -> int:
