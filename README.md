@@ -4,9 +4,16 @@
 
 <!-- TODO -->
 
-## Installation
+## Setup
+### Prerequisites
+- Ensure that git is installed on your machine. [Download Git](https://git-scm.com/downloads)
+- Ensure Python 3.12 or newer is installed on your machine. [Download Python](https://www.python.org/downloads/)
 
-<!-- TODO -->
+### Clone the repository
+```bash
+git clone https://github.com/CogitoNTNU/TetrisAI.git
+cd TetrisAI
+```
 
 ## Contributors
 
