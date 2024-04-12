@@ -34,7 +34,7 @@ def get_all_actions() -> list[Action]:
     ]
 
 
-class Board:
+class Tetris:
     """
     Represents the Tetris game board, handling block placements, movements, and rotations, as well as checking for game over conditions.
 
@@ -247,7 +247,7 @@ class Board:
         self.board = newMatrix
         self.rowsRemoved += 1
 
-    def getPossibleBoards(self) -> list["Board"]:
+    def getPossibleBoards(self) -> list["Tetris"]:
         possibleMoves = []
 
         # Number of rotations which gives unique block positions
@@ -282,8 +282,8 @@ class Board:
 
         return possibleMoves
 
-    def __eq__(self, other: "Board") -> bool:
-        if not isinstance(other, Board):
+    def __eq__(self, other: "Tetris") -> bool:
+        if not isinstance(other, Tetris):
             return False
 
         # Check if the blocks are the same
@@ -308,7 +308,7 @@ class Board:
             return "▧"
 
 
-def transition_model(current_state: Board, target_state: Board) -> list[Action]:
+def transition_model(current_state: Tetris, target_state: Tetris) -> list[Action]:
     """
     Calculates the sequence of actions required to transition from the current board state to the target board state.
 

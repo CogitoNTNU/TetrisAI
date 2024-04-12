@@ -2,7 +2,7 @@ from pynput.keyboard import Key, Listener
 import time as t
 import sys
 
-from src.game.board import Action, Board
+from src.game.board import Action, Tetris
 
 baseScore = 100
 
@@ -22,7 +22,7 @@ class TetrisGameManager:
     updateTimer = 1
     streak = 1
 
-    def __init__(self, board: Board):
+    def __init__(self, board: Tetris):
         self.board = board
         self.score = 0
         self.currentTime = int(round(t.time() * 1000))

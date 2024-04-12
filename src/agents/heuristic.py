@@ -1,14 +1,14 @@
 """ The heuristic module contains the heuristics used by the agents. """
 
-from src.game.board import Board
+from src.game.board import Tetris
 
 
-def utility(gameState: Board) -> int:
+def utility(gameState: Tetris) -> int:
     """Returns the utility of the given game state."""
     pass
 
 
-def aggregate_heights(gameState: Board) -> int:
+def aggregate_heights(gameState: Tetris) -> int:
     """Returns the sum of the heights of the columns in the game state."""
     checkedList = [0 for i in range(gameState.COLUMNS)]
     for i in range(gameState.ROWS):
@@ -19,7 +19,7 @@ def aggregate_heights(gameState: Board) -> int:
     return sum(checkedList)
 
 
-def max_height(gameState: Board) -> int:
+def max_height(gameState: Tetris) -> int:
     """Returns the maximum height of the columns in the game state."""
     checkedList = [0 for i in range(gameState.COLUMNS)]
     for i in range(gameState.ROWS):
@@ -30,7 +30,7 @@ def max_height(gameState: Board) -> int:
     return max(checkedList)
 
 
-def lines_cleaned(gameState: Board) -> int:
+def lines_cleaned(gameState: Tetris) -> int:
     """Retrurns the number of lines cleared."""
     sum = 0
     for row in gameState.board:
@@ -39,7 +39,7 @@ def lines_cleaned(gameState: Board) -> int:
     return sum
 
 
-def bumpiness(gameState: Board) -> int:
+def bumpiness(gameState: Tetris) -> int:
     """Returns the sum of the absolute height between all the columns"""
     total_bumpiness = 0
     max_height = 20
@@ -55,7 +55,7 @@ def bumpiness(gameState: Board) -> int:
     return total_bumpiness
 
 
-def aggregate_height(gameState: Board) -> int:
+def aggregate_height(gameState: Tetris) -> int:
     "Returns the sum of all column-heights"
     max_height = 20
     total_height = 0
@@ -71,7 +71,7 @@ def aggregate_height(gameState: Board) -> int:
     return total_height
 
 
-def find_holes(gameState: Board) -> int:
+def find_holes(gameState: Tetris) -> int:
     """Returns number of empty cells on the board.
 
     Args:
