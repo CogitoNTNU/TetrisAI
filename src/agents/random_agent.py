@@ -9,6 +9,8 @@ class RandomAgent(Agent):
 
     def result(self, board: Tetris) -> Action:
         # TODO: Get all possible actions
-
+        possible_actions = get_all_actions()
         # TODO: Return a random action
-        pass
+        return choice(possible_actions)
+        
+        

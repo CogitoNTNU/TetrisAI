@@ -3,9 +3,18 @@
 from src.game.tetris import Tetris
 
 
-def utility(gameState: Tetris) -> int:
+def utility(gameState: Tetris, aggregate_heights_weight: int, max_height_weight: int, 
+            lines_cleared_weight: int, bumpiness_weight: int, holes_weight: int) -> int:
     """Returns the utility of the given game state."""
-    pass
+    sum = 0
+
+    sum += aggregate_heights_weight * aggregate_heights(gameState)
+    sum += max_height_weight * max_height(gameState)
+    sum += lines_cleared_weight * lines_cleaned(gameState)
+    sum += bumpiness_weight * bumpiness(gameState)
+    sum += holes_weight * find_holes(gameState)
+
+    return sum
 
 
 def aggregate_heights(gameState: Tetris) -> int:
