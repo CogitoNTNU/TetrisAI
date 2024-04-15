@@ -201,6 +201,7 @@ class Tetris:
                     self.board[i + self.block.y][
                         j + self.block.x
                     ] = 1  # self.block.color
+        
 
     def _shiftToNewBlock(self):
         """Places the current block on the board and sets the next block as the current block"""
@@ -258,12 +259,12 @@ class Tetris:
 
         rotationBoard = copy.deepcopy(self)
         for _ in range(rotations):
-            for column in range(self.COLUMNS):
+            for column in range(0, self.COLUMNS):
                 moveBoard = copy.deepcopy(rotationBoard)
 
                 # Calibrate the to the left
                 toLeft = moveBoard.block.x
-                for _ in range(toLeft):
+                for _ in range(toLeft + 1):
                     moveBoard.doAction(Action.MOVE_LEFT)
                 # Move the block to the correct column
                 for _ in range(column):
@@ -321,6 +322,7 @@ def transition_model(current_state: Tetris, target_state: Tetris) -> list[Action
     actions = []
 
     if current_state == target_state:
+        actions.append(Action.SOFT_DROP)
         print("No transition needed")
         return actions
 
