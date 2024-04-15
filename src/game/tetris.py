@@ -232,7 +232,7 @@ class Tetris:
             if 0 not in row:
                 fullRows.append(rowIndex)
         # Remove all full rows
-        for rowIndex in reversed(fullRows):
+        for rowIndex in fullRows:
             self._clearRow(rowIndex)
             amount += 1
         return amount
@@ -241,9 +241,10 @@ class Tetris:
         """Clears the specified row and moves all rows above down one step"""
         # Remove the row and add a new empty row at the top
         newMatrix = self.board[:rownumber] + self.board[rownumber + 1 :]
-        newMatrix.append([0 for _ in range(self.COLUMNS)])
+        newMatrix.insert(0, [0 for _ in range(self.COLUMNS)])
         self.board = newMatrix
         self.rowsRemoved += 1
+        self.prevBoard = copy.deepcopy(self.board)
 
     def getPossibleBoards(self) -> list["Tetris"]:
         possibleMoves = []
