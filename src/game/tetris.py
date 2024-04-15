@@ -108,12 +108,9 @@ class Tetris:
         elif action == Action.ROTATE_COUNTERCLOCKWISE:
                 new_block.rotateLeft()
         elif action == Action.HARD_DROP:
-            while True:
-                if self.isValidBlockPosition(new_block):
-                    new_block.moveDown()
-                else:
-                    new_block.moveUp()
-                    break
+            while self.isValidBlockPosition(new_block):
+                new_block.moveDown()
+            new_block.moveUp()
         elif action == Action.SOFT_DROP:
             new_block.moveDown()
 
@@ -125,8 +122,7 @@ class Tetris:
         # For blocks reaching the bottom of the board, place the block and introduce a new one
         if (
             not self.isValidBlockPosition(new_block)
-            and action == Action.SOFT_DROP
-            or action == Action.HARD_DROP
+            and (action == Action.SOFT_DROP or action == Action.HARD_DROP)
         ):
             self._placeBlock()
             self._checkGameOver()
