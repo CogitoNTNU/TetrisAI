@@ -174,7 +174,6 @@ class Tetris:
 
     def _intersects(self, block: Block) -> bool:
         """Checks if the block intersects with another block on the board"""
-        ##  TODO: Fix this
         for row in range(4):
             for column in range(4):
                 if row * 4 + column in block.image():

@@ -62,7 +62,7 @@ class TetrisGameManager:
         newTime = int(round(t.time() * 1000))
         if checkTime < newTime:
             self.currentTime = newTime
-            # self.movePiece(Action.SOFT_DROP)
+            self.movePiece(Action.SOFT_DROP)
 
     def stopGame(self):
         pygame.quit()
