@@ -3,7 +3,9 @@
 from src.game.tetris import Tetris
 
 
-def utility(gameState: Tetris) -> int:
+def utility(gameState: Tetris, aggregate_heights_weight: int, max_height_weight: int, 
+            lines_cleared_weight: int) -> int:
+
     """Returns the utility of the given game state."""
     pass
 
@@ -13,7 +15,7 @@ def aggregate_heights(gameState: Tetris) -> int:
     checkedList = [0 for i in range(gameState.COLUMNS)]
     for i in range(gameState.ROWS):
         for j in range(gameState.COLUMNS):
-            if gameState.board[i][j] > 0:
+            if gameState.prevBoard[i][j] > 0:
                 if checkedList[j] == 0:
                     checkedList[j] = gameState.ROWS - i
     return sum(checkedList)
@@ -24,7 +26,7 @@ def max_height(gameState: Tetris) -> int:
     checkedList = [0 for i in range(gameState.COLUMNS)]
     for i in range(gameState.ROWS):
         for j in range(gameState.COLUMNS):
-            if gameState.board[i][j] > 0:
+            if gameState.prevBoard[i][j] > 0:
                 if checkedList[j] == 0:
                     checkedList[j] = gameState.ROWS - i
     return max(checkedList)
@@ -33,7 +35,7 @@ def max_height(gameState: Tetris) -> int:
 def lines_cleaned(gameState: Tetris) -> int:
     """Retrurns the number of lines cleared."""
     sum = 0
-    for row in gameState.board:
+    for row in gameState.prevBoard:
         if all(cell == 1 for cell in row):
             sum += 1
     return sum
@@ -46,7 +48,7 @@ def bumpiness(gameState: Tetris) -> int:
     columnHeightMap = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}
     for column in range(gameState.COLUMNS):
         for row in range(gameState.ROWS):
-            if gameState.board[row][column] > 0:
+            if gameState.prevBoard[row][column] > 0:
                 if columnHeightMap[column] == 0:
                     columnHeightMap[column] = max_height - row
 
@@ -62,7 +64,7 @@ def aggregate_height(gameState: Tetris) -> int:
     columnHeightMap = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}
     for column in range(gameState.COLUMNS):
         for row in range(gameState.ROWS):
-            if gameState.board[row][column] > 0:
+            if gameState.prevBoard[row][column] > 0:
                 if columnHeightMap[column] == 0:
                     columnHeightMap[column] = max_height - row
 
@@ -84,9 +86,9 @@ def find_holes(gameState: Tetris) -> int:
     for i in range(gameState.COLUMNS):
         top_block = 20
         for j in range(gameState.ROWS):
-            if (gameState.board[j][i] == 1) and (j < top_block):
+            if (gameState.prevBoard[j][i] == 1) and (j < top_block):
                 top_block = j
-            if (gameState.board[j][i] == 0) and (j > top_block):
+            if (gameState.prevBoard[j][i] == 0) and (j > top_block):
                 holes += 1
 
     return holes
