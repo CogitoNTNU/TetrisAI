@@ -99,23 +99,23 @@ class Tetris:
 
         # Move the new block according to the action
         new_block = self.block.copy()
-        match action:
-            case Action.MOVE_LEFT:
-                new_block.moveLeft()
-            case Action.MOVE_RIGHT:
-                new_block.moveRight()
-            case Action.ROTATE_CLOCKWISE:
-                new_block.rotateRight()
-            case Action.ROTATE_COUNTERCLOCKWISE:
+        if action == Action.MOVE_LEFT:
+            new_block.moveLeft()
+        elif action == Action.MOVE_RIGHT:
+            new_block.moveRight()
+        elif action == Action.ROTATE_CLOCKWISE:
+            new_block.rotateRight()
+        elif action == Action.ROTATE_COUNTERCLOCKWISE:
                 new_block.rotateLeft()
-            case Action.HARD_DROP:
-                while True:
+        elif action == Action.HARD_DROP:
+            while True:
+                if self.isValidBlockPosition(new_block):
                     new_block.moveDown()
-                    if not self.isValidBlockPosition(new_block):
-                        new_block.moveUp()
-                        break
-            case Action.SOFT_DROP:
-                new_block.moveDown()
+                else:
+                    new_block.moveUp()
+                    break
+        elif action == Action.SOFT_DROP:
+            new_block.moveDown()
 
         # Given the new block position, check if it is valid and update the board
         if self.isValidBlockPosition(new_block):

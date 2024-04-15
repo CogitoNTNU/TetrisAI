@@ -8,10 +8,9 @@ from src.agents.heuristic_agent import HeuristicAgent
 def create_agent(agent_type: str) -> Agent:
     """Create an agent of the specified type."""
 
-    match agent_type.lower():
-        case "random":
-            return RandomAgent()
-        case "heuristic":
-            return HeuristicAgent()
-        case _:
-            raise ValueError(f"Unknown agent type: {agent_type}")
+    if agent_type.lower() == "random":
+        return RandomAgent()
+    elif agent_type.lower() == "heuristic":
+        return HeuristicAgent()
+    else:
+        raise ValueError(f"Unknown agent type: {agent_type}")
