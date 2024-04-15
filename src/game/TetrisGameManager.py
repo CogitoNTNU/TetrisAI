@@ -2,7 +2,7 @@ from pynput.keyboard import Key, Listener
 import time as t
 import sys
 
-from src.game.board import Action, Tetris
+from src.game.tetris import Action, Tetris
 
 baseScore = 100
 
