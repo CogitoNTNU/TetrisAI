@@ -17,25 +17,25 @@ def utility(gameState: Tetris, aggregate_heights_weight: int, max_height_weight:
     return sum
 
 
-def aggregate_heights(gameState: Tetris) -> int:
+def aggregate_heights(gameState: Tetris) -> int: 
     """Returns the sum of the heights of the columns in the game state."""
     checkedList = [0 for i in range(gameState.COLUMNS)]
-    for i in range(gameState.ROWS):
-        for j in range(gameState.COLUMNS):
-            if gameState.prevBoard[i][j] > 0:
-                if checkedList[j] == 0:
-                    checkedList[j] = gameState.ROWS - i
+    for row in range(gameState.ROWS):
+        for column in range(gameState.COLUMNS):
+            if gameState.prevBoard[row][column] != 0: 
+                if checkedList[column] == 0:
+                    checkedList[column] = gameState.ROWS - row
     return sum(checkedList)
 
 
 def max_height(gameState: Tetris) -> int:
     """Returns the maximum height of the columns in the game state."""
     checkedList = [0 for i in range(gameState.COLUMNS)]
-    for i in range(gameState.ROWS):
-        for j in range(gameState.COLUMNS):
-            if gameState.prevBoard[i][j] > 0:
-                if checkedList[j] == 0:
-                    checkedList[j] = gameState.ROWS - i
+    for row in range(gameState.ROWS):
+        for column in range(gameState.COLUMNS):
+            if gameState.prevBoard[row][column] > 0:
+                if checkedList[column] == 0:
+                    checkedList[column] = gameState.ROWS - row
     return max(checkedList)
 
 
@@ -90,12 +90,12 @@ def find_holes(gameState: Tetris) -> int:
         The heuristic value
     """
     holes = 0
-    for i in range(gameState.COLUMNS):
+    for column in range(gameState.COLUMNS):
         top_block = 20
-        for j in range(gameState.ROWS):
-            if (gameState.prevBoard[j][i] == 1) and (j < top_block):
-                top_block = j
-            if (gameState.prevBoard[j][i] == 0) and (j > top_block):
+        for row in range(gameState.ROWS):
+            if (gameState.prevBoard[row][column] == 1) and (row < top_block):
+                top_block = row
+            if (gameState.prevBoard[row][column] == 0) and (row > top_block):
                 holes += 1
 
     return holes
