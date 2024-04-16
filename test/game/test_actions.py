@@ -121,9 +121,6 @@ def test_try_to_move_block_out_of_bound_left():
 
     for _ in range(board.COLUMNS + 1):
         board.doAction(Action.MOVE_LEFT)
-        for row in board.board:
-            print(row)
-        print('\n')
 
     for board_row, expected_row in zip(board.board, expected_board):
         assert board_row == expected_row

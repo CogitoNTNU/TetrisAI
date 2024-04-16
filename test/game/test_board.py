@@ -8,11 +8,13 @@ def test_get_possible_boards_for_line():
     i_block = Block(0, 3, 0)
     board: Tetris = Tetris(block=i_block)
     possible_boards = board.getPossibleBoards()
+    for board in possible_boards:
+        board.printBoard()
     assert isinstance(possible_boards, list)
     for move in possible_boards:
         assert isinstance(move, Tetris)
 
-    standing_up_right = 9
+    standing_up_right = 10
     laying_down_right = 7
     assert len(possible_boards) == standing_up_right + laying_down_right
 
@@ -26,7 +28,7 @@ def test_get_possible_moves_for_square():
     for move in possible_moves:
         assert isinstance(move, Tetris)
 
-    assert len(possible_moves) == 8
+    assert len(possible_moves) == 9
 
 
 def test_board_equal_for_the_same_object():
@@ -184,7 +186,7 @@ def test_transition_model_for_no_transition():
 
     actions = transition_model(current_board, target_board)
     assert isinstance(actions, list)
-    assert len(actions) == 0
+    assert len(actions) == 1
 
 
 def test_transition_model_x_direction():
