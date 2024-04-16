@@ -34,7 +34,7 @@ def get_all_actions() -> list[Action]:
     ]
 
 
-class Board:
+class Tetris:
     """
     Represents the Tetris game board, handling block placements, movements, and rotations, as well as checking for game over conditions.
 
@@ -99,23 +99,19 @@ class Board:
 
         # Move the new block according to the action
         new_block = self.block.copy()
-        match action:
-            case Action.MOVE_LEFT:
-                new_block.moveLeft()
-            case Action.MOVE_RIGHT:
-                new_block.moveRight()
-            case Action.ROTATE_CLOCKWISE:
-                new_block.rotateRight()
-            case Action.ROTATE_COUNTERCLOCKWISE:
-                new_block.rotateLeft()
-            case Action.HARD_DROP:
-                while True:
-                    new_block.moveDown()
-                    if not self.isValidBlockPosition(new_block):
-                        new_block.moveUp()
-                        break
-            case Action.SOFT_DROP:
+        if action == Action.MOVE_LEFT:
+            new_block.moveLeft()
+        elif action == Action.MOVE_RIGHT:
+            new_block.moveRight()
+        elif action == Action.ROTATE_CLOCKWISE:
+            new_block.rotateRight()
+        elif action == Action.ROTATE_COUNTERCLOCKWISE:
+            new_block.rotateLeft()
+        elif action == Action.HARD_DROP:
+            while self.isValidBlockPosition(new_block):
                 new_block.moveDown()
+        elif action == Action.SOFT_DROP:
+            new_block.moveDown()
 
         # Given the new block position, check if it is valid and update the board
         if self.isValidBlockPosition(new_block):
@@ -123,17 +119,16 @@ class Board:
             self._placeBlock()
 
         # For blocks reaching the bottom of the board, place the block and introduce a new one
-        if (
-            not self.isValidBlockPosition(new_block)
-            and action == Action.SOFT_DROP
-            or action == Action.HARD_DROP
-        ):
-            self._placeBlock()
-            self._checkGameOver()
-            # Store the previous board state before the new block placement
-            self.prevBoard = copy.deepcopy(self.board)
-            self._checkForFullRows()
-            self._shiftToNewBlock()
+        else:
+            if action in [Action.HARD_DROP, Action.SOFT_DROP]:
+                new_block.moveUp()
+                self.block = new_block
+                self._placeBlock()
+                self._checkForFullRows()
+                self._checkGameOver()
+                # Store the previous board state before the new block placement
+                self.prevBoard = copy.deepcopy(self.board)
+                self._shiftToNewBlock()
 
     def isValidBlockPosition(self, block: Block) -> bool:
         """
@@ -147,11 +142,9 @@ class Board:
         """
 
         if self._outOfBounds(block):
-            print("[DEBUG] Out of bounds")
             return False
 
         if self._intersects(block):
-            print("[DEBUG] Intersects")
             return False
 
         if self.isGameOver():
@@ -176,7 +169,6 @@ class Board:
 
     def _intersects(self, block: Block) -> bool:
         """Checks if the block intersects with another block on the board"""
-        ##  TODO: Fix this
         for row in range(4):
             for column in range(4):
                 if row * 4 + column in block.image():
@@ -204,6 +196,7 @@ class Board:
                     self.board[i + self.block.y][
                         j + self.block.x
                     ] = 1  # self.block.color
+        
 
     def _shiftToNewBlock(self):
         """Places the current block on the board and sets the next block as the current block"""
@@ -234,7 +227,7 @@ class Board:
             if 0 not in row:
                 fullRows.append(rowIndex)
         # Remove all full rows
-        for rowIndex in reversed(fullRows):
+        for rowIndex in fullRows:
             self._clearRow(rowIndex)
             amount += 1
         return amount
@@ -243,11 +236,12 @@ class Board:
         """Clears the specified row and moves all rows above down one step"""
         # Remove the row and add a new empty row at the top
         newMatrix = self.board[:rownumber] + self.board[rownumber + 1 :]
-        newMatrix.append([0 for _ in range(self.COLUMNS)])
+        newMatrix.insert(0, [0 for _ in range(self.COLUMNS)])
         self.board = newMatrix
         self.rowsRemoved += 1
+        self.prevBoard = copy.deepcopy(self.board)
 
-    def getPossibleBoards(self) -> list["Board"]:
+    def getPossibleBoards(self) -> list["Tetris"]:
         possibleMoves = []
 
         # Number of rotations which gives unique block positions
@@ -260,12 +254,12 @@ class Board:
 
         rotationBoard = copy.deepcopy(self)
         for _ in range(rotations):
-            for column in range(self.COLUMNS):
+            for column in range(0, self.COLUMNS):
                 moveBoard = copy.deepcopy(rotationBoard)
 
                 # Calibrate the to the left
                 toLeft = moveBoard.block.x
-                for _ in range(toLeft):
+                for _ in range(toLeft + 1):
                     moveBoard.doAction(Action.MOVE_LEFT)
                 # Move the block to the correct column
                 for _ in range(column):
@@ -282,8 +276,8 @@ class Board:
 
         return possibleMoves
 
-    def __eq__(self, other: "Board") -> bool:
-        if not isinstance(other, Board):
+    def __eq__(self, other: "Tetris") -> bool:
+        if not isinstance(other, Tetris):
             return False
 
         # Check if the blocks are the same
@@ -308,7 +302,7 @@ class Board:
             return "▧"
 
 
-def transition_model(current_state: Board, target_state: Board) -> list[Action]:
+def transition_model(current_state: Tetris, target_state: Tetris) -> list[Action]:
     """
     Calculates the sequence of actions required to transition from the current board state to the target board state.
 
@@ -323,6 +317,7 @@ def transition_model(current_state: Board, target_state: Board) -> list[Action]:
     actions = []
 
     if current_state == target_state:
+        actions.append(Action.SOFT_DROP)
         print("No transition needed")
         return actions
 

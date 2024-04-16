@@ -6,7 +6,7 @@ class for all agents in the simulation.
 from abc import ABC, abstractmethod
 from typing import Any, Union
 
-from src.game.board import Action, Board
+from src.game.tetris import Action, Tetris
 
 
 class Agent(ABC):
@@ -21,7 +21,7 @@ class Agent(ABC):
         return hasattr(subclass, "result") and callable(subclass.result)
 
     @abstractmethod
-    def result(board: Board) -> Union[Action, list[Action]]:
+    def result(board: Tetris) -> Union[Action, list[Action]]:
         """
         Determines the next move for the agent based on the current state of the board.
 
@@ -34,7 +34,7 @@ class Agent(ABC):
         pass
 
 
-def play_game(agent: Agent, board: Board, actions_per_drop: int = 1) -> Board:
+def play_game(agent: Agent, board: Tetris, actions_per_drop: int = 1) -> Tetris:
     """
     Plays a game of Tetris with the given agent.
 
@@ -58,6 +58,6 @@ def play_game(agent: Agent, board: Board, actions_per_drop: int = 1) -> Board:
                 board.doAction(result)
         # Advance the game by one frame
         board.doAction(Action.SOFT_DROP)
-        board.printBoard()
+        #board.printBoard()
 
     return board
