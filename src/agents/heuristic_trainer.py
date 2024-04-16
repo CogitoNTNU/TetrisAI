@@ -14,13 +14,13 @@ from src.agents.heuristic_agent_Henrik import HeuristicAgentHenrik
 
 def train():
     current_itteration = 0
-    agents = _create_heuristic_agents(500)
+    agents = _create_heuristic_agents(30)
     max_itterations = len(agents)
     best_agent = None
     best_agent_lines_cleared = 10
     min_lines_cleared = 8
     
-    hyperparameters_seed = [-0.7161870466697167, -1.0206888263763436, 1.1110841067034372, -0.8480056575381625, -0.09805070564448792]
+    hyperparameters_seed = [-0.9550579397805573, -1.713732853744936, 0.48480501821908994, -0.8785318347320727, -1.828473435227082]
     epsilon = 0.001
     learning_rate = 0.01
 
@@ -56,8 +56,55 @@ def train():
 
     game = Tetris()
     end_state = play_game(best_agent, game, shall_render=False)
+    
+def check_average():
+    hyperparameters = [-0.9550579397805573, -1.713732853744936, 0.48480501821908994, -0.8785318347320727, -1.828473435227082]
+    agents = [HeuristicAgentHenrik(hyperparameters) for _ in range(10)]
+    current_itteration = 0
+    max_itterations = 10
+    best_agent_lines_cleared = 0
+    best_agent = None
+    
+    for agent in agents:
+        game = Tetris()
+        end_state = play_game(agent, game)
+        current_itteration += 1
+        print(f"[INFO] new agent train, itteration {current_itteration} of {max_itterations}, current best {best_agent_lines_cleared}, this took {end_state.rowsRemoved} ")
+        if end_state.rowsRemoved > best_agent_lines_cleared:
+            print(f"[UPDATE] Ny beste agent funnet med {end_state.rowsRemoved} rader fjernet.")
+            best_agent = agent
+            best_agent_lines_cleared = end_state.rowsRemoved
 
+    print(f'Dette var de beste hyperparameterne: {best_agent.hyperparameters}')
+    print(f"Dette er antall linjer vi fjernet med dem! :-) {best_agent_lines_cleared}")
+    
+    
 
+def train_random():
+    current_itteration = 0
+    agents = _create_heuristic_agents(50)
+    max_itterations = len(agents)
+    best_agent = None
+    best_agent_lines_cleared = 0
+    
+    print(f'Det er {len(agents)} agenter som nå skaø prøve seg med tilfeldige hyperparametere!')
+
+    for agent in agents:
+        game = Tetris()
+        end_state = play_game(agent, game)
+        current_itteration += 1
+        print(f"[INFO] new agent train, itteration {current_itteration} of {max_itterations}, current best {best_agent_lines_cleared}, this took {end_state.rowsRemoved} ")
+        if end_state.rowsRemoved > best_agent_lines_cleared:
+            print(f"[UPDATE] Ny beste agent funnet med {end_state.rowsRemoved} rader fjernet.")
+            best_agent = agent
+            best_agent_lines_cleared = end_state.rowsRemoved
+            
+    print(f'Dette var de beste hyperparameterne: {best_agent.hyperparameters}')
+    print(f"Dette er antall linjer vi fjernet med dem! :-) {best_agent_lines_cleared}")
+
+    game = Tetris()
+    end_state = play_game(best_agent, game, shall_render=False)
+    
 
 def _create_heuristic_agents(num_agents: int):
     agents = [HeuristicAgentHenrik(create_random_hyperparameters()) for _ in range(num_agents)]
