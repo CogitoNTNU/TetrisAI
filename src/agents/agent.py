@@ -58,6 +58,6 @@ def play_game(agent: Agent, board: Tetris, actions_per_drop: int = 1) -> Tetris:
                 board.doAction(result)
         # Advance the game by one frame
         board.doAction(Action.SOFT_DROP)
-        board.printBoard()
+        #board.printBoard()
 
     return board
