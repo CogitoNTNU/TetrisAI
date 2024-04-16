@@ -1,5 +1,5 @@
 from src.agents.agent import Agent
-from src.game.tetris import Action, Tetris, transition_model
+from src.game.tetris import Action, Tetris, transition_model, get_all_actions
 from src.agents.heuristic import (
     utility
 )

@@ -5,6 +5,7 @@ from src.agents.agent_factory import create_agent
 from src.agents.heuristic import (
     utility
 )
+from src.agents.heuristic_trainer import train
 
 if __name__ == "__main__":
     game = Tetris()
@@ -26,3 +27,5 @@ if __name__ == "__main__":
     # manager = TetrisGameManager(board)
     
     # manager.startGame()
+
+    #train()
