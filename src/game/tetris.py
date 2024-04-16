@@ -106,11 +106,10 @@ class Tetris:
         elif action == Action.ROTATE_CLOCKWISE:
             new_block.rotateRight()
         elif action == Action.ROTATE_COUNTERCLOCKWISE:
-                new_block.rotateLeft()
+            new_block.rotateLeft()
         elif action == Action.HARD_DROP:
             while self.isValidBlockPosition(new_block):
                 new_block.moveDown()
-            new_block.moveUp()
         elif action == Action.SOFT_DROP:
             new_block.moveDown()
 
@@ -120,16 +119,16 @@ class Tetris:
             self._placeBlock()
 
         # For blocks reaching the bottom of the board, place the block and introduce a new one
-        if (
-            not self.isValidBlockPosition(new_block)
-            and (action == Action.SOFT_DROP or action == Action.HARD_DROP)
-        ):
-            self._placeBlock()
-            self._checkGameOver()
-            # Store the previous board state before the new block placement
-            self.prevBoard = copy.deepcopy(self.board)
-            self._checkForFullRows()
-            self._shiftToNewBlock()
+        else:
+            if action in [Action.HARD_DROP, Action.SOFT_DROP]:
+                new_block.moveUp()
+                self.block = new_block
+                self._placeBlock()
+                self._checkForFullRows()
+                self._checkGameOver()
+                # Store the previous board state before the new block placement
+                self.prevBoard = copy.deepcopy(self.board)
+                self._shiftToNewBlock()
 
     def isValidBlockPosition(self, block: Block) -> bool:
         """
