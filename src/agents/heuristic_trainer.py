@@ -8,7 +8,7 @@ from src.agents.heuristic import (
     max_height,
     bumpiness,
 )
-from src.agents.heuristic_agent import HeuristicAgent
+from src.agents.heuristic_agent_Henrik import HeuristicAgentHenrik
 
 #kan visualisere lines cleared hvordan den bederer seg over tid.
 
@@ -60,11 +60,11 @@ def train():
 
 
 def _create_heuristic_agents(num_agents: int):
-    agents = [HeuristicAgent(create_random_hyperparameters()) for _ in range(num_agents)]
+    agents = [HeuristicAgentHenrik(create_random_hyperparameters()) for _ in range(num_agents)]
     return agents
 
 def _create_heuristic_agents_hyper(hyperparameters):
-    return HeuristicAgent(hyperparameters)
+    return HeuristicAgentHenrik(hyperparameters)
 
 
 def create_random_hyperparameters():
