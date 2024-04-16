@@ -27,7 +27,7 @@ class TetrisGameManager:
 
     def startGame(self):
         pygame.init()
-        self.screen = pygame.display.set_mode((400, 800))  # Create a dummy window
+        self.screen = pygame.display.set_mode((80, 140))  # Create a dummy window
         pygame.display.set_caption('Tetris')  # Set window title
 
         clock = pygame.time.Clock()
