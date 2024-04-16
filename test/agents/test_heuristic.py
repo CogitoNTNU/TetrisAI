@@ -3,8 +3,8 @@ from src.agents.heuristic import *
 
 
 def test_heuristic_height_aggregate_empty_board():
-    board = Tetris()
-    board.board = [
+    
+    initBoard = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -26,14 +26,14 @@ def test_heuristic_height_aggregate_empty_board():
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ]
-
+    board = Tetris(initBoard)
     assert aggregate_heights(board) == 0
 
 
 def test_heuristic_aggregate_with_equal_heights():
-    board = Tetris()
+    
 
-    board.board = [
+    initBoard = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -55,13 +55,14 @@ def test_heuristic_aggregate_with_equal_heights():
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
     ]
+    board = Tetris(initBoard)
     expected = 3 * 9
     assert aggregate_heights(board) == expected
 
 
 def test_heuristic_high_line_heights():
-    board = Tetris()
-    board.board = [
+    
+    initBoard = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -83,13 +84,14 @@ def test_heuristic_high_line_heights():
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ]
+    board = Tetris(initBoard)
     expected = 3 * 9
     assert aggregate_heights(board) == expected
 
 
 def test_heuristic_different_heights():
-    board = Tetris()
-    board.board = [
+    
+    initBoard = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -111,7 +113,7 @@ def test_heuristic_different_heights():
         [0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
         [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ]
-
+    board = Tetris(initBoard)
     expected = 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10
     assert aggregate_heights(board) == expected
 
