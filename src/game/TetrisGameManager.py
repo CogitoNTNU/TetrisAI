@@ -1,3 +1,4 @@
+from copy import deepcopy
 import pygame
 from pygame.locals import *
 import time as t
@@ -6,6 +7,18 @@ import sys
 from src.game.tetris import Action, Tetris
 
 baseScore = 100
+
+# pygame visuals setup
+BLOCK_SIZE = 30
+WIDTH = 10
+HEIGHT = 23
+START_HEIGHT = 3
+SCREEN_WIDTH = WIDTH * BLOCK_SIZE
+SCREEN_HEIGHT = (HEIGHT - START_HEIGHT) * BLOCK_SIZE
+
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+BLUE = (0, 0, 255)
 
 class TetrisGameManager:
     currentPiece = None
@@ -27,12 +40,14 @@ class TetrisGameManager:
 
     def startGame(self):
         pygame.init()
-        self.screen = pygame.display.set_mode((80, 140))  # Create a dummy window
+        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+        # self.screen = pygame.display.set_mode((400, 1080))  # Create a dummy window
         pygame.display.set_caption('Tetris')  # Set window title
 
         clock = pygame.time.Clock()
 
         while not self.board.gameOver:
+            self.draw_board(self.board.board)
             self.inputHandling()
             if self.board.blockHasLanded:
                 self.board.updateBoard()    # Update the board after a block has landed and spawn a new block
@@ -65,6 +80,17 @@ class TetrisGameManager:
         if checkTime < newTime:
             self.currentTime = newTime
             self.movePiece(Action.SOFT_DROP)
+            
+    def draw_board(self, board):
+        self.screen.fill(BLACK)
+        temp = deepcopy(board)
+        temp = temp[START_HEIGHT:]        
+        for y in range(HEIGHT-START_HEIGHT):
+            for x in range(WIDTH):
+                if temp[y][x] == 1:
+                    pygame.draw.rect(self.screen, BLUE, (x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE))
+                pygame.draw.rect(self.screen, WHITE, (x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE), 1)
+
 
     def stopGame(self):
         pygame.quit()
