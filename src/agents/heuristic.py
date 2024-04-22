@@ -9,7 +9,7 @@ def utility(gameState: Tetris, aggregate_heights_weight: float, max_height_weigh
     sum = 0
     sum += aggregate_heights_weight * aggregate_heights(gameState)
     sum += max_height_weight * max_height(gameState)
-    sum += lines_cleared_weight * lines_cleaned(gameState)
+    sum += lines_cleared_weight * lines_cleared(gameState)
     sum += bumpiness_weight * bumpiness(gameState)
     sum += holes_weight * find_holes(gameState)
 
