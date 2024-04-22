@@ -48,16 +48,19 @@ def play_game(agent: Agent, board: Tetris, actions_per_drop: int = 1) -> Tetris:
     """
     while not board.isGameOver():
         # Get the result of the agent's action
-        for _ in range(actions_per_drop):
-            result = agent.result(board)
-            # Perform the action(s) on the board
-            if isinstance(result, list):
-                for action in result:
-                    board.doAction(action)
-            else:
-                board.doAction(result)
+        result = agent.result(board)
+        # Perform the action(s) on the board
+        if isinstance(result, list):
+            for action in result:
+                board.doAction(action)
+                board.printBoard()
+        else:
+            board.doAction(result)
+            board.printBoard()
         # Advance the game by one frame
         board.doAction(Action.SOFT_DROP)
+        if board.blockHasLanded:
+            board.updateBoard()
         #board.printBoard()
 
     return board

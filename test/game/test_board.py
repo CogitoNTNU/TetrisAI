@@ -211,6 +211,7 @@ def test_transition_model_complex_target():
     ]
     for action in actual_actions:
         target_board.doAction(action)
+    target_board.updateBoard()
 
     actions = transition_model(current_board, target_board)
     assert isinstance(actions, list)
@@ -229,6 +230,7 @@ def test_transition_model_left_movement():
     ]
     for action in actual_actions:
         target_board.doAction(action)
+    target_board.updateBoard()
 
     actions = transition_model(current_board, target_board)
     assert isinstance(actions, list)
@@ -248,10 +250,14 @@ def test_transition_model_execution():
     ]
     for action in actual_actions:
         target_board.doAction(action)
+        if target_board.blockHasLanded:
+            target_board.updateBoard()
 
     actions = transition_model(current_board, target_board)
     for action in actions:
         current_board.doAction(action)
+        if current_board.blockHasLanded:
+            current_board.updateBoard()
     assert current_board == target_board
 
 
@@ -268,10 +274,14 @@ def test_transition_model_execution_complex():
     ]
     for action in actual_actions:
         target_board.doAction(action)
+        if target_board.blockHasLanded:
+            target_board.updateBoard()
 
     actions = transition_model(current_board, target_board)
     for action in actions:
         current_board.doAction(action)
+        if current_board.blockHasLanded:
+            current_board.updateBoard()
     assert current_board == target_board
 
 
@@ -283,8 +293,12 @@ def test_transition_model_execution_of_invalid_move_sequence():
     actual_actions += [Action.HARD_DROP]
     for action in actual_actions:
         target_board.doAction(action)
+        if target_board.blockHasLanded:
+            target_board.updateBoard()
 
     actions = transition_model(current_board, target_board)
     for action in actions:
         current_board.doAction(action)
+        if current_board.blockHasLanded:
+            current_board.updateBoard()
     assert current_board == target_board

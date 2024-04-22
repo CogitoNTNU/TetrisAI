@@ -34,6 +34,8 @@ class TetrisGameManager:
 
         while not self.board.gameOver:
             self.inputHandling()
+            if self.board.blockHasLanded:
+                self.board.updateBoard()    # Update the board after a block has landed and spawn a new block
             self.checkTimer()
             pygame.display.update()
             clock.tick(60)  # Cap the frame rate to 60 FPS

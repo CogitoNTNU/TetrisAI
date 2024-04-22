@@ -11,17 +11,17 @@ class HeuristicAgent(Agent):
         # Get all possible boards
         possible_boards = board.getPossibleBoards()
 
-        best_board: Tetris
-        best_utility = float("-inf")
+        best_board = possible_boards[0]
+        best_utility = utility(best_board, -0.8, -1.2, 3, -0.3,-3)
         # Check which board has the best outcome based on the heuristic
-        for boards in possible_boards:
-            current_utility = utility(boards, -0.5, -1.2, 2, -0.3,-0.6)
+        for candidate_board in possible_boards[1:]:
+            current_utility = utility(candidate_board, -0.8, -1.2, 4, -0.3,-0.6)
             
-            if current_utility > best_utility:
-                best_board = boards
-                best_utility = current_utility
 
-            
+            if current_utility > best_utility:
+                best_board = candidate_board
+                best_utility = current_utility
+        
         # Find the actions needed to transform the current board to the new board
         actions = []
         try:

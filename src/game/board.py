@@ -34,7 +34,7 @@ def get_all_actions() -> list[Action]:
     ]
 
 
-class Tetris:
+class Board:
     """
     Represents the Tetris game board, handling block placements, movements, and rotations, as well as checking for game over conditions.
 
@@ -49,8 +49,7 @@ class Tetris:
         nextBlock (Block): The next block that will be introduced to the board after the current block is placed.
     """
 
-    ROWS = 23
-    SPAWN_ROWS = 3
+    ROWS = 20
     COLUMNS = 10
     START_X = 3
     START_Y = 0
@@ -62,11 +61,11 @@ class Tetris:
         self.gameOver = False
         self.rowsRemoved = 0
 
-        if board is None:
+        if board == None:
             self.board = self._initBoard()
         else:
             self.board = board
-        if block is None:
+        if block == None:
             self.block = Block(self.START_X, self.START_Y, 0)
         else:
             self.block = block
@@ -76,7 +75,6 @@ class Tetris:
 
         self.prevBlock = self.block.copy()
         self.nextBlock = Block(self.START_X, self.START_Y, random.randint(0, 6))
-        self.blockHasLanded = False
 
     def _initBoard(self) -> list[list[int]]:
         """Initializes an empty the board"""
@@ -101,41 +99,41 @@ class Tetris:
 
         # Move the new block according to the action
         new_block = self.block.copy()
-        if action == Action.MOVE_LEFT:
-            new_block.moveLeft()
-        elif action == Action.MOVE_RIGHT:
-            new_block.moveRight()
-        elif action == Action.ROTATE_CLOCKWISE:
-            new_block.rotateRight()
-        elif action == Action.ROTATE_COUNTERCLOCKWISE:
-            new_block.rotateLeft()
-        elif action == Action.HARD_DROP:
-            while self.isValidBlockPosition(new_block):
+        match action:
+            case Action.MOVE_LEFT:
+                new_block.moveLeft()
+            case Action.MOVE_RIGHT:
+                new_block.moveRight()
+            case Action.ROTATE_CLOCKWISE:
+                new_block.rotateRight()
+            case Action.ROTATE_COUNTERCLOCKWISE:
+                new_block.rotateLeft()
+            case Action.HARD_DROP:
+                while True:
+                    new_block.moveDown()
+                    if not self.isValidBlockPosition(new_block):
+                        new_block.moveUp()
+                        break
+            case Action.SOFT_DROP:
                 new_block.moveDown()
-        elif action == Action.SOFT_DROP:
-            new_block.moveDown()
 
-        # For blocks reaching the bottom of the board, place the block and introduce a new one
-        if (
-            action in [Action.HARD_DROP, Action.SOFT_DROP]
-            and not self.isValidBlockPosition(new_block)
-        ):
-            new_block.moveUp()
-            self.blockHasLanded = True
+        # Given the new block position, check if it is valid and update the board
         if self.isValidBlockPosition(new_block):
             self.block = new_block
             self._placeBlock()
 
-        
-    def updateBoard(self):
-        self.blockHasLanded = False
-        self._checkForFullRows()
-        self._checkGameOver()
-        # Store the previous board state before the new block placement
-        self.prevBoard = copy.deepcopy(self.board)
-        if self.isGameOver():
-            return
-        self._shiftToNewBlock()
+        # For blocks reaching the bottom of the board, place the block and introduce a new one
+        if (
+            not self.isValidBlockPosition(new_block)
+            and action == Action.SOFT_DROP
+            or action == Action.HARD_DROP
+        ):
+            self._placeBlock()
+            self._checkGameOver()
+            # Store the previous board state before the new block placement
+            self.prevBoard = copy.deepcopy(self.board)
+            self._checkForFullRows()
+            self._shiftToNewBlock()
 
     def isValidBlockPosition(self, block: Block) -> bool:
         """
@@ -149,9 +147,11 @@ class Tetris:
         """
 
         if self._outOfBounds(block):
+            print("[DEBUG] Out of bounds")
             return False
 
         if self._intersects(block):
+            print("[DEBUG] Intersects")
             return False
 
         if self.isGameOver():
@@ -176,6 +176,7 @@ class Tetris:
 
     def _intersects(self, block: Block) -> bool:
         """Checks if the block intersects with another block on the board"""
+        ##  TODO: Fix this
         for row in range(4):
             for column in range(4):
                 if row * 4 + column in block.image():
@@ -203,7 +204,6 @@ class Tetris:
                     self.board[i + self.block.y][
                         j + self.block.x
                     ] = 1  # self.block.color
-        
 
     def _shiftToNewBlock(self):
         """Places the current block on the board and sets the next block as the current block"""
@@ -219,11 +219,10 @@ class Tetris:
 
     def _checkGameOver(self):
         """Checks if the game is over"""
-        for spawn_row in range(self.SPAWN_ROWS):
-            for cell in self.board[spawn_row]:
-                if cell > 0:
-                    self.gameOver = True
-                    return
+        for cell in self.board[0]:
+            if cell > 0:
+                self.gameOver = True
+                break
 
     def _checkForFullRows(self) -> int:
         """Checks the board for full rows and removes them, returning the number of rows removed"""
@@ -235,7 +234,7 @@ class Tetris:
             if 0 not in row:
                 fullRows.append(rowIndex)
         # Remove all full rows
-        for rowIndex in fullRows:
+        for rowIndex in reversed(fullRows):
             self._clearRow(rowIndex)
             amount += 1
         return amount
@@ -244,12 +243,11 @@ class Tetris:
         """Clears the specified row and moves all rows above down one step"""
         # Remove the row and add a new empty row at the top
         newMatrix = self.board[:rownumber] + self.board[rownumber + 1 :]
-        newMatrix.insert(0, [0 for _ in range(self.COLUMNS)])
+        newMatrix.append([0 for _ in range(self.COLUMNS)])
         self.board = newMatrix
         self.rowsRemoved += 1
-        self.prevBoard = copy.deepcopy(self.board)
 
-    def getPossibleBoards(self) -> list["Tetris"]:
+    def getPossibleBoards(self) -> list["Board"]:
         possibleMoves = []
 
         # Number of rotations which gives unique block positions
@@ -262,12 +260,12 @@ class Tetris:
 
         rotationBoard = copy.deepcopy(self)
         for _ in range(rotations):
-            for column in range(0, self.COLUMNS + (4 - self.block.getRightmostImageCoordinate())):
+            for column in range(self.COLUMNS):
                 moveBoard = copy.deepcopy(rotationBoard)
 
                 # Calibrate the to the left
-                toLeft = moveBoard.block.x + moveBoard.block.getLeftmostImageCoordinate()
-                for _ in range(toLeft + 1):
+                toLeft = moveBoard.block.x
+                for _ in range(toLeft):
                     moveBoard.doAction(Action.MOVE_LEFT)
                 # Move the block to the correct column
                 for _ in range(column):
@@ -284,8 +282,8 @@ class Tetris:
 
         return possibleMoves
 
-    def __eq__(self, other: "Tetris") -> bool:
-        if not isinstance(other, Tetris):
+    def __eq__(self, other: "Board") -> bool:
+        if not isinstance(other, Board):
             return False
 
         # Check if the blocks are the same
@@ -310,7 +308,7 @@ class Tetris:
             return "▧"
 
 
-def transition_model(current_state: Tetris, target_state: Tetris) -> list[Action]:
+def transition_model(current_state: Board, target_state: Board) -> list[Action]:
     """
     Calculates the sequence of actions required to transition from the current board state to the target board state.
 
@@ -325,12 +323,11 @@ def transition_model(current_state: Tetris, target_state: Tetris) -> list[Action
     actions = []
 
     if current_state == target_state:
-        actions.append(Action.SOFT_DROP)
         print("No transition needed")
         return actions
 
     # Find where the last block is in the target state
-    target_block = target_state.block
+    target_block = target_state.prevBlock
 
     # Find the correct rotation
     needed_rotation = target_block.rotation - current_state.block.rotation

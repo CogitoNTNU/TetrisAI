@@ -3,14 +3,18 @@ import random
 
 FIGURES = [
     # Definitions for each Tetris block rotation
-    [[1, 5, 9, 13], [4, 5, 6, 7],   [2, 6, 10, 14], [8, 9, 10, 11]],    # I
-    [[4, 5, 9, 10], [2, 6, 5, 9],   [0, 1, 5, 6],   [1, 5, 4, 8]],      # Z
-    [[9, 10, 6, 7], [1, 5, 6, 10],  [5, 6, 2, 3],   [2, 6, 7, 11]],     # S
-    [[1, 2, 5, 9],  [0, 4, 5, 6],   [1, 5, 9, 8],   [4, 5, 6, 10]],     # L
-    [[1, 2, 6, 10], [5, 6, 7, 9],   [2, 6, 10, 11], [3, 5, 6, 7]],      # J
-    [[1, 4, 5, 6],  [1, 4, 5, 9],   [4, 5, 6, 9],   [1, 5, 6, 9]],      # T
+
+    [[4, 5, 6, 7],  [2, 6, 10, 14], [8, 9, 10, 11], [1, 5, 9, 13]],     # I
+    [[0, 1, 5, 6],  [2, 5, 6, 9],   [4, 5, 9, 10],  [5, 8, 9, 12]],     # Z
+    [[4, 5, 1, 2],  [1, 5, 6, 10],  [8, 9, 5, 6],   [0, 4, 5, 9]],      # S
+    [[2, 4, 5, 6],  [1, 5, 9, 10],  [4, 5, 6, 8],   [0, 1, 5, 9]],      # L
+    [[0, 4, 5, 6],  [1, 2, 5, 9],   [4, 5, 6, 10],  [1, 5, 8, 9]],      # J
+    [[1, 4, 5, 6],  [1, 5, 6, 9],   [4, 5, 6, 9],   [1, 4, 5, 9]],      # T
     [[1, 2, 5, 6]],                                                     # O
 ]
+
+
+
 
 # Colors for the blocks
 COLORS = [
@@ -125,3 +129,27 @@ class Block:
             listCoordinates.append((x, y))
 
         return listCoordinates
+
+    def getLeftmostImageCoordinate(self) -> int:
+        """
+        Returns:
+            int: The leftmost x-coordinate of the block's image.
+        """
+        leftmost = 4
+        for i in self.image():
+            x = i % 4
+            if x < leftmost:
+                leftmost = x
+        return leftmost
+    
+    def getRightmostImageCoordinate(self) -> int:
+        """
+        Returns:
+            int: The rightmost x-coordinate of the block's image.
+        """
+        rightmost = 0
+        for i in self.image():
+            x = i % 4
+            if x > rightmost:
+                rightmost = x
+        return rightmost
