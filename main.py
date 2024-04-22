@@ -41,6 +41,7 @@ if __name__ == "__main__":
     
     # # manager.startGame()
 
+<<<<<<< HEAD
     # # train()
 
 
@@ -52,3 +53,7 @@ if __name__ == "__main__":
     
         
     # cProfile.run('main()', 'restats')  
+=======
+    #train()
+    
+>>>>>>> c14418b (feat: :rocket: genetic agent class and it's training algorithm commenced)
