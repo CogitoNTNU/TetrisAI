@@ -81,8 +81,12 @@ def max_height(gameState: Tetris) -> int:
     return max(checkedList)
 
 
+<<<<<<< HEAD
 # Does this work? row cleared in get_possible_boards??
 def lines_cleaned(gameState: Tetris) -> int:
+=======
+def lines_cleared(gameState: Tetris) -> int:
+>>>>>>> c14418b (feat: :rocket: genetic agent class and it's training algorithm commenced)
     """Retrurns the number of lines cleared."""
     sum = 0
     for row in gameState.board:

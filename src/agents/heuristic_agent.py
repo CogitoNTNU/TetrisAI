@@ -24,6 +24,16 @@ class HeuristicAgent(Agent):
         
         # Find the actions needed to transform the current board to the new board
         actions = []
+<<<<<<< HEAD
         actions = transition_model(board, best_board)
         return actions
            
+=======
+        try:
+            actions = transition_model(board, best_board)
+            return actions
+        except:
+            return actions
+
+    
+>>>>>>> c14418b (feat: :rocket: genetic agent class and it's training algorithm commenced)

@@ -48,6 +48,7 @@ def play_game(agent: Agent, board: Tetris, actions_per_drop: int = 1, max_pieces
         The final state of the board after the game is over.
     """
 <<<<<<< HEAD
+<<<<<<< HEAD
     #count = 0
 
     while not board.isGameOver():
@@ -55,6 +56,10 @@ def play_game(agent: Agent, board: Tetris, actions_per_drop: int = 1, max_pieces
     pieces_dropped = 0
     while not board.isGameOver() and pieces_dropped < max_pieces_dropped:
 >>>>>>> b842fc6 (feat: :rocket: genetic agent class and it's training algorithm commenced)
+=======
+    pieces_dropped = 0
+    while not board.isGameOver() and pieces_dropped < max_pieces_dropped:
+>>>>>>> c14418b (feat: :rocket: genetic agent class and it's training algorithm commenced)
         # Get the result of the agent's action
         for _ in range(actions_per_drop):
             result = agent.result(board)
