@@ -3,8 +3,8 @@
 from src.game.tetris import Tetris
 
 
-def utility(gameState: Tetris, aggregate_heights_weight: int, max_height_weight: int, 
-            lines_cleared_weight: int, bumpiness_weight: int, holes_weight: int) -> int:
+def utility(gameState: Tetris, aggregate_heights_weight: float, max_height_weight: float, 
+            lines_cleared_weight: float, bumpiness_weight: float, holes_weight: float) -> int:
     """Returns the utility of the given game state."""
     sum = 0
 

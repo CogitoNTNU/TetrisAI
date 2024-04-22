@@ -5,3 +5,4 @@
 # TODO Read the part of the article about the genetic algorithm
 # TODO Create a fitness function
 # TODO Create a genetic algorithm based on the
+
