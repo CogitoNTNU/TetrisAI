@@ -3,14 +3,14 @@
 from src.game.tetris import Tetris
 
 
-def utility(gameState: Tetris, aggregate_heights_weight: int, max_height_weight: int, 
-            lines_cleared_weight: int, bumpiness_weight: int, holes_weight: int) -> int:
+def utility(gameState: Tetris, aggregate_heights_weight: float, max_height_weight: float, 
+            lines_cleared_weight: float, bumpiness_weight: float, holes_weight: float) -> float:
     """Returns the utility of the given game state."""
     sum = 0
 
     sum += aggregate_heights_weight * aggregate_heights(gameState)
     sum += max_height_weight * max_height(gameState)
-    sum += lines_cleared_weight * lines_cleaned(gameState)
+    sum += lines_cleared_weight * lines_cleared(gameState)
     sum += bumpiness_weight * bumpiness(gameState)
     sum += holes_weight * find_holes(gameState)
 
@@ -39,7 +39,7 @@ def max_height(gameState: Tetris) -> int:
     return max(checkedList)
 
 
-def lines_cleaned(gameState: Tetris) -> int:
+def lines_cleared(gameState: Tetris) -> int:
     """Retrurns the number of lines cleared."""
     sum = 0
     for row in gameState.prevBoard:

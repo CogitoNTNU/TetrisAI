@@ -29,3 +29,5 @@ class HeuristicAgent(Agent):
             return actions
         except:
             return actions
+
+    
