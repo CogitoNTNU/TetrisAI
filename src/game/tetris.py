@@ -341,7 +341,7 @@ def transition_model(current_state: Tetris, target_state: Tetris) -> list[Action
         actions += [Action.MOVE_RIGHT] * (target_block.x - current_state.block.x)
     elif current_state.block.x > target_block.x:
         actions += [Action.MOVE_LEFT] * (current_state.block.x - target_block.x)
-    # Move the block down to the correct y position
+    # Move the block down to the correct y position as it would be used in reality
     actions.append(Action.HARD_DROP)
 
     return actions

@@ -33,8 +33,8 @@ def test_result_heuristic_agent():
     ]
 
     expected_board = [
-        [0, 0, 0, 1, 1, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 1, 1, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -53,18 +53,17 @@ def test_result_heuristic_agent():
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-        [1, 1, 0, 0, 0, 0, 0, 0, 1, 1],
-        [1, 1, 1, 1, 1, 0, 0, 1, 1, 1],
-        [1, 1, 1, 1, 1, 0, 1, 1, 1, 1],
+        [1, 1, 0, 0, 0, 0, 1, 0, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     ]
     
     block = Block(3, 0, 1)
     board = Tetris(initBoard, block)
 
     agent: HeuristicAgent = create_agent("heuristic")
-    possible_moves = board.getPossibleBoards()
     result = agent.result(board)
-    for i in range(len(result)-1):
+    for i in range(len(result)):
         board.doAction(result[i])
     print(result)
     for row in board.board:

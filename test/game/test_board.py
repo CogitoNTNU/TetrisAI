@@ -196,11 +196,13 @@ def test_transition_model_x_direction():
     target_board.doAction(action)
     actions = transition_model(current_board, target_board)
     assert isinstance(actions, list)
-    assert len(actions) == 1
+    assert action in actions
+    assert len(actions) == 2 # 1 for moving right, 1 for hard drop which is always appended
 
 
 def test_transition_model_complex_target():
-    current_board: Tetris = Tetris()
+    initial_block = Block(0, 3, 0)
+    current_board: Tetris = Tetris(None, initial_block)
     target_board: Tetris = copy.deepcopy(current_board)
     actual_actions = [
         Action.ROTATE_CLOCKWISE,
@@ -211,7 +213,6 @@ def test_transition_model_complex_target():
     ]
     for action in actual_actions:
         target_board.doAction(action)
-    target_board.updateBoard()
 
     actions = transition_model(current_board, target_board)
     assert isinstance(actions, list)
@@ -230,7 +231,6 @@ def test_transition_model_left_movement():
     ]
     for action in actual_actions:
         target_board.doAction(action)
-    target_board.updateBoard()
 
     actions = transition_model(current_board, target_board)
     assert isinstance(actions, list)
@@ -250,14 +250,10 @@ def test_transition_model_execution():
     ]
     for action in actual_actions:
         target_board.doAction(action)
-        if target_board.blockHasLanded:
-            target_board.updateBoard()
 
     actions = transition_model(current_board, target_board)
     for action in actions:
         current_board.doAction(action)
-        if current_board.blockHasLanded:
-            current_board.updateBoard()
     assert current_board == target_board
 
 
@@ -274,14 +270,10 @@ def test_transition_model_execution_complex():
     ]
     for action in actual_actions:
         target_board.doAction(action)
-        if target_board.blockHasLanded:
-            target_board.updateBoard()
 
     actions = transition_model(current_board, target_board)
     for action in actions:
         current_board.doAction(action)
-        if current_board.blockHasLanded:
-            current_board.updateBoard()
     assert current_board == target_board
 
 
@@ -293,12 +285,8 @@ def test_transition_model_execution_of_invalid_move_sequence():
     actual_actions += [Action.HARD_DROP]
     for action in actual_actions:
         target_board.doAction(action)
-        if target_board.blockHasLanded:
-            target_board.updateBoard()
 
     actions = transition_model(current_board, target_board)
     for action in actions:
         current_board.doAction(action)
-        if current_board.blockHasLanded:
-            current_board.updateBoard()
     assert current_board == target_board
