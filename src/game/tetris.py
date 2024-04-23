@@ -92,7 +92,20 @@ class Tetris:
         return board
 
     def getBoard(self) -> list[list[int]]:
-        return copy.deepcopy(self.board)
+        return self.deep_copy_list_of_lists(self.board)
+    
+    def deep_copy_list_of_lists(self, original):
+        if not isinstance(original, list):
+            return original  # Base case: return non-list elements directly
+        
+        copied = []
+        for sublist in original:
+            if isinstance(sublist, list):
+                copied.append(self.deep_copy_list_of_lists(sublist))  # Recursively deep copy nested lists
+            else:
+                raise TypeError("Input must be a list of lists of integers")
+
+        return copied
 
     def doAction(self, action: Action) -> None:
         """
@@ -288,7 +301,7 @@ class Tetris:
         return np.array_equal(self.board, other.board)
     
     def copy(self) -> "Tetris":
-        tetris = Tetris(self.board, self.block, self.nextBlock)
+        tetris = Tetris(self.deep_copy_list_of_lists(self.board), self.block.copy(), self.nextBlock.copy())
         return tetris
 
     def printBoard(self):
