@@ -35,7 +35,8 @@ class GeneticAlgAgentJM:
                 param_list = self.agents[i][0]
                 average_cleared = self.play_game(param_list[0], param_list[1], param_list[2], param_list[3], param_list[4])
                 self.agents[i][1] = average_cleared
-        print(self.getBestPop())
+        
+            print(self.getBestPop())
 
 
     def initAgents(self) -> list[list[list[float], float]]:
