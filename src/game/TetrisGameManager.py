@@ -5,11 +5,12 @@ import time as t
 import sys
 
 from src.game.tetris import Action, Tetris
+from src.game.block import COLORS
 
 baseScore = 100
 
 # pygame visuals setup
-BLOCK_SIZE = 30
+BLOCK_SIZE = 40
 WIDTH = 10
 HEIGHT = 23
 START_HEIGHT = 3
@@ -19,7 +20,6 @@ SCREEN_HEIGHT = (HEIGHT - START_HEIGHT) * BLOCK_SIZE
 # Colors
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
-BLUE = (0, 0, 255)
 
 class TetrisGameManager:
     currentPiece = None
@@ -88,8 +88,8 @@ class TetrisGameManager:
         temp_board = temp.board[START_HEIGHT:]        
         for y in range(HEIGHT-START_HEIGHT):
             for x in range(WIDTH):
-                if temp_board[y][x] == 1:
-                    pygame.draw.rect(self.screen, BLUE, (x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE))
+                if temp_board[y][x] != 0:
+                    pygame.draw.rect(self.screen, COLORS[temp_board[y][x]-1], (x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE))
                 pygame.draw.rect(self.screen, WHITE, (x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE), 1)
 
 
