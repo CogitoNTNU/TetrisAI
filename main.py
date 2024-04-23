@@ -5,6 +5,7 @@ from src.agents.agent_factory import create_agent
 from src.agents.heuristic import (
     utility
 )
+from src.agents.geneticAlgAgent import GeneticAgent, train_genetic_algorithm
 
 if __name__ == "__main__":
     # game = Tetris()
@@ -24,7 +25,8 @@ if __name__ == "__main__":
     #     boards.printBoard()
     
     board = Tetris()
-    manager = TetrisGameManager(board)
-    agent = create_agent("heuristic")
-    
-    manager.startDemo(agent)
+    # manager = TetrisGameManager(board)
+    # agent = create_agent("heuristic")
+    agents = train_genetic_algorithm(10)
+
+    # manager.startDemo(agent)
