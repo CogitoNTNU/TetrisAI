@@ -55,7 +55,7 @@ class Tetris:
     START_X = 3
     START_Y = 0
 
-    def __init__(self, board: list[list[int]] = None, block: Block = None):
+    def __init__(self, board: list[list[int]] = None, block: Block = None, nextBlock: Block = None):
         """
         Initializes a new game board instance, setting up an empty board, placing the first block, and selecting the next block.
         """
@@ -70,8 +70,12 @@ class Tetris:
             self.block = Block(self.START_X, self.START_Y, 0)
         else:
             self.block = block
-        self.prevBoard = copy.deepcopy(self.board)
+        if nextBlock == None:
+            self.nextBlock = Block(self.START_X, self.START_Y, 0)
+        else:
+            self.nextBlock = nextBlock
 
+        self.prevBoard = copy.deepcopy(self.board)
         self._placeBlock()
 
         self.prevBlock = self.block.copy()
@@ -253,10 +257,10 @@ class Tetris:
         else:
             rotations = 1
 
-        rotationBoard = copy.deepcopy(self)
+        rotationBoard = self.copy()
         for _ in range(rotations):
             for column in range(0, self.COLUMNS):
-                moveBoard = copy.deepcopy(rotationBoard)
+                moveBoard = rotationBoard.copy()
 
                 # Calibrate the to the left
                 toLeft = moveBoard.block.x
@@ -281,13 +285,11 @@ class Tetris:
         if not isinstance(other, Tetris):
             return False
 
-        # Check if the blocks are the same
-        # for r in range(self.ROWS):
-        #     for c in range(self.COLUMNS):
-        #         if self.board[r][c] != other.board[r][c]:
-        #             return False
-
         return np.array_equal(self.board, other.board)
+    
+    def copy(self) -> "Tetris":
+        tetris = Tetris(self.board, self.block, self.nextBlock)
+        return tetris
 
     def printBoard(self):
         print("_______________________________________")
