@@ -81,7 +81,7 @@ def playGameDemoStepByStep(agent: Agent, board: Tetris) -> Tetris:
     if isinstance(result, list):
         for action in result:
             board.doAction(action)
-            sleep(0.2)
+            sleep(0.3)
             # board.printBoard()
     else:
         board.doAction(result)
