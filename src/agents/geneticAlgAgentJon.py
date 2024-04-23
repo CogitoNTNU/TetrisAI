@@ -1,4 +1,5 @@
 import random
+import numpy as np
 from src.game.tetris import *
 from src.agents.agent_factory import create_agent
 from src.agents.agent import Agent
@@ -58,7 +59,7 @@ class GeneticAlgAgentJM:
         board = Tetris()
         agent: Agent = HeuristicWithParametersAgent([agg_height, max_height, lines_cleared, bumpiness, holes])
         total_cleared = 0
-        number_of_rounds = 10
+        number_of_rounds = 20
         for _ in range(0, number_of_rounds):
                 
             max_moves = number_of_rounds
@@ -117,7 +118,9 @@ class GeneticAlgAgentJM:
         if random.randrange(0,1000)/1000 < 0.2:
             random_parameter = int(random.randint(0,4))
             new_pop[0][random_parameter] = (random.randrange(-200, 200)/1000) * new_pop[0][random_parameter]
-            
+
+        new_pop[0] = (new_pop[0] / np.linalg.norm(new_pop[0])).tolist()
+
         return new_pop
 
 
