@@ -7,6 +7,7 @@ from abc import ABC, abstractmethod
 from typing import Any, Union
 
 from src.game.tetris import Action, Tetris
+from time import sleep
 
 
 class Agent(ABC):
@@ -53,10 +54,10 @@ def play_game(agent: Agent, board: Tetris, actions_per_drop: int = 1) -> Tetris:
         if isinstance(result, list):
             for action in result:
                 board.doAction(action)
-                board.printBoard()
+                # board.printBoard()
         else:
             board.doAction(result)
-            board.printBoard()
+            # board.printBoard()
         # Advance the game by one frame
         board.doAction(Action.SOFT_DROP)
         if board.blockHasLanded:
@@ -64,3 +65,30 @@ def play_game(agent: Agent, board: Tetris, actions_per_drop: int = 1) -> Tetris:
         #board.printBoard()
 
     return board
+
+def playGameDemoStepByStep(agent: Agent, board: Tetris) -> Tetris:
+    """
+    Plays a game of Tetris with the given agent where actions are slowed down for demonstration purposes.
+
+    Args:
+        agent (Agent): The agent to play the game.
+        board (Board): The initial state of the board.
+    """
+    
+    # Get the result of the agent's action
+    result = agent.result(board)
+    # Perform the action(s) on the board
+    if isinstance(result, list):
+        for action in result:
+            board.doAction(action)
+            sleep(0.2)
+            # board.printBoard()
+    else:
+        board.doAction(result)
+        sleep(0.1)
+        # board.printBoard()
+    # Advance the game by one frame
+    board.doAction(Action.SOFT_DROP)
+    if board.blockHasLanded:
+        board.updateBoard()
+    # board.printBoard()

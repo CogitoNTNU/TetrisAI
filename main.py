@@ -25,5 +25,6 @@ if __name__ == "__main__":
     
     board = Tetris()
     manager = TetrisGameManager(board)
+    agent = create_agent("heuristic")
     
-    manager.startGame()
+    manager.startDemo(agent)

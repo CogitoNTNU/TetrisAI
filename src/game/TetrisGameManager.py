@@ -4,6 +4,7 @@ from pygame.locals import *
 import time as t
 import sys
 
+from src.agents.agent import Agent, playGameDemoStepByStep
 from src.game.tetris import Action, Tetris
 from src.game.block import COLORS
 
@@ -42,7 +43,6 @@ class TetrisGameManager:
     def startGame(self):
         pygame.init()
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-        # self.screen = pygame.display.set_mode((400, 1080))  # Create a dummy window
         pygame.display.set_caption('Tetris')  # Set window title
 
         clock = pygame.time.Clock()
@@ -57,6 +57,24 @@ class TetrisGameManager:
             clock.tick(60)  # Cap the frame rate to 60 FPS
 
         self.stopGame()
+        
+    def startDemo(self, agent: Agent):
+        pygame.init()
+        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+        pygame.display.set_caption('Tetris')  # Set window title
+        
+        clock = pygame.time.Clock()
+        
+        while not self.board.gameOver:
+            self.draw_board(self.board)
+            playGameDemoStepByStep(agent, self.board)
+            pygame.display.update()
+            clock.tick(60)  # Cap the frame rate to 60 FPS
+            
+        self.stopGame()
+            
+            
+        
         
     def inputHandling(self):
         for event in pygame.event.get():
