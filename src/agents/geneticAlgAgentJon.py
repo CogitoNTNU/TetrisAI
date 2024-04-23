@@ -35,7 +35,8 @@ class GeneticAlgAgentJM:
                 param_list = self.agents[i][0]
                 average_cleared = self.play_game(param_list[0], param_list[1], param_list[2], param_list[3], param_list[4])
                 self.agents[i][1] = average_cleared
-            
+        print(self.getBestPop())
+
 
     def initAgents(self) -> list[list[list[float], float]]:
         number_of_agents = 20
@@ -46,12 +47,9 @@ class GeneticAlgAgentJM:
             bumpiness = random.randrange(-1000, 0)/1000
             holes = random.randrange(-1000, 0)/1000
 
-            # agents = [] 
-            average_cleared = self.play_game(agg_height, max_height, lines_cleared, bumpiness, holes) / number_of_agents
+            average_cleared = self.play_game(agg_height, max_height, lines_cleared, bumpiness, holes)
             self.agents.append([[agg_height, max_height, lines_cleared, bumpiness, holes], average_cleared])
             print(_)
-            
-        # return agents
     
         
     def play_game(self, agg_height, max_height, lines_cleared, bumpiness, holes):
@@ -84,20 +82,16 @@ class GeneticAlgAgentJM:
 
             total_cleared += board.rowsRemoved
         
-        return total_cleared
+        return total_cleared / number_of_rounds
     
 
     def replace_30_percent(self, pop_list: list[list[list[float], float]]) -> list[list[float], float]:
-        new_list = []#: list[list[list[float], float]]
-        
-        
         # Number of pops needed for 30% of total number
         num_pops_needed = int(len(pop_list) * 0.3)
 
-        for _ in range(0, num_pops_needed):
-            new_list.append(self.paring_pop(pop_list))  # liste.append(liste[liste, float]) = liste[liste[liste, float]]
+        new_list = [self.paring_pop(pop_list) for _ in range(num_pops_needed)]
 
-        pop_list: sorted(pop_list, key=lambda x: x[1], reverse=False)[:num_pops_needed]
+        pop_list = sorted(pop_list, key=lambda x: x[1], reverse=False)[num_pops_needed:]
 
         pop_list.extend(new_list)
 
@@ -116,26 +110,23 @@ class GeneticAlgAgentJM:
         highest_values = sorted(random_pop_sample, key=lambda x: x[1], reverse=True)[:2] 
 
         # Gets the child pop of the two pops
-        new_pop = self.fitness_crossover(highest_values[0], highest_values[1])  # liste[liste, float]
+        new_pop = self.fitness_crossover(highest_values[0], highest_values[1])
         
         # Mutate 5% of children pops
         if random.randrange(0,1000)/1000 < 0.2:
             random_parameter = int(random.randint(0,4))
             new_pop[0][random_parameter] = (random.randrange(-200, 200)/1000) * new_pop[0][random_parameter]
             
-        return new_pop  # liste[liste, float]
+        return new_pop
 
 
     def fitness_crossover(self, pop1: list[list[float], float], pop2: list[list[float], float]) -> list[list[float], float]:
         # Combines the two vectors proportionaly by how many lines they cleared
-        parent_pop1 = [h * pop1[1] for h in pop1[0]]
-        parent_pop2 = [h * pop2[1] for h in pop2[0]]
-        child_pop = [h1 + h2 for h1, h2 in zip(parent_pop1, parent_pop2)]
-
-        return [child_pop, 0.0]  # liste[liste, float]
+        child_pop = [h1 * pop1[1] + h2 * pop2[1] for h1, h2 in zip(pop1[0], pop2[0])]
+        return [child_pop, 0.0]
     
 
     def getBestPop(self) -> list[list[float], float]:
         pop_list = self.agents
-        pop_list = sorted(pop_list, key=lambda x: x[1], reverse=False)
+        pop_list = sorted(pop_list, key=lambda x: x[1], reverse=True)
         return pop_list[0]

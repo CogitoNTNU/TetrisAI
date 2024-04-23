@@ -34,6 +34,6 @@ if __name__ == "__main__":
 
 
     algAgent = GeneticAlgAgentJM()
-    algAgent.number_of_selection(1)
+    algAgent.number_of_selection(2)
     print(algAgent.getBestPop())
     
