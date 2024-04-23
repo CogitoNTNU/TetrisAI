@@ -1,5 +1,6 @@
 import random
 import copy
+import numpy as np
 
 from enum import Enum, auto
 
@@ -281,12 +282,12 @@ class Tetris:
             return False
 
         # Check if the blocks are the same
-        for r in range(self.ROWS):
-            for c in range(self.COLUMNS):
-                if self.board[r][c] != other.board[r][c]:
-                    return False
+        # for r in range(self.ROWS):
+        #     for c in range(self.COLUMNS):
+        #         if self.board[r][c] != other.board[r][c]:
+        #             return False
 
-        return True
+        return np.array_equal(self.board, other.board)
 
     def printBoard(self):
         print("_______________________________________")
