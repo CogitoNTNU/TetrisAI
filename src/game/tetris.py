@@ -1,4 +1,5 @@
 import random
+from copy import copy
 import numpy as np
 
 from enum import Enum, auto
@@ -94,17 +95,8 @@ class Tetris:
     def getBoard(self) -> list[list[int]]:
         return self.deep_copy_list_of_lists(self.board)
     
-    def deep_copy_list_of_lists(self, original):
-        if not isinstance(original, list):
-            return original  # Base case: return non-list elements directly
-        
-        copied = []
-        for sublist in original:
-            if isinstance(sublist, list):
-                copied.append(self.deep_copy_list_of_lists(sublist))  # Recursively deep copy nested lists
-            else:
-                copied.append(sublist)
-
+    def deep_copy_list_of_lists(self, original: list[list[int]]) -> list[list[int]]:
+        copied = [row[:] for row in original]
         return copied
 
     def doAction(self, action: Action) -> None:
