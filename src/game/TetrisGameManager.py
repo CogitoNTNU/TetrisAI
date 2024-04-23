@@ -16,6 +16,7 @@ START_HEIGHT = 3
 SCREEN_WIDTH = WIDTH * BLOCK_SIZE
 SCREEN_HEIGHT = (HEIGHT - START_HEIGHT) * BLOCK_SIZE
 
+# Colors
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 BLUE = (0, 0, 255)
@@ -47,7 +48,7 @@ class TetrisGameManager:
         clock = pygame.time.Clock()
 
         while not self.board.gameOver:
-            self.draw_board(self.board.board)
+            self.draw_board(self.board)
             self.inputHandling()
             if self.board.blockHasLanded:
                 self.board.updateBoard()    # Update the board after a block has landed and spawn a new block
@@ -81,13 +82,13 @@ class TetrisGameManager:
             self.currentTime = newTime
             self.movePiece(Action.SOFT_DROP)
             
-    def draw_board(self, board):
+    def draw_board(self, gameState: Tetris):
         self.screen.fill(BLACK)
-        temp = deepcopy(board)
-        temp = temp[START_HEIGHT:]        
+        temp = deepcopy(gameState)
+        temp_board = temp.board[START_HEIGHT:]        
         for y in range(HEIGHT-START_HEIGHT):
             for x in range(WIDTH):
-                if temp[y][x] == 1:
+                if temp_board[y][x] == 1:
                     pygame.draw.rect(self.screen, BLUE, (x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE))
                 pygame.draw.rect(self.screen, WHITE, (x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE), 1)
 

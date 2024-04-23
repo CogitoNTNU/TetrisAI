@@ -202,7 +202,7 @@ class Tetris:
                 if i * 4 + j in self.block.image():
                     self.board[i + self.block.y][
                         j + self.block.x
-                    ] = 1  # self.block.color
+                    ] = self.block.type + 1  # implicit color 1 to 7
         
 
     def _shiftToNewBlock(self):
@@ -215,7 +215,7 @@ class Tetris:
                 if i * 4 + j in self.block.image():
                     self.board[i + self.block.y][
                         j + self.block.x
-                    ] = 1  # self.block.color
+                    ] = self.block.type + 1  # implicit color 1 to 7
 
     def _checkGameOver(self):
         """Checks if the game is over"""
@@ -304,7 +304,7 @@ class Tetris:
         print("‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾")
 
     def _checkCharacter(self, character) -> str:
-        if character == 1:
+        if character >= 1:
             return "■"
         else:
             return "▧"

@@ -46,11 +46,12 @@ def max_height(gameState: Tetris) -> int:
     return max(checkedList)
 
 
+# Does this work? row cleared in get_possible_boards??
 def lines_cleaned(gameState: Tetris) -> int:
     """Retrurns the number of lines cleared."""
     sum = 0
     for row in gameState.board:
-        if all(cell == 1 for cell in row):
+        if all(cell >= 1 for cell in row):
             sum += 1
     return sum
 
@@ -70,7 +71,7 @@ def bumpiness(gameState: Tetris) -> int:
         total_bumpiness += abs(columnHeightMap[key] - columnHeightMap[key + 1])
     return total_bumpiness
 
-
+# Henrik exluse ???
 def aggregate_height(gameState: Tetris) -> int:
     "Returns the sum of all column-heights"
     max_height = gameState.ROWS
@@ -100,7 +101,7 @@ def find_holes(gameState: Tetris) -> int:
     for column in range(gameState.COLUMNS):
         top_block = gameState.ROWS
         for row in range(gameState.ROWS):
-            if (gameState.prevBoard[row][column] == 1) and (row < top_block):
+            if (gameState.prevBoard[row][column] >= 1) and (row < top_block):
                 top_block = row
             if (gameState.prevBoard[row][column] == 0) and (row > top_block):
                 holes += 1
