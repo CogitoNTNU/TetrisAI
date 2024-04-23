@@ -1,5 +1,4 @@
 import random
-import copy
 import numpy as np
 
 from enum import Enum, auto
@@ -66,20 +65,21 @@ class Tetris:
             self.board = self._initBoard()
         else:
             self.board = board
+        
         if block == None:
             self.block = Block(self.START_X, self.START_Y, 0)
         else:
             self.block = block
+        
         if nextBlock == None:
-            self.nextBlock = Block(self.START_X, self.START_Y, 0)
+            self.nextBlock = Block(self.START_X, self.START_Y, random.randint(0, 6))
         else:
             self.nextBlock = nextBlock
 
-        self.prevBoard = copy.deepcopy(self.board)
+        self.prevBoard = self.deep_copy_list_of_lists(self.board)
         self._placeBlock()
 
         self.prevBlock = self.block.copy()
-        self.nextBlock = Block(self.START_X, self.START_Y, random.randint(0, 6))
 
     def _initBoard(self) -> list[list[int]]:
         """Initializes an empty the board"""
@@ -103,7 +103,7 @@ class Tetris:
             if isinstance(sublist, list):
                 copied.append(self.deep_copy_list_of_lists(sublist))  # Recursively deep copy nested lists
             else:
-                raise TypeError("Input must be a list of lists of integers")
+                copied.append(sublist)
 
         return copied
 
@@ -145,7 +145,7 @@ class Tetris:
                 self._checkForFullRows()
                 self._checkGameOver()
                 # Store the previous board state before the new block placement
-                self.prevBoard = copy.deepcopy(self.board)
+                self.prevBoard = self.deep_copy_list_of_lists(self.board)
                 self._shiftToNewBlock()
 
     def isValidBlockPosition(self, block: Block) -> bool:
@@ -207,7 +207,7 @@ class Tetris:
 
     def _placeBlock(self):
         """Places the current block on the board"""
-        self.board = copy.deepcopy(self.prevBoard)
+        self.board = self.deep_copy_list_of_lists(self.prevBoard)
         for i in range(4):
             for j in range(4):
                 if i * 4 + j in self.block.image():
@@ -257,7 +257,7 @@ class Tetris:
         newMatrix.insert(0, [0 for _ in range(self.COLUMNS)])
         self.board = newMatrix
         self.rowsRemoved += 1
-        self.prevBoard = copy.deepcopy(self.board)
+        self.prevBoard = self.deep_copy_list_of_lists(self.board)
 
     def getPossibleBoards(self) -> list["Tetris"]:
         possibleMoves = []
@@ -301,7 +301,7 @@ class Tetris:
         return np.array_equal(self.board, other.board)
     
     def copy(self) -> "Tetris":
-        tetris = Tetris(self.deep_copy_list_of_lists(self.board), self.block.copy(), self.nextBlock.copy())
+        tetris = Tetris(self.deep_copy_list_of_lists(self.prevBoard), self.block.copy(), self.nextBlock.copy())
         return tetris
 
     def printBoard(self):
