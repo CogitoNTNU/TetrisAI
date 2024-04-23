@@ -77,18 +77,17 @@ def playGameDemoStepByStep(agent: Agent, board: Tetris) -> Tetris:
     
     # Get the result of the agent's action
     result = agent.result(board)
+    
+    if Action.HARD_DROP in result:
+        result.remove(Action.HARD_DROP)
+        result.append([Action.SOFT_DROP] * 20)
     # Perform the action(s) on the board
     if isinstance(result, list):
         for action in result:
-            board.doAction(action)
-            sleep(0.3)
-            # board.printBoard()
+            board.doAction(action, demo=True)
     else:
-        board.doAction(result)
-        sleep(0.1)
-        # board.printBoard()
+        board.doAction(action, demo=True)
     # Advance the game by one frame
     board.doAction(Action.SOFT_DROP)
     if board.blockHasLanded:
         board.updateBoard()
-    # board.printBoard()

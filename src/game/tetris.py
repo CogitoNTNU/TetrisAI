@@ -2,8 +2,11 @@ import random
 import copy
 
 from enum import Enum, auto
+from time import sleep
 
 from src.game.block import Block
+
+DEMO_SLEEP = 0.05
 
 
 class Action(Enum):
@@ -91,12 +94,13 @@ class Tetris:
     def getBoard(self) -> list[list[int]]:
         return copy.deepcopy(self.board)
 
-    def doAction(self, action: Action) -> None:
+    def doAction(self, action: Action, demo: bool = False) -> None:
         """
         Performs the specified action on the current block and updates the game board accordingly.
 
         Args:
             action (Action): The action to perform, as defined in the Action enumeration.
+            demo   (bool): If True, the action will be performed with a delay for demonstration purposes.
         """
 
         # Move the new block according to the action
@@ -125,6 +129,8 @@ class Tetris:
         if self.isValidBlockPosition(new_block):
             self.block = new_block
             self._placeBlock()
+            if demo:
+                sleep(DEMO_SLEEP)
 
         
     def updateBoard(self):
@@ -327,7 +333,7 @@ def transition_model(current_state: Tetris, target_state: Tetris) -> list[Action
 
     if current_state == target_state:
         actions.append(Action.SOFT_DROP)
-        print("No transition needed")
+        # print("No transition needed")
         return actions
 
     # Find where the last block is in the target state
