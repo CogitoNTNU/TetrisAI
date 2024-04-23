@@ -34,7 +34,7 @@ class Agent(ABC):
         pass
 
 
-def play_game(agent: Agent, board: Tetris, max_count: int, actions_per_drop: int = 1) -> Tetris:
+def play_game(agent: Agent, board: Tetris, actions_per_drop: int = 1) -> Tetris:
     """
     Plays a game of Tetris with the given agent.
 
@@ -46,9 +46,9 @@ def play_game(agent: Agent, board: Tetris, max_count: int, actions_per_drop: int
     Returns:
         The final state of the board after the game is over.
     """
-    count = 0
+    #count = 0
 
-    while not board.isGameOver() or count < max_count:
+    while not board.isGameOver():
         # Get the result of the agent's action
         for _ in range(actions_per_drop):
             result = agent.result(board)
@@ -59,7 +59,7 @@ def play_game(agent: Agent, board: Tetris, max_count: int, actions_per_drop: int
             else:
                 board.doAction(result)
             
-            count += 1
+            #count += 1
         # Advance the game by one frame
         board.doAction(Action.SOFT_DROP)
         #board.printBoard()

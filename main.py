@@ -9,11 +9,6 @@ from src.agents.heuristic_trainer import train
 from src.agents.geneticAlgAgentJon import GeneticAlgAgentJM
 
 if __name__ == "__main__":
-    algAgent = GeneticAlgAgentJM()
-    algAgent.number_of_selection(1)
-    print(algAgent.getBestPop)
-
-
 
     # game = Tetris()
     # agent: Agent = create_agent("heuristic")
@@ -37,4 +32,8 @@ if __name__ == "__main__":
 
     # train()
 
+
+    algAgent = GeneticAlgAgentJM()
+    algAgent.number_of_selection(1)
+    print(algAgent.getBestPop())
     

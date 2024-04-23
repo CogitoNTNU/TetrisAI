@@ -24,9 +24,10 @@ class GeneticAlgAgentJM:
     agents: list[list[list[float], float]] = []
 
     def number_of_selection(self, number_of_selections: int):
-        self.agents = self.initAgents()
+        self.initAgents()
         for i in range(0, number_of_selections):
             # Select new pops
+            print(len(self.agents))
             self.agents = self.replace_30_percent(self.agents)
 
             # Run new test
@@ -36,9 +37,8 @@ class GeneticAlgAgentJM:
                 self.agents[i][1] = average_cleared
             
 
-
     def initAgents(self) -> list[list[list[float], float]]:
-        number_of_agents = 10
+        number_of_agents = 20
         for _ in range(0, number_of_agents):
             agg_height = random.randrange(-1000, 0)/1000
             max_height = random.randrange(-1000, 0)/1000
@@ -48,7 +48,7 @@ class GeneticAlgAgentJM:
 
             # agents = [] 
             average_cleared = self.play_game(agg_height, max_height, lines_cleared, bumpiness, holes) / number_of_agents
-            self.agents.append = ([agg_height, max_height, lines_cleared, bumpiness, holes], average_cleared)
+            self.agents.append([[agg_height, max_height, lines_cleared, bumpiness, holes], average_cleared])
             print(_)
             
         # return agents
@@ -87,50 +87,55 @@ class GeneticAlgAgentJM:
         return total_cleared
     
 
-    def fitness_crossover(self, pop1: list[list[float], float], pop2: list[list[float], float]) -> list[list[float], float]:
-        # Combines the two vectors proportionaly by how many lines they cleared
-        child_pop = pop1[1] * pop1[0] + pop2[1] * pop2[0]
-
-        return list(child_pop, 0)
-        
-    # TODO create method for fetching a random 10%, and finds the two with highest lines cleared, and makes a child (with 5% chance of mutation)
-    def paring_pop(self, pop_list: list[list[list[float], float]]) -> list[list[float], float]:
-        # Gets the number of pops to select
-        num_pops_to_select: int(len(pop_list) * 0.1)
-
-        # Get a sample of pops based on the previous number
-        random_pop_sample: random.sample(pop_list, num_pops_to_select)
-
-        # Gets the two pops with the highest lines cleared
-        highest_values: sorted(random_pop_sample, key=lambda x: x[1], reverse=True)[:2] 
-
-        # Gets the child pop of the two pops
-        new_pop = self.fitness_crossover(highest_values[0], highest_values[1])
-        
-        # Mutate 5% of children pops
-        if random.random(0,1) < 0.2:
-            random_parameter = int(random.randint(0,4))
-            new_pop[0][random_parameter] = (random.randrange(-200, 200)/1000) * new_pop[0][random_parameter]
-            
-        return new_pop
-    
-
     def replace_30_percent(self, pop_list: list[list[list[float], float]]) -> list[list[float], float]:
-        new_list: list[list[list[float], float]]
+        new_list = []#: list[list[list[float], float]]
+        
         
         # Number of pops needed for 30% of total number
-        num_pops_needed: int(len(pop_list) * 0.3)
+        num_pops_needed = int(len(pop_list) * 0.3)
 
         for _ in range(0, num_pops_needed):
-            new_list.append(self.paring_pop(pop_list))
+            new_list.append(self.paring_pop(pop_list))  # liste.append(liste[liste, float]) = liste[liste[liste, float]]
 
         pop_list: sorted(pop_list, key=lambda x: x[1], reverse=False)[:num_pops_needed]
 
-        pop_list.append(new_list)
+        pop_list.extend(new_list)
 
         return pop_list
+    
 
+     # TODO create method for fetching a random 10%, and finds the two with highest lines cleared, and makes a child (with 5% chance of mutation)
+    def paring_pop(self, pop_list: list[list[list[float], float]]) -> list[list[float], float]:
+        # Gets the number of pops to select
+        num_pops_to_select = int(len(pop_list) * 0.1)
+
+        # Get a sample of pops based on the previous number
+        random_pop_sample = random.sample(pop_list, num_pops_to_select)
+
+        # Gets the two pops with the highest lines cleared
+        highest_values = sorted(random_pop_sample, key=lambda x: x[1], reverse=True)[:2] 
+
+        # Gets the child pop of the two pops
+        new_pop = self.fitness_crossover(highest_values[0], highest_values[1])  # liste[liste, float]
+        
+        # Mutate 5% of children pops
+        if random.randrange(0,1000)/1000 < 0.2:
+            random_parameter = int(random.randint(0,4))
+            new_pop[0][random_parameter] = (random.randrange(-200, 200)/1000) * new_pop[0][random_parameter]
+            
+        return new_pop  # liste[liste, float]
+
+
+    def fitness_crossover(self, pop1: list[list[float], float], pop2: list[list[float], float]) -> list[list[float], float]:
+        # Combines the two vectors proportionaly by how many lines they cleared
+        parent_pop1 = [h * pop1[1] for h in pop1[0]]
+        parent_pop2 = [h * pop2[1] for h in pop2[0]]
+        child_pop = [h1 + h2 for h1, h2 in zip(parent_pop1, parent_pop2)]
+
+        return [child_pop, 0.0]  # liste[liste, float]
+    
 
     def getBestPop(self) -> list[list[float], float]:
-        pop_list: sorted(pop_list, key, key=lambda x: x[1], reverse=False)
+        pop_list = self.agents
+        pop_list = sorted(pop_list, key=lambda x: x[1], reverse=False)
         return pop_list[0]
