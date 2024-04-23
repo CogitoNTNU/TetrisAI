@@ -5,8 +5,10 @@ from src.agents.agent_factory import create_agent
 from src.agents.heuristic import (
     utility
 )
+
 from src.agents.heuristic_trainer import train
 from src.agents.geneticAlgAgentJon import GeneticAlgAgentJM
+
 
 def test():
     # algAgent = GeneticAlgAgentJM()
@@ -35,6 +37,7 @@ if __name__ == "__main__":
     #     print(utility(boards, 0, -1, 0, 0, 0))
     #     boards.printBoard()
     
+<<<<<<< HEAD
     # board = Tetris()
     # manager = TetrisGameManager(board)
     # agent = create_agent("heuristic")
@@ -57,3 +60,11 @@ if __name__ == "__main__":
     #train()
     
 >>>>>>> c14418b (feat: :rocket: genetic agent class and it's training algorithm commenced)
+=======
+    board = Tetris()
+    # manager = TetrisGameManager(board)
+    # agent = create_agent("heuristic")
+    agents = train_genetic_algorithm(10)
+
+    # manager.startDemo(agent)
+>>>>>>> fa9eeb9 (Co-authored-by: Håvard Fossdal <HFossdal@users.noreply.github.com>)
