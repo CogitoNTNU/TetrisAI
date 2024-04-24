@@ -27,11 +27,10 @@ def test_heuristic_height_aggregate_empty_board():
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ]
     board = Tetris(initBoard)
-    assert aggregate_heights(board) == 0
+    assert calculate_heights(board)[0] == 0, "Expected aggregate height of 0 for an empty board"
 
 
 def test_heuristic_aggregate_with_equal_heights():
-    
 
     initBoard = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -57,7 +56,7 @@ def test_heuristic_aggregate_with_equal_heights():
     ]
     board = Tetris(initBoard)
     expected = 3 * 9
-    assert aggregate_heights(board) == expected
+    assert calculate_heights(board)[0] == expected
 
 
 def test_heuristic_high_line_heights():
@@ -86,7 +85,7 @@ def test_heuristic_high_line_heights():
     ]
     board = Tetris(initBoard)
     expected = 3 * 9
-    assert aggregate_heights(board) == expected
+    assert calculate_heights(board)[0] == expected
 
 
 def test_heuristic_different_heights():
@@ -115,7 +114,7 @@ def test_heuristic_different_heights():
     ]
     board = Tetris(initBoard)
     expected = 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10
-    assert aggregate_heights(board) == expected
+    assert calculate_heights(board)[0] == expected
 
 
 def test_max_height_empty_board():
@@ -142,7 +141,7 @@ def test_max_height_empty_board():
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ]
     board = Tetris(initBoard)
-    assert max_height(board) == 0, "Expected max height of 0 for an empty board"
+    assert calculate_heights(board)[1] == 0, "Expected max height of 0 for an empty board"
 
 
 def test_max_height_equal_heights():
@@ -170,7 +169,7 @@ def test_max_height_equal_heights():
     ]
     board = Tetris(initBoard)
     assert (
-        max_height(board) == 20
+        calculate_heights(board)[1] == 20
     ), "Expected max height of 20 for a board with equal heights"
 
 
@@ -199,7 +198,7 @@ def test_max_height_takes_highest():
     ]
     board = Tetris(initBoard)
     assert (
-        max_height(board) == 20
+        calculate_heights(board)[1] == 20
     ), "Expected max height of 20 for a single column with height 20"
 
 
@@ -335,7 +334,9 @@ def test_bumpiness_empty():
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ]
-    assert bumpiness(board) == 0
+
+    assert calculate_heights(board)[2] == 0
+    #assert bumpiness(board) == 0
 
 
 def test_bumpiness_five():
@@ -363,7 +364,7 @@ def test_bumpiness_five():
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     ]
     board = Tetris(initBoard)
-    assert bumpiness(board) == 2
+    assert calculate_heights(board)[2] == 2
 
 
 def test_bumpiness_nine():
@@ -391,7 +392,7 @@ def test_bumpiness_nine():
         [1, 0, 1, 0, 1, 0, 1, 0, 1, 0],
     ]
     board = Tetris(initBoard)
-    assert bumpiness(board) == 9
+    assert calculate_heights(board)[2] == 9
 
 
 def test_bumpiness_with_holes():
@@ -419,7 +420,7 @@ def test_bumpiness_with_holes():
         [1, 1, 1, 0, 1, 0, 1, 0, 1, 0],
     ]
     board = Tetris(initBoard)
-    assert bumpiness(board) == 0
+    assert calculate_heights(board)[2] == 0
 
 
 def test_bumpiness_40():
@@ -447,7 +448,7 @@ def test_bumpiness_40():
         [1, 0, 1, 0, 1, 0, 1, 0, 1, 0],
     ]
     board = Tetris(initBoard)
-    assert bumpiness(board) == 40
+    assert calculate_heights(board)[2] == 40
 
 
 def test_aggregate_height_zero():
