@@ -150,28 +150,19 @@ class Tetris:
         Returns:
             bool: True if the block's position is valid, False otherwise.
         """
-
-        if self._outOfBounds(block):
-            return False
-
-        if self._intersects(block):
-            return False
-
-        if self.isGameOver():
-            return False
-
-        return True
+        return not (self._outOfBounds(block) or self._intersects(block) or self.isGameOver())
 
     def _outOfBounds(self, block: Block) -> bool:
         """Checks if the block is out of bounds"""
         for row in range(4):
             for column in range(4):
                 if row * 4 + column in block.image():
+                    block_x, block_y = block.x + column, block.y + row
                     if (
-                        row + block.y > self.ROWS - 1
-                        or row + block.y < 0
-                        or column + block.x > self.COLUMNS - 1
-                        or column + block.x < 0
+                        block_y > self.ROWS - 1
+                        or block_y < 0
+                        or block_x > self.COLUMNS - 1
+                        or block_x < 0
                     ):
                         return True
 
@@ -184,13 +175,9 @@ class Tetris:
                 if row * 4 + column in block.image():
                     # Check if the block intersects with the board
                     # That is, if the block is on top of another block that is not itself
-                    blockOverlaps = self.prevBoard[row + block.y][column + block.x] > 0
-                    isItSelf = (
-                        block.x + column == self.block.x
-                        and block.y + row == self.block.y
-                    )
-
-                    if blockOverlaps and not isItSelf:
+                    block_x, block_y = block.x + column, block.y + row
+                    prev_value = self.prevBoard[block_y][block_x]
+                    if prev_value > 0 and (block_x, block_y) != (self.block.x, self.block.y):
                         return True
         return False
 
@@ -290,7 +277,7 @@ class Tetris:
         if not isinstance(other, Tetris):
             return False
 
-        return np.array_equal(self.board, other.board)
+        return self.board == other.board
     
     def copy(self) -> "Tetris":
         tetris = Tetris(self.deep_copy_list_of_lists(self.prevBoard), self.block.copy(), self.nextBlock.copy())
