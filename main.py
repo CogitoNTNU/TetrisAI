@@ -8,6 +8,16 @@ from src.agents.heuristic import (
 from src.agents.heuristic_trainer import train
 from src.agents.geneticAlgAgentJon import GeneticAlgAgentJM
 
+def test():
+    # algAgent = GeneticAlgAgentJM()
+    # algAgent.number_of_selection(2)
+    # print(algAgent.getBestPop())
+    
+    board = Tetris()
+    agent = create_agent("heuristic")
+    manager = TetrisGameManager(board)
+    manager.startDemo(agent)
+    
 if __name__ == "__main__":
 
     # game = Tetris()
@@ -25,16 +35,20 @@ if __name__ == "__main__":
     #     print(utility(boards, 0, -1, 0, 0, 0))
     #     boards.printBoard()
     
-    board = Tetris()
-    manager = TetrisGameManager(board)
-    agent = create_agent("heuristic")
+    # board = Tetris()
+    # manager = TetrisGameManager(board)
+    # agent = create_agent("heuristic")
     
-    # manager.startGame()
+    # # manager.startGame()
 
-    # train()
+    # # train()
 
 
-    algAgent = GeneticAlgAgentJM()
-    algAgent.number_of_selection(2)
-    print(algAgent.getBestPop())
+    # algAgent = GeneticAlgAgentJM()
+    # algAgent.number_of_selection(2)
+    # print(algAgent.getBestPop())
     
+    test()
+    
+        
+    # cProfile.run('main()', 'restats')  
