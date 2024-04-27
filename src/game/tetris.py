@@ -280,7 +280,7 @@ class Tetris:
                 if not moveBoard.isValidBlockPosition(moveBoard.block):
                     continue
 
-                moveBoard.prevBoard = copy.deepcopy(moveBoard.board)
+                moveBoard.prevBoard = moveBoard.deep_copy_list_of_lists(moveBoard.board)
                 if moveBoard not in possibleMoves:
                     possibleMoves.append(moveBoard)
 
