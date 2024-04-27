@@ -47,17 +47,20 @@ def play_game(agent: Agent, board: Tetris, actions_per_drop: int = 1) -> Tetris:
     Returns:
         The final state of the board after the game is over.
     """
+    #count = 0
+
     while not board.isGameOver():
         # Get the result of the agent's action
-        result = agent.result(board)
-        # Perform the action(s) on the board
-        if isinstance(result, list):
-            for action in result:
-                board.doAction(action)
-                # board.printBoard()
-        else:
-            board.doAction(result)
-            # board.printBoard()
+        for _ in range(actions_per_drop):
+            result = agent.result(board)
+            # Perform the action(s) on the board
+            if isinstance(result, list):
+                for action in result:
+                    board.doAction(action)
+            else:
+                board.doAction(result)
+            
+            #count += 1
         # Advance the game by one frame
         board.doAction(Action.SOFT_DROP)
         if board.blockHasLanded:

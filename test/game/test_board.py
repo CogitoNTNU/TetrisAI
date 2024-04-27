@@ -35,6 +35,11 @@ def test_board_equal_for_the_same_object():
     board1 = Tetris()
     assert board1 == board1
 
+def test_board_equal_for_equal_different_objects():
+    board1 = Tetris()
+    board2 = board1.copy()
+    assert board1 == board1
+
 
 def test_clear_row():
     board: Tetris = Tetris()

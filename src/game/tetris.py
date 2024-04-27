@@ -1,5 +1,6 @@
 import random
-import copy
+from copy import copy
+import numpy as np
 
 from enum import Enum, auto
 from time import sleep
@@ -58,7 +59,7 @@ class Tetris:
     START_X = 3
     START_Y = 0
 
-    def __init__(self, board: list[list[int]] = None, block: Block = None):
+    def __init__(self, board: list[list[int]] = None, block: Block = None, nextBlock: Block = None):
         """
         Initializes a new game board instance, setting up an empty board, placing the first block, and selecting the next block.
         """
@@ -73,8 +74,13 @@ class Tetris:
             self.block = Block(self.START_X, self.START_Y, 0)
         else:
             self.block = block
-        self.prevBoard = copy.deepcopy(self.board)
+        
+        if nextBlock == None:
+            self.nextBlock = Block(self.START_X, self.START_Y, random.randint(0, 6))
+        else:
+            self.nextBlock = nextBlock
 
+        self.prevBoard = self.deep_copy_list_of_lists(self.board)
         self._placeBlock()
 
         self.prevBlock = self.block.copy()
@@ -92,7 +98,11 @@ class Tetris:
         return board
 
     def getBoard(self) -> list[list[int]]:
-        return copy.deepcopy(self.board)
+        return self.deep_copy_list_of_lists(self.board)
+    
+    def deep_copy_list_of_lists(self, original: list[list[int]]) -> list[list[int]]:
+        copied = [row[:] for row in original]
+        return copied
 
     def doAction(self, action: Action, demo: bool = False) -> None:
         """
@@ -138,7 +148,7 @@ class Tetris:
         self._checkForFullRows()
         self._checkGameOver()
         # Store the previous board state before the new block placement
-        self.prevBoard = copy.deepcopy(self.board)
+        self.prevBoard = self.deep_copy_list_of_lists(self.board)
         if self.isGameOver():
             return
         self._shiftToNewBlock()
@@ -153,28 +163,19 @@ class Tetris:
         Returns:
             bool: True if the block's position is valid, False otherwise.
         """
-
-        if self._outOfBounds(block):
-            return False
-
-        if self._intersects(block):
-            return False
-
-        if self.isGameOver():
-            return False
-
-        return True
+        return not (self._outOfBounds(block) or self._intersects(block) or self.isGameOver())
 
     def _outOfBounds(self, block: Block) -> bool:
         """Checks if the block is out of bounds"""
         for row in range(4):
             for column in range(4):
                 if row * 4 + column in block.image():
+                    block_x, block_y = block.x + column, block.y + row
                     if (
-                        row + block.y > self.ROWS - 1
-                        or row + block.y < 0
-                        or column + block.x > self.COLUMNS - 1
-                        or column + block.x < 0
+                        block_y > self.ROWS - 1
+                        or block_y < 0
+                        or block_x > self.COLUMNS - 1
+                        or block_x < 0
                     ):
                         return True
 
@@ -187,13 +188,9 @@ class Tetris:
                 if row * 4 + column in block.image():
                     # Check if the block intersects with the board
                     # That is, if the block is on top of another block that is not itself
-                    blockOverlaps = self.prevBoard[row + block.y][column + block.x] > 0
-                    isItSelf = (
-                        block.x + column == self.block.x
-                        and block.y + row == self.block.y
-                    )
-
-                    if blockOverlaps and not isItSelf:
+                    block_x, block_y = block.x + column, block.y + row
+                    prev_value = self.prevBoard[block_y][block_x]
+                    if prev_value > 0 and (block_x, block_y) != (self.block.x, self.block.y):
                         return True
         return False
 
@@ -202,7 +199,7 @@ class Tetris:
 
     def _placeBlock(self):
         """Places the current block on the board"""
-        self.board = copy.deepcopy(self.prevBoard)
+        self.board = self.deep_copy_list_of_lists(self.prevBoard)
         for i in range(4):
             for j in range(4):
                 if i * 4 + j in self.block.image():
@@ -253,7 +250,7 @@ class Tetris:
         newMatrix.insert(0, [0 for _ in range(self.COLUMNS)])
         self.board = newMatrix
         self.rowsRemoved += 1
-        self.prevBoard = copy.deepcopy(self.board)
+        self.prevBoard = self.deep_copy_list_of_lists(self.board)
 
     def getPossibleBoards(self) -> list["Tetris"]:
         possibleMoves = []
@@ -266,10 +263,10 @@ class Tetris:
         else:
             rotations = 1
 
-        rotationBoard = copy.deepcopy(self)
+        rotationBoard = self.copy()
         for _ in range(rotations):
             for column in range(0, self.COLUMNS + (4 - self.block.getRightmostImageCoordinate())):
-                moveBoard = copy.deepcopy(rotationBoard)
+                moveBoard = rotationBoard.copy()
 
                 # Calibrate the to the left
                 toLeft = moveBoard.block.x + moveBoard.block.getLeftmostImageCoordinate()
@@ -295,13 +292,11 @@ class Tetris:
         if not isinstance(other, Tetris):
             return False
 
-        # Check if the blocks are the same
-        for r in range(self.ROWS):
-            for c in range(self.COLUMNS):
-                if self.board[r][c] != other.board[r][c]:
-                    return False
-
-        return True
+        return self.board == other.board
+    
+    def copy(self) -> "Tetris":
+        tetris = Tetris(self.deep_copy_list_of_lists(self.prevBoard), self.block.copy(), self.nextBlock.copy())
+        return tetris
 
     def printBoard(self):
         print("_______________________________________")

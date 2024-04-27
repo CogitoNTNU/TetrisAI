@@ -7,10 +7,12 @@ def utility(gameState: Tetris, aggregate_heights_weight: float, max_height_weigh
             lines_cleared_weight: float, bumpiness_weight: float, holes_weight: float) -> float:
     """Returns the utility of the given game state."""
     sum = 0
-    sum += aggregate_heights_weight * aggregate_heights(gameState)
-    sum += max_height_weight * max_height(gameState)
+    aggregate, max_height, bumpiness = calculate_heights(gameState)
+
+    sum += aggregate_heights_weight * aggregate
+    sum += max_height_weight * max_height
     sum += lines_cleared_weight * lines_cleaned(gameState)
-    sum += bumpiness_weight * bumpiness(gameState)
+    sum += bumpiness_weight * bumpiness
     sum += holes_weight * find_holes(gameState)
 
     # print("--------------------")
@@ -23,6 +25,32 @@ def utility(gameState: Tetris, aggregate_heights_weight: float, max_height_weigh
 
     return sum
 
+def calculate_heights(gameState: Tetris) -> tuple[int, int, int]:
+    """Calculates the sum and maximum height of the columns in the game state."""
+    #sum_heights = 0
+    max_height = 0
+    checked_list = [0] * gameState.COLUMNS
+
+
+    total_bumpiness = 0
+    columnHeightMap = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}
+
+
+
+    for row in range(gameState.ROWS - 1, -1, -1):
+        for column in range(gameState.COLUMNS):
+            if gameState.prevBoard[row][column] != 0:
+                height = gameState.ROWS - row
+                checked_list[column] = height
+                max_height = max(max_height, height)
+                columnHeightMap[column] = gameState.ROWS - row
+    
+
+    for key in range(gameState.COLUMNS - 1):
+        total_bumpiness += abs(columnHeightMap[key] - columnHeightMap[key + 1])
+                
+
+    return sum(checked_list), max_height , total_bumpiness
 
 def aggregate_heights(gameState: Tetris) -> int: 
     """Returns the sum of the heights of the columns in the game state."""
@@ -65,7 +93,7 @@ def bumpiness(gameState: Tetris) -> int:
         for row in range(gameState.SPAWN_ROWS, gameState.ROWS):
             if gameState.prevBoard[row][column] > 0:
                 if columnHeightMap[column] == 0:
-                    columnHeightMap[column] = max_height - row
+                    columnHeightMap[column] = gameState.ROWS - row
 
     for key in range(gameState.COLUMNS - 1):
         total_bumpiness += abs(columnHeightMap[key] - columnHeightMap[key + 1])

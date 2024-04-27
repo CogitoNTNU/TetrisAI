@@ -5,18 +5,20 @@ from src.agents.agent_factory import create_agent
 from src.agents.heuristic import (
     utility
 )
+from src.agents.heuristic_trainer import train
+from src.agents.geneticAlgAgentJon import GeneticAlgAgentJM
 
 if __name__ == "__main__":
+
     # game = Tetris()
     # agent: Agent = create_agent("heuristic")
     # sum_rows_removed = 0
-    # for i in range(1):
+    # for i in range(10):
     #     end_board = play_game(agent, game, 7)
     #     end_board.printBoard()
     #     sum_rows_removed += end_board.rowsRemoved
-    #     print(f"Rows removed: {end_board.rowsRemoved}")
 
-    # print(f"Average rows removed: {sum_rows_removed}")
+    # print(f"Average rows removed: {sum_rows_removed / 10}")
 
     # possible_moves = game.getPossibleBoards()
     # for boards in possible_moves:
@@ -27,4 +29,12 @@ if __name__ == "__main__":
     manager = TetrisGameManager(board)
     agent = create_agent("heuristic")
     
-    manager.startDemo(agent)
+    # manager.startGame()
+
+    # train()
+
+
+    algAgent = GeneticAlgAgentJM()
+    algAgent.number_of_selection(2)
+    print(algAgent.getBestPop())
+    
