@@ -504,3 +504,53 @@ def test_transition_model_execution_of_invalid_move_sequence():
     for action in actions:
         current_board.doAction(action)
     assert current_board == target_board
+    
+def test_transition_model_result_complex():
+
+    innitBoard = [
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 1, 1, 0, 0],
+        [0, 0, 0, 0, 0, 1, 1, 0, 0, 0],
+        [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+        [0, 0, 0, 0, 1, 1, 0, 0, 0, 0],
+        [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+        [1, 1, 1, 1, 1, 1, 0, 0, 1, 1],
+    ]
+    
+    innitBlock1 = Block(3, 0, 0) # I    
+
+    current_board: Tetris = Tetris(innitBoard, innitBlock1)
+    target_board: Tetris = copy.deepcopy(current_board)
+    settup = [Action.ROTATE_CLOCKWISE]
+    for x in range(3): settup.append(Action.MOVE_RIGHT)  
+    for x in range(18): settup.append(Action.SOFT_DROP)    
+    for x in range(2): settup.append(Action.MOVE_LEFT)  
+    settup.append(Action.HARD_DROP)
+    
+    for action in settup:
+        target_board.doAction(action)
+
+    # Test if the actions from the transition model result in the target board
+    actions = transition_model(current_board, target_board)
+    for action in actions:
+        current_board.doAction(action)
+        
+    assert current_board == target_board
+    
+    
