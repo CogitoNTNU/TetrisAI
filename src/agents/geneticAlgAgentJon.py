@@ -146,7 +146,8 @@ class GeneticAlgAgentJM:
 
     def fitness_crossover(self, pop1: Individual, pop2: Individual) -> Individual:
         # Combines the two vectors proportionaly by how many lines they cleared
-        child_pop = [h1 * pop1.parameters + h2 * pop2.parameters for h1, h2 in zip(pop1.lines_cleared, pop2.lines_cleared)]
+        child_pop: Individual
+        child_pop.parameters = [h1 * pop1.parameters + h2 * pop2.parameters for h1, h2 in zip(pop1.lines_cleared, pop2.lines_cleared)]
         child_pop.lines_cleared = 0.0
         return child_pop
     
