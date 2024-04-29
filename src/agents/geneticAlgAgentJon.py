@@ -113,7 +113,7 @@ class GeneticAlgAgentJM:
 
         new_list = [self.paring_pop(pop_list) for _ in range(num_pops_needed)]
 
-        pop_list.agents = sorted(pop_list.agents, key=lambda x: x[1], reverse=False)[num_pops_needed:]
+        pop_list.agents = sorted(pop_list.agents, key=lambda x: x.lines_cleared, reverse=False)[num_pops_needed:]
 
         pop_list.extend(new_list)
 
@@ -129,7 +129,7 @@ class GeneticAlgAgentJM:
         random_pop_sample = random.sample(pop_list.agents, num_pops_to_select)
 
         # Gets the two pops with the highest lines cleared
-        highest_values = sorted(random_pop_sample, key=lambda x: x[1], reverse=True)[:2] 
+        highest_values = sorted(random_pop_sample, key=lambda x: x.lines_cleared, reverse=True)[:2] 
 
         # Gets the child pop of the two pops
         new_pop = self.fitness_crossover(highest_values[0], highest_values[1])
@@ -152,5 +152,5 @@ class GeneticAlgAgentJM:
 
     def getBestPop(self) -> Individual:
         pop_list = self.pop
-        pop_list = sorted(pop_list.agents, key=lambda x: x[1], reverse=True)
+        pop_list = sorted(pop_list.agents, key=lambda x: x.lines_cleared, reverse=True)
         return pop_list[0]
