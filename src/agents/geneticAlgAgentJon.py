@@ -1,5 +1,8 @@
 import random
 import numpy as np
+from dataclasses import dataclass
+from concurrent.futures import ThreadPoolExecutor
+
 from src.game.tetris import *
 from src.agents.agent_factory import create_agent
 from src.agents.agent import Agent
@@ -21,27 +24,43 @@ from src.agents.heuristic_with_parameters_agent import *
 # TODO create method for fetching a random 10%, and finds the two with highest lines cleared, and makes a child (with 5% chance of mutation)
 # TODO create method that makes 30% new agents from existing agents (last method), replace worst 30% with the new agents
 
+@dataclass
+class Individual:
+    parameters: list[float]
+    lines_cleared: float
+
+@dataclass 
+class Population:
+    agents: list[Individual]
+
+
 class GeneticAlgAgentJM:
-    agents: list[list[list[float], float]] = []
+    pop: Population = Population([])
 
     def number_of_selection(self, number_of_selections: int):
-        self.initAgents()
-        for i in range(0, number_of_selections):
+        self.initAgent(20)
+        for number in range(number_of_selections):
             # Select new pops
-            print(len(self.agents))
-            self.agents = self.replace_30_percent(self.agents)
+            print(f"[INFO] Selecting new pops: {self.pop}")
+            
+            self.pop.agents = self.replace_30_percent(self.pop)
 
             # Run new test
-            for i in range(len(self.agents)):
-                param_list = self.agents[i][0]
-                average_cleared = self.play_game(param_list[0], param_list[1], param_list[2], param_list[3], param_list[4])
-                self.agents[i][1] = average_cleared
+            for agent in self.pop.agents:
+            # for i in range(len(self.pop)):
+                
+                param_list = agent.parameters
+                average_cleared = self.play_game(param_list[0], param_list[1], param_list[2], param_list[3], param_list[4])                
+                agent.lines_cleared = average_cleared
         
-            print(self.getBestPop())
+            print(f"[INFO] Best individual: {self.getBestPop()}")
 
+    def initAgents(self, number_of_agents: int = 5) -> list[list[list[float], float]]:
+        with ThreadPoolExecutor() as executor:
+            executor.map(self.initAgent, range(number_of_agents))
+            return self.agents
 
-    def initAgents(self) -> list[list[list[float], float]]:
-        number_of_agents = 20
+    def initAgent(self, number_of_agents: int):
         for _ in range(0, number_of_agents):
             agg_height = random.randrange(-1000, 0)/1000
             max_height = random.randrange(-1000, 0)/1000
@@ -50,7 +69,7 @@ class GeneticAlgAgentJM:
             holes = random.randrange(-1000, 0)/1000
 
             average_cleared = self.play_game(agg_height, max_height, lines_cleared, bumpiness, holes)
-            self.agents.append([[agg_height, max_height, lines_cleared, bumpiness, holes], average_cleared])
+            self.pop.agents.append(Individual([agg_height, max_height, lines_cleared, bumpiness, holes], average_cleared))
             print(_)
     
         
@@ -87,13 +106,14 @@ class GeneticAlgAgentJM:
         return total_cleared / number_of_rounds
     
 
-    def replace_30_percent(self, pop_list: list[list[list[float], float]]) -> list[list[float], float]:
+    def replace_30_percent(self, pop_list: Population) -> Population:
+        """" Creates 30% new agents from existing agents, and replaces the worst 30% with the new agents """
         # Number of pops needed for 30% of total number
-        num_pops_needed = int(len(pop_list) * 0.3)
+        num_pops_needed = int(len(pop_list.agents) * 0.3)
 
         new_list = [self.paring_pop(pop_list) for _ in range(num_pops_needed)]
 
-        pop_list = sorted(pop_list, key=lambda x: x[1], reverse=False)[num_pops_needed:]
+        pop_list.agents = sorted(pop_list.agents, key=lambda x: x[1], reverse=False)[num_pops_needed:]
 
         pop_list.extend(new_list)
 
@@ -101,7 +121,7 @@ class GeneticAlgAgentJM:
     
 
      # TODO create method for fetching a random 10%, and finds the two with highest lines cleared, and makes a child (with 5% chance of mutation)
-    def paring_pop(self, pop_list: list[list[list[float], float]]) -> list[list[float], float]:
+    def paring_pop(self, pop_list: Population) -> Population:
         # Gets the number of pops to select
         num_pops_to_select = int(len(pop_list) * 0.1)
 
@@ -124,13 +144,13 @@ class GeneticAlgAgentJM:
         return new_pop
 
 
-    def fitness_crossover(self, pop1: list[list[float], float], pop2: list[list[float], float]) -> list[list[float], float]:
+    def fitness_crossover(self, pop1: Population, pop2: Population) -> Population:
         # Combines the two vectors proportionaly by how many lines they cleared
         child_pop = [h1 * pop1[1] + h2 * pop2[1] for h1, h2 in zip(pop1[0], pop2[0])]
         return [child_pop, 0.0]
     
 
-    def getBestPop(self) -> list[list[float], float]:
-        pop_list = self.agents
+    def getBestPop(self) -> Individual:
+        pop_list = self.pop
         pop_list = sorted(pop_list, key=lambda x: x[1], reverse=True)
         return pop_list[0]
