@@ -113,13 +113,17 @@ class GeneticAlgAgentJM:
 
         # Gets the child pop of the two pops
         new_pop = self.fitness_crossover(highest_values[0], highest_values[1])
-        
+        norm = np.linalg.norm(new_pop[0])
+        if norm == 0:
+            norm = 1e-10  # or some small constant
+        new_pop[0] = (new_pop[0] / norm).tolist()
+
         # Mutate 5% of children pops
-        if random.randrange(0,1000)/1000 < 0.2:
+        if random.randrange(0,1000)/1000 < 0.05:
             random_parameter = int(random.randint(0,4))
             new_pop[0][random_parameter] = (random.randrange(-200, 200)/1000) * new_pop[0][random_parameter]
 
-        new_pop[0] = (new_pop[0] / np.linalg.norm(new_pop[0])).tolist()
+        #new_pop[0] = (new_pop[0] / np.linalg.norm(new_pop[0])).tolist()
 
         return new_pop
 
