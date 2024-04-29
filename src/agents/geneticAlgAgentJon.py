@@ -80,6 +80,8 @@ class GeneticAlgAgentJM:
                 move += 1
             # Advance the game by one frame
             board.doAction(Action.SOFT_DROP)
+            if board.blockHasLanded:
+                board.updateBoard()
             #board.printBoard()
 
             total_cleared += board.rowsRemoved
@@ -116,7 +118,7 @@ class GeneticAlgAgentJM:
         norm = np.linalg.norm(new_pop[0])
         if norm == 0:
             norm = 1e-10  # or some small constant
-        new_pop[0] = (new_pop[0] / norm).tolist()
+        new_pop[0] = [i / norm for i in new_pop[0]]
 
         # Mutate 5% of children pops
         if random.randrange(0,1000)/1000 < 0.05:
