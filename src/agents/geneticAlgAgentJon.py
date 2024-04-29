@@ -152,5 +152,5 @@ class GeneticAlgAgentJM:
 
     def getBestPop(self) -> Individual:
         pop_list = self.pop
-        pop_list = sorted(pop_list, key=lambda x: x[1], reverse=True)
+        pop_list = sorted(pop_list.agents, key=lambda x: x[1], reverse=True)
         return pop_list[0]
