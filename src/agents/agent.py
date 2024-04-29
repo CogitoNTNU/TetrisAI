@@ -6,7 +6,8 @@ class for all agents in the simulation.
 from abc import ABC, abstractmethod
 from typing import Any, Union
 
-from src.game.board import Action, Board
+from src.game.tetris import Action, Tetris
+from time import sleep
 
 
 class Agent(ABC):
@@ -21,7 +22,7 @@ class Agent(ABC):
         return hasattr(subclass, "result") and callable(subclass.result)
 
     @abstractmethod
-    def result(board: Board) -> Union[Action, list[Action]]:
+    def result(board: Tetris) -> Union[Action, list[Action]]:
         """
         Determines the next move for the agent based on the current state of the board.
 
@@ -34,7 +35,7 @@ class Agent(ABC):
         pass
 
 
-def play_game(agent: Agent, board: Board, actions_per_drop: int = 1) -> Board:
+def play_game(agent: Agent, board: Tetris, actions_per_drop: int = 1) -> Tetris:
     """
     Plays a game of Tetris with the given agent.
 
@@ -46,6 +47,8 @@ def play_game(agent: Agent, board: Board, actions_per_drop: int = 1) -> Board:
     Returns:
         The final state of the board after the game is over.
     """
+    #count = 0
+
     while not board.isGameOver():
         # Get the result of the agent's action
         for _ in range(actions_per_drop):
@@ -56,8 +59,38 @@ def play_game(agent: Agent, board: Board, actions_per_drop: int = 1) -> Board:
                     board.doAction(action)
             else:
                 board.doAction(result)
+            
+            #count += 1
         # Advance the game by one frame
         board.doAction(Action.SOFT_DROP)
-        board.printBoard()
+        if board.blockHasLanded:
+            board.updateBoard()
+        #board.printBoard()
 
     return board
+
+def playGameDemoStepByStep(agent: Agent, board: Tetris) -> Tetris:
+    """
+    Plays a game of Tetris with the given agent where actions are slowed down for demonstration purposes.
+
+    Args:
+        agent (Agent): The agent to play the game.
+        board (Board): The initial state of the board.
+    """
+    
+    # Get the result of the agent's action
+    result = agent.result(board)
+    
+    if Action.HARD_DROP in result:
+        result.remove(Action.HARD_DROP)
+        result.append([Action.SOFT_DROP] * 20)
+    # Perform the action(s) on the board
+    if isinstance(result, list):
+        for action in result:
+            board.doAction(action, demo=True)
+    else:
+        board.doAction(action, demo=True)
+    # Advance the game by one frame
+    board.doAction(Action.SOFT_DROP)
+    if board.blockHasLanded:
+        board.updateBoard()

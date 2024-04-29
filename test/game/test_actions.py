@@ -1,17 +1,17 @@
-from src.game.board import Action, Board
+from src.game.tetris import Action, Tetris
 from src.game.block import Block
 
 
-def non_random_board(init_board=None, first_block=None, next_block=None) -> Board:
-    board: Board
+def non_random_board(init_board=None, first_block=None, next_block=None) -> Tetris:
+    board: Tetris
 
     initial_block = Block(3, 0, 0)
     if first_block is not None:
         initial_block = first_block
     if init_board is not None:
-        board = Board(board=init_board, block=initial_block)
+        board = Tetris(board=init_board, block=initial_block)
     else:
-        board = Board(block=initial_block)
+        board = Tetris(block=initial_block)
     board.nextBlock = Block(0, 0, 6)
     if next_block is not None:
         board.nextBlock = next_block
@@ -19,7 +19,7 @@ def non_random_board(init_board=None, first_block=None, next_block=None) -> Boar
 
 
 def test_move_down():
-    board: Board = non_random_board()
+    board: Tetris = non_random_board()
     expected_block = board.block.copy()
     expected_block.moveDown()
 
@@ -28,7 +28,7 @@ def test_move_down():
 
 
 def test_move_left():
-    board: Board = non_random_board()
+    board: Tetris = non_random_board()
     expected_block = board.block.copy()
     expected_block.moveLeft()
 
@@ -37,10 +37,8 @@ def test_move_left():
 
 
 def test_hard_drop():
-    board: Board = non_random_board()
+    board: Tetris = non_random_board()
     expected_board = [
-        [0, 1, 1, 0, 0, 0, 0, 0, 0, 0],
-        [0, 1, 1, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -55,19 +53,25 @@ def test_hard_drop():
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 1, 1, 1, 1, 0, 0, 0],
     ]
 
     board.doAction(Action.HARD_DROP)
+    
     for board_row, expected_row in zip(board.board, expected_board):
         assert board_row == expected_row
 
 
 def test_move_right():
-    board: Board = non_random_board()
+    board: Tetris = non_random_board()
     expected_block = board.block.copy()
     expected_block.moveRight()
 
@@ -76,7 +80,7 @@ def test_move_right():
 
 
 def test_rotate_clockwise():
-    board: Board = non_random_board()
+    board: Tetris = non_random_board()
     expected_block = board.block.copy()
     expected_block.rotateRight()
 
@@ -85,7 +89,7 @@ def test_rotate_clockwise():
 
 
 def test_rotate_counter_clockwise():
-    board: Board = non_random_board()
+    board: Tetris = non_random_board()
     expected_block = board.block.copy()
     expected_block.rotateLeft()
 
@@ -94,12 +98,15 @@ def test_rotate_counter_clockwise():
 
 
 def test_try_to_move_block_out_of_bound_left():
-    board: Board = non_random_board()
+    board: Tetris = non_random_board()
     expected_board = [
-        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [1, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -122,17 +129,19 @@ def test_try_to_move_block_out_of_bound_left():
         board.doAction(Action.MOVE_LEFT)
 
     for board_row, expected_row in zip(board.board, expected_board):
-        print(len(board_row), len(expected_row))
         assert board_row == expected_row
 
 
 def test_try_to_move_block_out_of_bound_right():
-    board: Board = non_random_board()
+    board: Tetris = non_random_board()
     expected_board = [
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 1, 1, 1, 1],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -159,13 +168,16 @@ def test_try_to_move_block_out_of_bound_right():
 
 
 def test_try_to_rotate_block_out_of_bound():
-    board: Board
+    board: Tetris
     # TODO: CREATE THIS TEST test_try_to_rotate_block_out_of_bound
     pass
 
 
 def test_drop_block_on_top_of_another_block():
     initBoard = [
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -193,8 +205,6 @@ def test_drop_block_on_top_of_another_block():
     board.printBoard()
 
     expected_board = [
-        [0, 1, 1, 0, 0, 0, 0, 0, 0, 0],
-        [0, 1, 1, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -208,10 +218,15 @@ def test_drop_block_on_top_of_another_block():
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 1, 1, 1, 1, 0, 0, 0],
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
     ]
     board.doAction(Action.HARD_DROP)
@@ -222,7 +237,10 @@ def test_drop_block_on_top_of_another_block():
 
 
 def test_slide_left_block_on_top_of_another_block():
-    innitBoard = [
+    initBoard = [
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -244,10 +262,8 @@ def test_slide_left_block_on_top_of_another_block():
         [0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ]
-    board: Board = non_random_board(innitBoard)
+    board: Tetris = non_random_board(initBoard)
     expected_board = [
-        [0, 1, 1, 0, 0, 0, 0, 0, 0, 0],
-        [0, 1, 1, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -262,14 +278,17 @@ def test_slide_left_block_on_top_of_another_block():
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 1, 1, 0, 0, 0, 0, 0],
-        [0, 0, 0, 1, 1, 0, 0, 0, 0, 0],
-        [0, 0, 0, 1, 1, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 1, 1, 1, 1, 0, 0, 0, 0],
+        [0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ]
-    needed_downs = 16
-    for _ in range(needed_downs):
-        board.doAction(Action.SOFT_DROP)
+    board.doAction(Action.HARD_DROP)
     board.printBoard()
     board.doAction(Action.MOVE_LEFT)
     board.doAction(Action.SOFT_DROP)
@@ -298,15 +317,16 @@ def test_slide_right_block_on_top_of_another_block():
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ]
-    board: Board = non_random_board(initBoard, initBlock)
+    board: Tetris = non_random_board(initBoard, initBlock)
     expected_board = [
-        [0, 1, 1, 0, 0, 0, 0, 0, 0, 0],
-        [0, 1, 1, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -319,8 +339,13 @@ def test_slide_right_block_on_top_of_another_block():
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
-        [0, 0, 0, 0, 1, 1, 1, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 6, 0, 0, 0, 0],
+        [0, 0, 0, 0, 6, 6, 6, 0, 0, 0],
         [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
@@ -337,6 +362,9 @@ def test_slide_right_block_on_top_of_another_block():
 
 def test_slide_right_block_on_under_another_block():
     initBoard = [
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -378,10 +406,13 @@ def test_slide_right_block_on_under_another_block():
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
-        [0, 0, 0, 0, 1, 1, 0, 0, 0, 0],
-        [0, 0, 0, 1, 1, 1, 0, 0, 0, 0],
+        [0, 0, 0, 0, 6, 1, 0, 0, 0, 0],
+        [0, 0, 0, 6, 6, 6, 0, 0, 0, 0],
     ]
 
     board.doAction(Action.MOVE_LEFT)

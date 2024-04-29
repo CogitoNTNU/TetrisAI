@@ -1,50 +1,37 @@
-from pynput.keyboard import Key, Listener
+from copy import deepcopy
+import pygame
+from pygame.locals import *
 import time as t
 import sys
 
-from src.game.board import Action, Board
+from src.agents.agent import Agent, playGameDemoStepByStep
+from src.game.tetris import Action, Tetris
+from src.game.block import COLORS
 
 baseScore = 100
 
-""" TODO:   Timer for piece drop 
-            keyboard input for piece movement
-            keyboard input for piece rotation
-            keyboard input for piece drop
-            keyboard input for game start
-            soft drop and hard drop implementation
-            """
+# pygame visuals setup
+BLOCK_SIZE = 40
+WIDTH = 10
+HEIGHT = 23
+START_HEIGHT = 3
+SCREEN_WIDTH = WIDTH * BLOCK_SIZE
+SCREEN_HEIGHT = (HEIGHT - START_HEIGHT) * BLOCK_SIZE
 
+# Colors
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
 
 class TetrisGameManager:
-
     currentPiece = None
     nextPiece = None
     updateTimer = 1
     streak = 1
 
-    def __init__(self, board: Board):
+    def __init__(self, board: Tetris):
         self.board = board
         self.score = 0
         self.currentTime = int(round(t.time() * 1000))
-
-        self.switcher = {
-            Key.down: Action.SOFT_DROP,
-            Key.left: Action.MOVE_LEFT,
-            Key.right: Action.MOVE_RIGHT,
-            Key.space: Action.HARD_DROP,
-            Key.up: Action.ROTATE_CLOCKWISE,
-        }
-
-    def onPress(self, key):
-        # Default action if key not found
-        default_action = lambda: "Key not recognized"
-
-        # Get the function to execute based on the key, or default action
-        action = self.switcher.get(key, default_action)
-        self.movePiece(action)
-
-    def onRelease(self, key):
-        pass
 
     def movePiece(self, direction: Action):
         self.board.doAction(direction)
@@ -54,41 +41,76 @@ class TetrisGameManager:
         return self.board.isGameOver()
 
     def startGame(self):
-        self.currentPiece = self.newPiece()
-        self.nextPiece = self.newPiece()
-        self.board.printBoard()
+        pygame.init()
+        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+        pygame.display.set_caption('Tetris')  # Set window title
 
-        listener = Listener(on_press=self.onPress, on_release=self.onRelease)
-        listener.start()
+        clock = pygame.time.Clock()
 
         while not self.board.gameOver:
-
+            self.draw_board(self.board)
+            self.inputHandling()
+            if self.board.blockHasLanded:
+                self.board.updateBoard()    # Update the board after a block has landed and spawn a new block
             self.checkTimer()
+            pygame.display.update()
+            clock.tick(60)  # Cap the frame rate to 60 FPS
 
-            t.sleep(0.1)  # Add a small delay to reduce CPU usage
-
-        # Stop the listener when the game is over
-        print("Stopping listener")
-        listener.stop()
-
-    def newPiece(self):
-        pass
-        # return self.pieces.getNewPiece()
-
-    def updateScore(self, linesCleared):
-        self.score += self.streak * (baseScore**linesCleared)
+        self.stopGame()
+        
+    def startDemo(self, agent: Agent):
+        pygame.init()
+        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+        pygame.display.set_caption('Tetris')  # Set window title
+        
+        clock = pygame.time.Clock()
+        
+        while not self.board.gameOver:
+            self.draw_board(self.board)
+            playGameDemoStepByStep(agent, self.board)
+            pygame.display.update()
+            clock.tick(60)  # Cap the frame rate to 60 FPS
+            
+        self.stopGame()
+            
+            
+        
+        
+    def inputHandling(self):
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                self.stopGame()
+            else:
+                keys = pygame.key.get_pressed()
+                if keys[K_DOWN]:
+                    self.movePiece(Action.SOFT_DROP)
+                elif keys[K_LEFT]:
+                    self.movePiece(Action.MOVE_LEFT)
+                elif keys[K_RIGHT]:
+                    self.movePiece(Action.MOVE_RIGHT)
+                elif keys[K_SPACE]:
+                    self.movePiece(Action.HARD_DROP)
+                elif keys[K_UP]:
+                    self.movePiece(Action.ROTATE_CLOCKWISE)
 
     def checkTimer(self):
         checkTime = self.currentTime + 1000 / self.updateTimer
         newTime = int(round(t.time() * 1000))
-        # if (checkTime < newTime):
-        #     self.currentTime = newTime
-        #     self.movePiece("DOWN")
-        #     print("Timer checked")
-        #     self.board.printBoard()
+        if checkTime < newTime:
+            self.currentTime = newTime
+            self.movePiece(Action.SOFT_DROP)
+            
+    def draw_board(self, gameState: Tetris):
+        self.screen.fill(BLACK)
+        temp = deepcopy(gameState)
+        temp_board = temp.board[START_HEIGHT:]        
+        for y in range(HEIGHT-START_HEIGHT):
+            for x in range(WIDTH):
+                if temp_board[y][x] != 0:
+                    pygame.draw.rect(self.screen, COLORS[temp_board[y][x]-1], (x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE))
+                pygame.draw.rect(self.screen, WHITE, (x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE), 1)
 
-        return True
 
     def stopGame(self):
-        self.board.gameOver = True
+        pygame.quit()
         sys.exit()

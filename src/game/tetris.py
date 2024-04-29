@@ -1,9 +1,13 @@
 import random
-import copy
+from copy import copy
+import numpy as np
 
 from enum import Enum, auto
+from time import sleep
 
 from src.game.block import Block
+
+DEMO_SLEEP = 0.05
 
 
 class Action(Enum):
@@ -34,7 +38,7 @@ def get_all_actions() -> list[Action]:
     ]
 
 
-class Board:
+class Tetris:
     """
     Represents the Tetris game board, handling block placements, movements, and rotations, as well as checking for game over conditions.
 
@@ -49,32 +53,39 @@ class Board:
         nextBlock (Block): The next block that will be introduced to the board after the current block is placed.
     """
 
-    ROWS = 20
+    ROWS = 23
+    SPAWN_ROWS = 3
     COLUMNS = 10
     START_X = 3
     START_Y = 0
 
-    def __init__(self, board: list[list[int]] = None, block: Block = None):
+    def __init__(self, board: list[list[int]] = None, block: Block = None, nextBlock: Block = None):
         """
         Initializes a new game board instance, setting up an empty board, placing the first block, and selecting the next block.
         """
         self.gameOver = False
         self.rowsRemoved = 0
 
-        if board == None:
+        if board is None:
             self.board = self._initBoard()
         else:
             self.board = board
-        if block == None:
+        if block is None:
             self.block = Block(self.START_X, self.START_Y, 0)
         else:
             self.block = block
-        self.prevBoard = copy.deepcopy(self.board)
+        
+        if nextBlock == None:
+            self.nextBlock = Block(self.START_X, self.START_Y, random.randint(0, 6))
+        else:
+            self.nextBlock = nextBlock
 
+        self.prevBoard = self.deep_copy_list_of_lists(self.board)
         self._placeBlock()
 
         self.prevBlock = self.block.copy()
         self.nextBlock = Block(self.START_X, self.START_Y, random.randint(0, 6))
+        self.blockHasLanded = False
 
     def _initBoard(self) -> list[list[int]]:
         """Initializes an empty the board"""
@@ -87,53 +98,60 @@ class Board:
         return board
 
     def getBoard(self) -> list[list[int]]:
-        return copy.deepcopy(self.board)
+        return self.deep_copy_list_of_lists(self.board)
+    
+    def deep_copy_list_of_lists(self, original: list[list[int]]) -> list[list[int]]:
+        copied = [row[:] for row in original]
+        return copied
 
-    def doAction(self, action: Action) -> None:
+    def doAction(self, action: Action, demo: bool = False) -> None:
         """
         Performs the specified action on the current block and updates the game board accordingly.
 
         Args:
             action (Action): The action to perform, as defined in the Action enumeration.
+            demo   (bool): If True, the action will be performed with a delay for demonstration purposes.
         """
 
         # Move the new block according to the action
         new_block = self.block.copy()
-        match action:
-            case Action.MOVE_LEFT:
-                new_block.moveLeft()
-            case Action.MOVE_RIGHT:
-                new_block.moveRight()
-            case Action.ROTATE_CLOCKWISE:
-                new_block.rotateRight()
-            case Action.ROTATE_COUNTERCLOCKWISE:
-                new_block.rotateLeft()
-            case Action.HARD_DROP:
-                while True:
-                    new_block.moveDown()
-                    if not self.isValidBlockPosition(new_block):
-                        new_block.moveUp()
-                        break
-            case Action.SOFT_DROP:
+        if action == Action.MOVE_LEFT:
+            new_block.moveLeft()
+        elif action == Action.MOVE_RIGHT:
+            new_block.moveRight()
+        elif action == Action.ROTATE_CLOCKWISE:
+            new_block.rotateRight()
+        elif action == Action.ROTATE_COUNTERCLOCKWISE:
+            new_block.rotateLeft()
+        elif action == Action.HARD_DROP:
+            while self.isValidBlockPosition(new_block):
                 new_block.moveDown()
-
-        # Given the new block position, check if it is valid and update the board
-        if self.isValidBlockPosition(new_block):
-            self.block = new_block
-            self._placeBlock()
+        elif action == Action.SOFT_DROP:
+            new_block.moveDown()
 
         # For blocks reaching the bottom of the board, place the block and introduce a new one
         if (
-            not self.isValidBlockPosition(new_block)
-            and action == Action.SOFT_DROP
-            or action == Action.HARD_DROP
+            action in [Action.HARD_DROP, Action.SOFT_DROP]
+            and not self.isValidBlockPosition(new_block)
         ):
+            new_block.moveUp()
+            self.blockHasLanded = True
+        if self.isValidBlockPosition(new_block):
+            self.block = new_block
             self._placeBlock()
-            self._checkGameOver()
-            # Store the previous board state before the new block placement
-            self.prevBoard = copy.deepcopy(self.board)
-            self._checkForFullRows()
-            self._shiftToNewBlock()
+            if demo:
+                sleep(DEMO_SLEEP)
+
+        
+    def updateBoard(self):
+        self.blockHasLanded = False
+        self._checkForFullRows()
+        self._checkGameOver()
+        # Store the previous board state before the new block placement
+        self.prevBoard = self.deep_copy_list_of_lists(self.board)
+        if self.isGameOver():
+            return
+        self._shiftToNewBlock()
 
     def isValidBlockPosition(self, block: Block) -> bool:
         """
@@ -145,30 +163,19 @@ class Board:
         Returns:
             bool: True if the block's position is valid, False otherwise.
         """
-
-        if self._outOfBounds(block):
-            print("[DEBUG] Out of bounds")
-            return False
-
-        if self._intersects(block):
-            print("[DEBUG] Intersects")
-            return False
-
-        if self.isGameOver():
-            return False
-
-        return True
+        return not (self._outOfBounds(block) or self._intersects(block) or self.isGameOver())
 
     def _outOfBounds(self, block: Block) -> bool:
         """Checks if the block is out of bounds"""
         for row in range(4):
             for column in range(4):
                 if row * 4 + column in block.image():
+                    block_x, block_y = block.x + column, block.y + row
                     if (
-                        row + block.y > self.ROWS - 1
-                        or row + block.y < 0
-                        or column + block.x > self.COLUMNS - 1
-                        or column + block.x < 0
+                        block_y > self.ROWS - 1
+                        or block_y < 0
+                        or block_x > self.COLUMNS - 1
+                        or block_x < 0
                     ):
                         return True
 
@@ -176,19 +183,14 @@ class Board:
 
     def _intersects(self, block: Block) -> bool:
         """Checks if the block intersects with another block on the board"""
-        ##  TODO: Fix this
         for row in range(4):
             for column in range(4):
                 if row * 4 + column in block.image():
                     # Check if the block intersects with the board
                     # That is, if the block is on top of another block that is not itself
-                    blockOverlaps = self.prevBoard[row + block.y][column + block.x] > 0
-                    isItSelf = (
-                        block.x + column == self.block.x
-                        and block.y + row == self.block.y
-                    )
-
-                    if blockOverlaps and not isItSelf:
+                    block_x, block_y = block.x + column, block.y + row
+                    prev_value = self.prevBoard[block_y][block_x]
+                    if prev_value > 0 and (block_x, block_y) != (self.block.x, self.block.y):
                         return True
         return False
 
@@ -197,13 +199,14 @@ class Board:
 
     def _placeBlock(self):
         """Places the current block on the board"""
-        self.board = copy.deepcopy(self.prevBoard)
+        self.board = self.deep_copy_list_of_lists(self.prevBoard)
         for i in range(4):
             for j in range(4):
                 if i * 4 + j in self.block.image():
                     self.board[i + self.block.y][
                         j + self.block.x
-                    ] = 1  # self.block.color
+                    ] = self.block.type + 1  # implicit color 1 to 7
+        
 
     def _shiftToNewBlock(self):
         """Places the current block on the board and sets the next block as the current block"""
@@ -215,14 +218,15 @@ class Board:
                 if i * 4 + j in self.block.image():
                     self.board[i + self.block.y][
                         j + self.block.x
-                    ] = 1  # self.block.color
+                    ] = self.block.type + 1  # implicit color 1 to 7
 
     def _checkGameOver(self):
         """Checks if the game is over"""
-        for cell in self.board[0]:
-            if cell > 0:
-                self.gameOver = True
-                break
+        for spawn_row in range(self.SPAWN_ROWS):
+            for cell in self.board[spawn_row]:
+                if cell > 0:
+                    self.gameOver = True
+                    return
 
     def _checkForFullRows(self) -> int:
         """Checks the board for full rows and removes them, returning the number of rows removed"""
@@ -234,7 +238,7 @@ class Board:
             if 0 not in row:
                 fullRows.append(rowIndex)
         # Remove all full rows
-        for rowIndex in reversed(fullRows):
+        for rowIndex in fullRows:
             self._clearRow(rowIndex)
             amount += 1
         return amount
@@ -243,11 +247,12 @@ class Board:
         """Clears the specified row and moves all rows above down one step"""
         # Remove the row and add a new empty row at the top
         newMatrix = self.board[:rownumber] + self.board[rownumber + 1 :]
-        newMatrix.append([0 for _ in range(self.COLUMNS)])
+        newMatrix.insert(0, [0 for _ in range(self.COLUMNS)])
         self.board = newMatrix
         self.rowsRemoved += 1
+        self.prevBoard = self.deep_copy_list_of_lists(self.board)
 
-    def getPossibleBoards(self) -> list["Board"]:
+    def getPossibleBoards(self) -> list["Tetris"]:
         possibleMoves = []
 
         # Number of rotations which gives unique block positions
@@ -258,14 +263,14 @@ class Board:
         else:
             rotations = 1
 
-        rotationBoard = copy.deepcopy(self)
+        rotationBoard = self.copy()
         for _ in range(rotations):
-            for column in range(self.COLUMNS):
-                moveBoard = copy.deepcopy(rotationBoard)
+            for column in range(0, self.COLUMNS + (4 - self.block.getRightmostImageCoordinate())):
+                moveBoard = rotationBoard.copy()
 
                 # Calibrate the to the left
-                toLeft = moveBoard.block.x
-                for _ in range(toLeft):
+                toLeft = moveBoard.block.x + moveBoard.block.getLeftmostImageCoordinate()
+                for _ in range(toLeft + 1):
                     moveBoard.doAction(Action.MOVE_LEFT)
                 # Move the block to the correct column
                 for _ in range(column):
@@ -275,6 +280,7 @@ class Board:
                 if not moveBoard.isValidBlockPosition(moveBoard.block):
                     continue
 
+                moveBoard.prevBoard = moveBoard.deep_copy_list_of_lists(moveBoard.board)
                 if moveBoard not in possibleMoves:
                     possibleMoves.append(moveBoard)
 
@@ -282,17 +288,15 @@ class Board:
 
         return possibleMoves
 
-    def __eq__(self, other: "Board") -> bool:
-        if not isinstance(other, Board):
+    def __eq__(self, other: "Tetris") -> bool:
+        if not isinstance(other, Tetris):
             return False
 
-        # Check if the blocks are the same
-        for r in range(self.ROWS):
-            for c in range(self.COLUMNS):
-                if self.board[r][c] != other.board[r][c]:
-                    return False
-
-        return True
+        return self.board == other.board
+    
+    def copy(self) -> "Tetris":
+        tetris = Tetris(self.deep_copy_list_of_lists(self.prevBoard), self.block.copy(), self.nextBlock.copy())
+        return tetris
 
     def printBoard(self):
         print("_______________________________________")
@@ -302,13 +306,13 @@ class Board:
         print("‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾")
 
     def _checkCharacter(self, character) -> str:
-        if character == 1:
+        if character >= 1:
             return "■"
         else:
             return "▧"
 
 
-def transition_model(current_state: Board, target_state: Board) -> list[Action]:
+def transition_model(current_state: Tetris, target_state: Tetris) -> list[Action]:
     """
     Calculates the sequence of actions required to transition from the current board state to the target board state.
 
@@ -323,11 +327,12 @@ def transition_model(current_state: Board, target_state: Board) -> list[Action]:
     actions = []
 
     if current_state == target_state:
-        print("No transition needed")
+        actions.append(Action.SOFT_DROP)
+        # print("No transition needed")
         return actions
 
     # Find where the last block is in the target state
-    target_block = target_state.prevBlock
+    target_block = target_state.block
 
     # Find the correct rotation
     needed_rotation = target_block.rotation - current_state.block.rotation
@@ -338,7 +343,7 @@ def transition_model(current_state: Board, target_state: Board) -> list[Action]:
         actions += [Action.MOVE_RIGHT] * (target_block.x - current_state.block.x)
     elif current_state.block.x > target_block.x:
         actions += [Action.MOVE_LEFT] * (current_state.block.x - target_block.x)
-    # Move the block down to the correct y position
+    # Move the block down to the correct y position as it would be used in reality
     actions.append(Action.HARD_DROP)
 
     return actions
