@@ -79,7 +79,9 @@ class GeneticAlgAgentJM:
                 
                 move += 1
             # Advance the game by one frame
-            board.doAction(Action.SOFT_DROP)
+                board.doAction(Action.SOFT_DROP)
+                if board.blockHasLanded:
+                    board.updateBoard()
             #board.printBoard()
 
             total_cleared += board.rowsRemoved
@@ -103,7 +105,8 @@ class GeneticAlgAgentJM:
      # TODO create method for fetching a random 10%, and finds the two with highest lines cleared, and makes a child (with 5% chance of mutation)
     def paring_pop(self, pop_list: list[list[list[float], float]]) -> list[list[float], float]:
         # Gets the number of pops to select
-        num_pops_to_select = int(len(pop_list) * 0.1)
+        # num_pops_to_select = int(len(pop_list) * 0.1)
+        num_pops_to_select = int(len(pop_list) * 0.5)
 
         # Get a sample of pops based on the previous number
         random_pop_sample = random.sample(pop_list, num_pops_to_select)
@@ -116,7 +119,7 @@ class GeneticAlgAgentJM:
         norm = np.linalg.norm(new_pop[0])
         if norm == 0:
             norm = 1e-10  # or some small constant
-        new_pop[0] = (new_pop[0] / norm).tolist()
+        new_pop[0] = [i / norm for i in new_pop[0]]
 
         # Mutate 5% of children pops
         if random.randrange(0,1000)/1000 < 0.05:
