@@ -123,10 +123,10 @@ class GeneticAlgAgentJM:
      # TODO create method for fetching a random 10%, and finds the two with highest lines cleared, and makes a child (with 5% chance of mutation)
     def paring_pop(self, pop_list: Population) -> Population:
         # Gets the number of pops to select
-        num_pops_to_select = int(len(pop_list) * 0.1)
+        num_pops_to_select = int(len(pop_list.agents) * 0.1)
 
         # Get a sample of pops based on the previous number
-        random_pop_sample = random.sample(pop_list, num_pops_to_select)
+        random_pop_sample = random.sample(pop_list.agents, num_pops_to_select)
 
         # Gets the two pops with the highest lines cleared
         highest_values = sorted(random_pop_sample, key=lambda x: x[1], reverse=True)[:2] 
@@ -135,7 +135,7 @@ class GeneticAlgAgentJM:
         new_pop = self.fitness_crossover(highest_values[0], highest_values[1])
         
         # Mutate 5% of children pops
-        if random.randrange(0,1000)/1000 < 0.2:
+        if random.randrange(0,1000)/1000 < 0.05:
             random_parameter = int(random.randint(0,4))
             new_pop[0][random_parameter] = (random.randrange(-200, 200)/1000) * new_pop[0][random_parameter]
 
