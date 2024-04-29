@@ -120,6 +120,7 @@ class GeneticAlgAgentJM:
         if norm == 0:
             norm = 1e-10  # or some small constant
         new_pop[0] = [i / norm for i in new_pop[0]]
+        new_pop[0] = [i / norm for i in new_pop[0]]
 
         # Mutate 5% of children pops
         if random.randrange(0,1000)/1000 < 0.05:
