@@ -35,7 +35,7 @@ class Agent(ABC):
         pass
 
 
-def play_game(agent: Agent, board: Tetris, actions_per_drop: int = 1, max_pieces_dropped: int = 1_000_000_000) -> Tetris:
+def play_game(agent: Agent, board: Tetris, actions_per_drop: int = 1, max_pieces_dropped : int = 1_000_000_000) -> Tetris:
     """
     Plays a game of Tetris with the given agent.
 
@@ -77,8 +77,11 @@ def play_game(agent: Agent, board: Tetris, actions_per_drop: int = 1, max_pieces
             board.updateBoard()
         #board.printBoard()
         pieces_dropped += 1
+        if pieces_dropped == max_pieces_dropped:
+            print("Max pieces dropped")
 
     return board
+
 
 def playGameDemoStepByStep(agent: Agent, board: Tetris) -> Tetris:
     """
