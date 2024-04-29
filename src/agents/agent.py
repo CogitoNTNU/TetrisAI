@@ -35,7 +35,7 @@ class Agent(ABC):
         pass
 
 
-def play_game(agent: Agent, board: Tetris, actions_per_drop: int = 1, max_pieces_dropped: int = 1_000_000_000) -> Tetris:
+def play_game(agent: Agent, board: Tetris, actions_per_drop: int = 1, max_pieces_dropped : int = 1_000_000_000) -> Tetris:
     """
     Plays a game of Tetris with the given agent.
 
@@ -47,24 +47,10 @@ def play_game(agent: Agent, board: Tetris, actions_per_drop: int = 1, max_pieces
     Returns:
         The final state of the board after the game is over.
     """
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
     #count = 0
 
-    while not board.isGameOver():
-=======
     pieces_dropped = 0
     while not board.isGameOver() and pieces_dropped < max_pieces_dropped:
->>>>>>> b842fc6 (feat: :rocket: genetic agent class and it's training algorithm commenced)
-=======
-    pieces_dropped = 0
-    while not board.isGameOver() and pieces_dropped < max_pieces_dropped:
->>>>>>> c14418b (feat: :rocket: genetic agent class and it's training algorithm commenced)
-=======
-    pieces_dropped = 0
-    while not board.isGameOver() and pieces_dropped < max_pieces_dropped:
->>>>>>> fa9eeb924767729763e18a070d98dd0646936c29
         # Get the result of the agent's action
         for _ in range(actions_per_drop):
             result = agent.result(board)
@@ -82,8 +68,11 @@ def play_game(agent: Agent, board: Tetris, actions_per_drop: int = 1, max_pieces
             board.updateBoard()
         #board.printBoard()
         pieces_dropped += 1
+        if pieces_dropped == max_pieces_dropped:
+            print("Max pieces dropped")
 
     return board
+
 
 def playGameDemoStepByStep(agent: Agent, board: Tetris) -> Tetris:
     """

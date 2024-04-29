@@ -10,6 +10,8 @@ from src.agents.geneticAlgAgent import GeneticAgent, train_genetic_algorithm
 from src.agents.heuristic_trainer import train
 from src.agents.geneticAlgAgentJon import GeneticAlgAgentJM
 
+import numpy as np
+
 
 def test():
     # algAgent = GeneticAlgAgentJM()
@@ -38,15 +40,14 @@ if __name__ == "__main__":
     #     print(utility(boards, 0, -1, 0, 0, 0))
     #     boards.printBoard()
     
-<<<<<<< HEAD
-<<<<<<< HEAD
+
     # board = Tetris()
     # manager = TetrisGameManager(board)
     # agent = create_agent("heuristic")
     
     # # manager.startGame()
 
-<<<<<<< HEAD
+
     # # train()
 
 
@@ -54,25 +55,13 @@ if __name__ == "__main__":
     # algAgent.number_of_selection(2)
     # print(algAgent.getBestPop())
     
-    test()
+    # test()
     
         
-    # cProfile.run('main()', 'restats')  
-=======
-    #train()
+    # # cProfile.run('main()', 'restats')  
+    # # train()
     
->>>>>>> c14418b (feat: :rocket: genetic agent class and it's training algorithm commenced)
-=======
-=======
->>>>>>> fa9eeb924767729763e18a070d98dd0646936c29
     board = Tetris()
     # manager = TetrisGameManager(board)
     # agent = create_agent("heuristic")
-    agents = train_genetic_algorithm(10)
-
-<<<<<<< HEAD
-    # manager.startDemo(agent)
->>>>>>> fa9eeb9 (Co-authored-by: Håvard Fossdal <HFossdal@users.noreply.github.com>)
-=======
-    # manager.startDemo(agent)
->>>>>>> fa9eeb924767729763e18a070d98dd0646936c29
+    agents = train_genetic_algorithm(50)

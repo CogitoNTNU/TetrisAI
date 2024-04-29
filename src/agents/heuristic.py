@@ -7,19 +7,12 @@ def utility(gameState: Tetris, aggregate_heights_weight: float, max_height_weigh
             lines_cleared_weight: float, bumpiness_weight: float, holes_weight: float) -> float:
     """Returns the utility of the given game state."""
     sum = 0
-<<<<<<< HEAD
     aggregate, max_height, bumpiness = calculate_heights(gameState)
 
     sum += aggregate_heights_weight * aggregate
     sum += max_height_weight * max_height
     sum += lines_cleared_weight * lines_cleaned(gameState)
     sum += bumpiness_weight * bumpiness
-=======
-    sum += aggregate_heights_weight * aggregate_heights(gameState)
-    sum += max_height_weight * max_height(gameState)
-    sum += lines_cleared_weight * lines_cleared(gameState)
-    sum += bumpiness_weight * bumpiness(gameState)
->>>>>>> b842fc6 (feat: :rocket: genetic agent class and it's training algorithm commenced)
     sum += holes_weight * find_holes(gameState)
 
     # print("--------------------")
@@ -31,6 +24,7 @@ def utility(gameState: Tetris, aggregate_heights_weight: float, max_height_weigh
     # print("--------------------")
 
     return sum
+
 
 def calculate_heights(gameState: Tetris) -> tuple[int, int, int]:
     """Calculates the sum and maximum height of the columns in the game state."""
@@ -81,16 +75,8 @@ def max_height(gameState: Tetris) -> int:
     return max(checkedList)
 
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 # Does this work? row cleared in get_possible_boards??
 def lines_cleaned(gameState: Tetris) -> int:
-=======
-def lines_cleared(gameState: Tetris) -> int:
->>>>>>> c14418b (feat: :rocket: genetic agent class and it's training algorithm commenced)
-=======
-def lines_cleared(gameState: Tetris) -> int:
->>>>>>> fa9eeb924767729763e18a070d98dd0646936c29
     """Retrurns the number of lines cleared."""
     sum = 0
     for row in gameState.board:
