@@ -121,7 +121,7 @@ class GeneticAlgAgentJM:
     
 
      # TODO create method for fetching a random 10%, and finds the two with highest lines cleared, and makes a child (with 5% chance of mutation)
-    def paring_pop(self, pop_list: Population) -> Population:
+    def paring_pop(self, pop_list: Population) -> Individual:
         # Gets the number of pops to select
         num_pops_to_select = int(len(pop_list.agents) * 0.1)
 
@@ -133,24 +133,25 @@ class GeneticAlgAgentJM:
 
         # Gets the child pop of the two pops
         new_pop = self.fitness_crossover(highest_values[0], highest_values[1])
+
+        new_pop.parameters = (new_pop.parameters / np.linalg.norm(new_pop.parameters)).tolist()
         
         # Mutate 5% of children pops
         if random.randrange(0,1000)/1000 < 0.05:
             random_parameter = int(random.randint(0,4))
-            new_pop[0][random_parameter] = (random.randrange(-200, 200)/1000) * new_pop[0][random_parameter]
-
-        new_pop[0] = (new_pop[0] / np.linalg.norm(new_pop[0])).tolist()
+            new_pop.parameters[random_parameter] = (random.randrange(-200, 200)/1000) * new_pop[0][random_parameter]
 
         return new_pop
 
 
-    def fitness_crossover(self, pop1: Population, pop2: Population) -> Population:
+    def fitness_crossover(self, pop1: Individual, pop2: Individual) -> Individual:
         # Combines the two vectors proportionaly by how many lines they cleared
-        child_pop = [h1 * pop1[1] + h2 * pop2[1] for h1, h2 in zip(pop1[0], pop2[0])]
-        return [child_pop, 0.0]
+        child_pop = [h1 * pop1.parameters + h2 * pop2.parameters for h1, h2 in zip(pop1.lines_cleared, pop2.lines_cleared)]
+        child_pop.lines_cleared = 0.0
+        return child_pop
     
 
     def getBestPop(self) -> Individual:
         pop_list = self.pop
         pop_list = sorted(pop_list.agents, key=lambda x: x.lines_cleared, reverse=True)
-        return pop_list[0]
+        return pop_list.agents[0]
