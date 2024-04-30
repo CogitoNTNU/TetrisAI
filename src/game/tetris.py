@@ -251,42 +251,59 @@ class Tetris:
         self.board = newMatrix
         self.rowsRemoved += 1
         self.prevBoard = self.deep_copy_list_of_lists(self.board)
-
+        
+    def checkBlockFits(self, block: Block, x, y) -> "Tetris":
+        """Places the given block at the specified position on the board"""
+        tetris = self.copy()
+        tetris.block = block.copy()
+        tetris.block.x = x
+        tetris.block.y = y
+        
+        valid = tetris.isValidBlockPosition(tetris.block)
+        
+        if not valid:
+            return None
+        
+        onTop = False
+        for cord in tetris.block.getListCoordinates():
+            if cord[1] == self.ROWS - 1: # if the block is on the bottom
+                onTop = True
+                break
+            elif self.prevBoard[cord[1] + 1][cord[0]] != 0: # if the block is on top of another block
+                onTop = True
+                break
+            
+        if onTop:
+            tetris._placeBlock()
+            return tetris
+        
+        return None
+        
+    
     def getPossibleBoards(self) -> list["Tetris"]:
-        possibleMoves = []
-
-        # Number of rotations which gives unique block positions
-        if self.block.type < 3:
+        possible_boards = []
+        blockCopy = self.block.copy()
+        
+        if self.block.type <= 2: # I Z S
             rotations = 2
-        elif self.block.type < 6:
-            rotations = 4
-        else:
+        elif self.block.type == 6: # O
             rotations = 1
+        else:
+            rotations = 4
 
-        rotationBoard = self.copy()
-        for _ in range(rotations):
-            for column in range(0, self.COLUMNS + (4 - self.block.getRightmostImageCoordinate())):
-                moveBoard = rotationBoard.copy()
+        for rotation in range(rotations):
+            blockCopy.rotation = rotation
+            for y in range(self.ROWS):
+                for x in range(-blockCopy.getLeftmostImageCoordinate(), self.COLUMNS - blockCopy.getLeftmostImageCoordinate()):
+                    # if self.prevBoard[y][x] == 0:
+                    tetris = self.checkBlockFits(blockCopy, x, y)
+                    if tetris is not None:
+                        tetris.prevBoard = self.deep_copy_list_of_lists(tetris.board)
+                        possible_boards.append(tetris)
+        
+        return possible_boards
 
-                # Calibrate the to the left
-                toLeft = moveBoard.block.x + moveBoard.block.getLeftmostImageCoordinate()
-                for _ in range(toLeft + 1):
-                    moveBoard.doAction(Action.MOVE_LEFT)
-                # Move the block to the correct column
-                for _ in range(column):
-                    moveBoard.doAction(Action.MOVE_RIGHT)
 
-                moveBoard.doAction(Action.HARD_DROP)
-                if not moveBoard.isValidBlockPosition(moveBoard.block):
-                    continue
-
-                moveBoard.prevBoard = moveBoard.deep_copy_list_of_lists(moveBoard.board)
-                if moveBoard not in possibleMoves:
-                    possibleMoves.append(moveBoard)
-
-            rotationBoard.doAction(Action.ROTATE_CLOCKWISE)
-
-        return possibleMoves
 
     def __eq__(self, other: "Tetris") -> bool:
         if not isinstance(other, Tetris):

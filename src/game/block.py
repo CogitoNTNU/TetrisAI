@@ -55,6 +55,7 @@ class Block:
         self.y = y
         self.rotation = 0
 
+        random.seed(0)
         self.type = random.randint(0, 6) if blockType is None else blockType
         self.color = COLORS[self.type]
 
@@ -93,40 +94,21 @@ class Block:
 
     def image(self):
         return FIGURES[self.type][self.rotation]
+    
 
-    def getListCoordinates(self) -> list:
+    def getListCoordinates(self) -> list[tuple[int, int]]:
         """
         Calculates and returns the grid coordinates for each part of the block, based on its current position and orientation.
 
         Returns:
             list of tuple: A list of tuples (x, y) representing the grid coordinates of the block's parts.
         """
-        imageList = self.image()
         listCoordinates = []
-        for i in range(len(imageList)):
-            x = 0
-            y = 0
-            listNr = imageList[i]
-            restList = imageList[i] % 4
-            divList = imageList[i] // 4
-
-            if restList == 0:
-                y = self.y + divList - 1
-                x = self.x - 1
-
-            elif restList == 1:
-                y = self.y + divList - 1
-                x = self.x
-
-            elif restList == 2:
-                y = self.y + divList - 1
-                x = self.x + 1
-
-            elif restList == 3:
-                y = self.y + divList - 1
-                x = self.x + 2
-
-            listCoordinates.append((x, y))
+        for i in self.image():
+            x = i % 4
+            y = i // 4
+            listCoordinates.append((self.x + x, self.y + y))
+          
 
         return listCoordinates
 
@@ -153,3 +135,16 @@ class Block:
             if x > rightmost:
                 rightmost = x
         return rightmost
+    
+    def getLowestImageCoordinate(self) -> int:
+        """
+        Returns:
+            int: The bottommost y-coordinate of the block's image.
+        """
+        botmost = 0
+        for i in self.image():
+            y = i // 4
+            if y > botmost:
+                botmost = y
+        return botmost
+    
