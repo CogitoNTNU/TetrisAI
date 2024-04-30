@@ -73,8 +73,6 @@ class TetrisGameManager:
             
         self.stopGame()
             
-            
-        
         
     def inputHandling(self):
         for event in pygame.event.get():

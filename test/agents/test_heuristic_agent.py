@@ -66,9 +66,5 @@ def test_result_heuristic_agent():
     for i in range(len(result)):
         board.doAction(result[i])
     print(result)
-    for row in board.board:
-        print(row)
-    print('\n')
+    board.printBoard()
     assert (board.board == expected_board)
-
-    #end_board = play_game(agent, game, 7)
