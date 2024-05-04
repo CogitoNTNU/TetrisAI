@@ -7,7 +7,7 @@ from time import sleep
 
 from src.game.block import Block
 
-DEMO_SLEEP = 0.05
+DEMO_SLEEP = 0
 
 
 class Action(Enum):
