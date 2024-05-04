@@ -34,13 +34,13 @@ cd TetrisAI
 To play the game yourself, run the following command:
   
 ```bash
-python main.py --play
+python main.py play
 ```
 
 To let the agent play the game, run the following command:
 
 ```bash
-python main.py --agent <agent>
+python main.py agent <agent>
 ```
 
 where `<agent>` is the agent you want to use. The available agents are: `random`, `heuristic`, `genetic`
@@ -48,7 +48,7 @@ where `<agent>` is the agent you want to use. The available agents are: `random`
 To train the genetic agent, run the following command:
 
 ```bash
-python main.py --train
+python main.py train
 ```
 
 ## Team
