@@ -24,11 +24,6 @@ pip install -r requirements.txt
 
 - Done! You are now ready to run the game
 
-```bash
-git clone https://github.com/CogitoNTNU/TetrisAI.git
-cd TetrisAI
-```
-
 ## Usage
 
 To play the game yourself, run the following command:
