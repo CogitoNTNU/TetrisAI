@@ -46,6 +46,14 @@ To train the genetic agent, run the following command:
 python main.py train
 ```
 
+## Testing
+
+To run the test suite, run the following command from the root directory of the project:
+
+```bash
+python -m pytest
+```
+
 ## Team
 
 The team behind this project is a group of students at NTNU in Trondheim, Norway, developed during the spring semester of 2024. The team consists of:
