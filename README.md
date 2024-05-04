@@ -1,5 +1,17 @@
 # Tetris AI
 
+<div align="center">
+
+![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/CogitoNTNU/TetrisAI/ci.yml)
+![GitHub top language](https://img.shields.io/github/languages/top/CogitoNTNU/TetrisAI)
+![GitHub language count](https://img.shields.io/github/languages/count/CogitoNTNU/TetrisAI)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Project Version](https://img.shields.io/badge/version-1.0.0-blue)](https://img.shields.io/badge/version-1.0.0-blue)
+
+![logo](docs/img/Logo.webp)
+
+</div>
+
 ## Description
 
 This project is our attempt at making an AI that can play Tetris. First of all we made the environment (the game itself) and then we started working on multiple AI's that can play the game. The AI's are based on different algorithms and strategies. We have implmented:
