@@ -148,3 +148,23 @@ class Block:
                 botmost = y
         return botmost
     
+    def __eq__(self, other):
+        if not isinstance(other, Block):
+            return False
+        return (self.x, self.y, self.rotation, self.type) == (other.x, other.y, other.rotation, other.type)
+
+    def __lt__(self, other):
+        return (self.x, self.y, self.rotation, self.type) < (other.x, other.y, other.rotation, other.type)
+
+    def __le__(self, other):
+        return (self.x, self.y, self.rotation, self.type) <= (other.x, other.y, other.rotation, other.type)
+
+    def __gt__(self, other):
+        return (self.x, self.y, self.rotation, self.type) > (other.x, other.y, other.rotation, other.type)
+
+    def __ge__(self, other):
+        return (self.x, self.y, self.rotation, self.type) >= (other.x, other.y, other.rotation, other.type)
+    
+    def __hash__(self):
+        return hash((self.x, self.y, self.rotation, self.type))
+    

@@ -7,6 +7,9 @@ from time import sleep
 
 from src.game.block import Block
 
+import heapq
+from typing import List, Tuple, Dict
+
 DEMO_SLEEP = 0
 
 
@@ -329,38 +332,97 @@ class Tetris:
             return "▧"
 
 
-def transition_model(current_state: Tetris, target_state: Tetris) -> list[Action]:
-    """
-    Calculates the sequence of actions required to transition from the current board state to the target board state.
+# def transition_model(current_state: Tetris, target_state: Tetris) -> list[Action]:
+#     """
+#     Calculates the sequence of actions required to transition from the current board state to the target board state.
 
-    Args:
-        current_state (Board): The current state of the Tetris board.
-        target_state (Board): The desired target state of the board.
+#     Args:
+#         current_state (Board): The current state of the Tetris board.
+#         target_state (Board): The desired target state of the board.
 
-    Returns:
-        list[Action]: A list of actions that need to be performed to achieve the target state.
-    """
+#     Returns:
+#         list[Action]: A list of actions that need to be performed to achieve the target state.
+#     """
 
-    actions = []
+#     actions = []
+#     # TODO: change implementation to make it smarter
+    
+#     if current_state == target_state:
+#         actions.append(Action.SOFT_DROP)
+#         # print("No transition needed")
+#         return actions
 
-    if current_state == target_state:
-        actions.append(Action.SOFT_DROP)
-        # print("No transition needed")
-        return actions
+#     # Find where the last block is in the target state
+#     target_block = target_state.block
 
-    # Find where the last block is in the target state
-    target_block = target_state.block
+#     # Find the correct rotation
+#     needed_rotation = target_block.rotation - current_state.block.rotation
+#     actions += [Action.ROTATE_CLOCKWISE] * needed_rotation
 
-    # Find the correct rotation
-    needed_rotation = target_block.rotation - current_state.block.rotation
-    actions += [Action.ROTATE_CLOCKWISE] * needed_rotation
+#     # Move the block to the correct x and y position
+#     if current_state.block.x < target_block.x:
+#         actions += [Action.MOVE_RIGHT] * (target_block.x - current_state.block.x)
+#     elif current_state.block.x > target_block.x:
+#         actions += [Action.MOVE_LEFT] * (current_state.block.x - target_block.x)
+#     # Move the block down to the correct y position as it would be used in reality
+#     actions.append(Action.HARD_DROP)
 
-    # Move the block to the correct x and y position
-    if current_state.block.x < target_block.x:
-        actions += [Action.MOVE_RIGHT] * (target_block.x - current_state.block.x)
-    elif current_state.block.x > target_block.x:
-        actions += [Action.MOVE_LEFT] * (current_state.block.x - target_block.x)
-    # Move the block down to the correct y position as it would be used in reality
-    actions.append(Action.HARD_DROP)
+#     return actions
 
-    return actions
+def heuristic(a: Block, b: Block) -> int:
+    return abs(a.x - b.x) + abs(a.y - b.y)
+
+def get_neighbors(board: Tetris, block: Block) -> List[Tuple[Block, Action]]:
+    neighbors = []
+    potential_moves = [
+        (block.copy(), Action.ROTATE_CLOCKWISE),
+        (block.copy(), Action.ROTATE_COUNTERCLOCKWISE),
+        (block.copy(), Action.MOVE_LEFT),
+        (block.copy(), Action.MOVE_RIGHT),
+        (block.copy(), Action.SOFT_DROP),
+    ]
+    
+    potential_moves[0][0].rotateRight()
+    potential_moves[1][0].rotateLeft()
+    potential_moves[2][0].moveLeft()
+    potential_moves[3][0].moveRight()
+    potential_moves[4][0].moveDown()
+
+    for new_block, action in potential_moves:
+        if board.isValidBlockPosition(new_block):
+            neighbors.append((new_block, action))
+    return neighbors
+
+
+def reconstruct_path(came_from: Dict[Block, Tuple[Block, Action]], current: Block) -> List[Action]:
+    path = []
+    while current in came_from:
+        current, action = came_from[current]
+        path.append(action)
+    return path[::-1]
+
+def transition_model(current_state: Tetris, target_state: Tetris) -> List[Action]:
+    start = current_state.block
+    goal = target_state.block
+
+    open_set = []
+    heapq.heappush(open_set, (0, start))
+    came_from = {}
+    g_score = {start: 0}
+    f_score = {start: heuristic(start, goal)}
+
+    while open_set:
+        _, current = heapq.heappop(open_set)
+        if current == goal:
+            return reconstruct_path(came_from, current)
+
+        for neighbor, action in get_neighbors(current_state, current):
+            tentative_g_score = g_score[current] + 1
+            if neighbor not in g_score or tentative_g_score < g_score[neighbor]:
+                came_from[neighbor] = (current, action)
+                g_score[neighbor] = tentative_g_score
+                f_score[neighbor] = tentative_g_score + heuristic(neighbor, goal)
+                if neighbor not in [i[1] for i in open_set]:
+                    heapq.heappush(open_set, (f_score[neighbor], neighbor))
+
+    return []

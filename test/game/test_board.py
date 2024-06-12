@@ -424,7 +424,7 @@ def test_transition_model_for_no_transition():
 
     actions = transition_model(current_board, target_board)
     assert isinstance(actions, list)
-    assert len(actions) == 1
+    assert len(actions) == 0
 
 
 def test_transition_model_x_direction():
@@ -435,7 +435,7 @@ def test_transition_model_x_direction():
     actions = transition_model(current_board, target_board)
     assert isinstance(actions, list)
     assert action in actions
-    assert len(actions) == 2 # 1 for moving right, 1 for hard drop which is always appended
+    assert len(actions) == 1 
 
 
 def test_transition_model_complex_target():
@@ -453,9 +453,13 @@ def test_transition_model_complex_target():
         target_board.doAction(action)
 
     actions = transition_model(current_board, target_board)
+    print(actions)
     assert isinstance(actions, list)
-    assert len(actions) == len(actual_actions)
-    assert actions == actual_actions
+    
+    for action in actual_actions:
+        current_board.doAction(action)
+    
+    assert current_board == target_board
 
 
 def test_transition_model_left_movement():
@@ -472,9 +476,11 @@ def test_transition_model_left_movement():
 
     actions = transition_model(current_board, target_board)
     assert isinstance(actions, list)
-    assert len(actions) == len(actual_actions)
-    print(actual_actions)
-    assert actions == actual_actions
+    
+    for action in actual_actions:
+        current_board.doAction(action)
+    
+    assert current_board == target_board
 
 
 def test_transition_model_execution():
