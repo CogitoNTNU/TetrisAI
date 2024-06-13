@@ -216,12 +216,7 @@ class Tetris:
         self.prevBlock = self.block.copy()
         self.block = self.nextBlock
         self.nextBlock = Block(self.START_X, self.START_Y, random.randint(0, 6))
-        for i in range(4):
-            for j in range(4):
-                if i * 4 + j in self.block.image():
-                    self.board[i + self.block.y][
-                        j + self.block.x
-                    ] = self.block.type + 1  # implicit color 1 to 7
+        self._placeBlock()
 
     def _checkGameOver(self):
         """Checks if the game is over"""
@@ -319,17 +314,18 @@ class Tetris:
         return tetris
 
     def printBoard(self):
-        print("_______________________________________")
+        print("_______________________")
         for row in self.board:
-            print("|" + "   ".join(self._checkCharacter(cell) for cell in row) + "|")
+            print("|" + "".join(self._checkCharacter(cell) for cell in row) + "|")
 
-        print("‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾")
+        print("‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾")
 
     def _checkCharacter(self, character) -> str:
         if character >= 1:
-            return "■"
+            colors = ["⬜", "🟥", "🟩", "🟧", "🟦", "🟪", "🟨"]
+            return colors[character - 1]
         else:
-            return "▧"
+            return "⬛"
 
 
 # def transition_model(current_state: Tetris, target_state: Tetris) -> list[Action]:
