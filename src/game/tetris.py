@@ -10,7 +10,7 @@ from src.game.block import Block
 import heapq
 from typing import List, Tuple, Dict
 
-DEMO_SLEEP = 0
+DEMO_SLEEP = 0.02
 
 
 class Action(Enum):

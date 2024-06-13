@@ -55,7 +55,7 @@ class Block:
         self.y = y
         self.rotation = 0
 
-        random.seed(0)
+        # random.seed(0)
         self.type = random.randint(0, 6) if blockType is None else blockType
         self.color = COLORS[self.type]
 
