@@ -167,31 +167,17 @@ class Tetris:
 
     def _outOfBounds(self, block: Block) -> bool:
         """Checks if the block is out of bounds"""
-        for row in range(4):
-            for column in range(4):
-                if row * 4 + column in block.image():
-                    block_x, block_y = block.x + column, block.y + row
-                    if (
-                        block_y > self.ROWS - 1
-                        or block_y < 0
-                        or block_x > self.COLUMNS - 1
-                        or block_x < 0
-                    ):
-                        return True
+        for cord in block.getListCoordinates():
+            if cord[0] < 0 or cord[0] >= self.COLUMNS or cord[1] >= self.ROWS or cord[1] < 0:
+                return True
 
         return False
 
     def _intersects(self, block: Block) -> bool:
         """Checks if the block intersects with another block on the board"""
-        for row in range(4):
-            for column in range(4):
-                if row * 4 + column in block.image():
-                    # Check if the block intersects with the board
-                    # That is, if the block is on top of another block that is not itself
-                    block_x, block_y = block.x + column, block.y + row
-                    prev_value = self.prevBoard[block_y][block_x]
-                    if prev_value > 0 and (block_x, block_y) != (self.block.x, self.block.y):
-                        return True
+        for cord in block.getListCoordinates():
+            if self.prevBoard[cord[1]][cord[0]] != 0:
+                return True
         return False
 
     def isGameOver(self):
