@@ -170,31 +170,17 @@ class Tetris:
 
     def _outOfBounds(self, block: Block) -> bool:
         """Checks if the block is out of bounds"""
-        for row in range(4):
-            for column in range(4):
-                if row * 4 + column in block.image():
-                    block_x, block_y = block.x + column, block.y + row
-                    if (
-                        block_y > self.ROWS - 1
-                        or block_y < 0
-                        or block_x > self.COLUMNS - 1
-                        or block_x < 0
-                    ):
-                        return True
+        for cord in block.getListCoordinates():
+            if cord[0] < 0 or cord[0] >= self.COLUMNS or cord[1] >= self.ROWS or cord[1] < 0:
+                return True
 
         return False
 
     def _intersects(self, block: Block) -> bool:
         """Checks if the block intersects with another block on the board"""
-        for row in range(4):
-            for column in range(4):
-                if row * 4 + column in block.image():
-                    # Check if the block intersects with the board
-                    # That is, if the block is on top of another block that is not itself
-                    block_x, block_y = block.x + column, block.y + row
-                    prev_value = self.prevBoard[block_y][block_x]
-                    if prev_value > 0 and (block_x, block_y) != (self.block.x, self.block.y):
-                        return True
+        for cord in block.getListCoordinates():
+            if self.prevBoard[cord[1]][cord[0]] != 0:
+                return True
         return False
 
     def isGameOver(self):
@@ -281,7 +267,7 @@ class Tetris:
     def getPossibleBoards(self) -> list["Tetris"]:
         possible_boards = []
         blockCopy = self.block.copy()
-        
+                
         if self.block.type <= 2: # I Z S
             rotations = 2
         elif self.block.type == 6: # O
@@ -291,7 +277,7 @@ class Tetris:
 
         for rotation in range(rotations):
             blockCopy.rotation = rotation
-            for y in range(self.ROWS):
+            for y in range(self.ROWS, 0, -1):
                 for x in range(-blockCopy.getLeftmostImageCoordinate(), self.COLUMNS - blockCopy.getLeftmostImageCoordinate()):
                     # if self.prevBoard[y][x] == 0:
                     tetris = self.checkBlockFits(blockCopy, x, y)
@@ -327,43 +313,6 @@ class Tetris:
         else:
             return "⬛"
 
-
-# def transition_model(current_state: Tetris, target_state: Tetris) -> list[Action]:
-#     """
-#     Calculates the sequence of actions required to transition from the current board state to the target board state.
-
-#     Args:
-#         current_state (Board): The current state of the Tetris board.
-#         target_state (Board): The desired target state of the board.
-
-#     Returns:
-#         list[Action]: A list of actions that need to be performed to achieve the target state.
-#     """
-
-#     actions = []
-#     # TODO: change implementation to make it smarter
-    
-#     if current_state == target_state:
-#         actions.append(Action.SOFT_DROP)
-#         # print("No transition needed")
-#         return actions
-
-#     # Find where the last block is in the target state
-#     target_block = target_state.block
-
-#     # Find the correct rotation
-#     needed_rotation = target_block.rotation - current_state.block.rotation
-#     actions += [Action.ROTATE_CLOCKWISE] * needed_rotation
-
-#     # Move the block to the correct x and y position
-#     if current_state.block.x < target_block.x:
-#         actions += [Action.MOVE_RIGHT] * (target_block.x - current_state.block.x)
-#     elif current_state.block.x > target_block.x:
-#         actions += [Action.MOVE_LEFT] * (current_state.block.x - target_block.x)
-#     # Move the block down to the correct y position as it would be used in reality
-#     actions.append(Action.HARD_DROP)
-
-#     return actions
 
 def heuristic(a: Block, b: Block) -> int:
     return abs(a.x - b.x) + abs(a.y - b.y)
