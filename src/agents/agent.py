@@ -4,9 +4,9 @@ class for all agents in the simulation.
 """
 
 from abc import ABC, abstractmethod
-from typing import Any, Union
+from typing import Any, Tuple, Union
 
-from src.game.tetris import Action, Tetris
+from src.game.tetris import Action, Tetris, transition_model
 from time import sleep
 
 
@@ -22,7 +22,7 @@ class Agent(ABC):
         return hasattr(subclass, "result") and callable(subclass.result)
 
     @abstractmethod
-    def result(board: Tetris) -> Union[Action, list[Action]]:
+    def result(board: Tetris) -> Tuple[Union[Action, list[Action]], Tetris]:
         """
         Determines the next move for the agent based on the current state of the board.
 
@@ -77,20 +77,40 @@ def playGameDemoStepByStep(agent: Agent, board: Tetris) -> Tetris:
         agent (Agent): The agent to play the game.
         board (Board): The initial state of the board.
     """
+    assert board is not None, "Board is None"
     
+    copyBoard = board.copy()
     # Get the result of the agent's action
-    result = agent.result(board)
+    result, best_board, nextBestBoard = agent.result(board)
     
-    if Action.HARD_DROP in result:
-        result.remove(Action.HARD_DROP)
-        result.append([Action.SOFT_DROP] * 20)
-    # Perform the action(s) on the board
-    if isinstance(result, list):
+    # Check if the result is empty, because its impossible to reach the best board
+    if len(result) > 0:
         for action in result:
             board.doAction(action, demo=True)
+    # try the next best board instead
     else:
-        board.doAction(action, demo=True)
+        result = transition_model(board, nextBestBoard)
+        for action in result:
+            board.doAction(action, demo=True)
+        
+    # Error checking
+    assert not board.blockHasLanded, f"Block landed too early \nBoard pre actions:\n{copyBoard.board}\nNum SoftDrops:\n{result.count(Action.SOFT_DROP)}\nBoard post actions:\n{board.board}"
+    if not (board == best_board):
+        print("Start Board:")
+        copyBoard.printBoard()
+        print("\nActual:")
+        board.printBoard()
+        print("Expected:")
+        best_board.printBoard()
+        print("Actions:")
+        print(result)
+        raise AssertionError(f"Boards are not the same.")
+    
     # Advance the game by one frame
     board.doAction(Action.SOFT_DROP)
+    assert board.blockHasLanded, "Block has not landed"
     if board.blockHasLanded:
         board.updateBoard()
+        
+    # assert that board is the same as best_board if not print both boards
+    
