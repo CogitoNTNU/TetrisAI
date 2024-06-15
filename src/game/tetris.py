@@ -246,14 +246,20 @@ class Tetris:
         self.rowsRemoved += 1
         self.prevBoard = self.deep_copy_list_of_lists(self.board)
 
-    def checkBlockFits(self, block: Block, x, y) -> "Tetris":
-        """Places the given block at the specified position on the board"""
+    def checkBlockFits(self, block: Block, x: int, y: int) -> "Tetris":
+        """Places the given block at the specified position on the board
+
+        Returns:
+            The new Tetris instance if it is legal or None object for illegal
+        """
         tetris = self.copy()
         tetris.block = block.copy()
         tetris.block.x = x
         tetris.block.y = y
 
-        valid = tetris.isValidBlockPosition(tetris.block)
+        valid = tetris.isValidBlockPosition(tetris.block) and tetris._isUnreachable(
+            tetris.block
+        )
 
         if not valid:
             return None
@@ -275,6 +281,9 @@ class Tetris:
 
         return None
 
+    def _isUnreachable(self, block: Block) -> bool:
+        return True
+
     def getPossibleBoards(self) -> list["Tetris"]:
         possible_boards = []
         blockCopy = self.block.copy()
@@ -293,7 +302,7 @@ class Tetris:
                     -blockCopy.getLeftmostImageCoordinate(),
                     self.COLUMNS - blockCopy.getLeftmostImageCoordinate(),
                 ):
-                    # if self.prevBoard[y][x] == 0:
+
                     tetris = self.checkBlockFits(blockCopy, x, y)
                     if tetris is not None:
                         tetris.prevBoard = self.deep_copy_list_of_lists(tetris.board)
