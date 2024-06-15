@@ -1,8 +1,7 @@
 from src.agents.agent import Agent
 from src.game.tetris import Action, Tetris, transition_model, get_all_actions
-from src.agents.heuristic import (
-    utility
-)
+from src.agents.heuristic import utility
+
 
 class HeuristicWithParametersAgent(Agent):
 
@@ -27,14 +26,19 @@ class HeuristicWithParametersAgent(Agent):
         best_utility = float("-inf")
         # Check which board has the best outcome based on the heuristic
         for boards in possible_boards:
-            current_utility = utility(boards, self.aggregate_heights_weight, self.max_height_weight,
-                                    self.lines_cleared_weight, self.bumpiness_weight, self.holes_weight)
-            
+            current_utility = utility(
+                boards,
+                self.aggregate_heights_weight,
+                self.max_height_weight,
+                self.lines_cleared_weight,
+                self.bumpiness_weight,
+                self.holes_weight,
+            )
+
             if current_utility > best_utility:
                 best_board = boards
                 best_utility = current_utility
 
-            
         # Find the actions needed to transform the current board to the new board
         actions = []
         try:

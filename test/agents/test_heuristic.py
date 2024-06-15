@@ -3,7 +3,7 @@ from src.agents.heuristic import *
 
 
 def test_heuristic_height_aggregate_empty_board():
-    
+
     initBoard = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -30,7 +30,9 @@ def test_heuristic_height_aggregate_empty_board():
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ]
     board = Tetris(initBoard)
-    assert calculate_heights(board)[0] == 0, "Expected aggregate height of 0 for an empty board"
+    assert (
+        calculate_heights(board)[0] == 0
+    ), "Expected aggregate height of 0 for an empty board"
 
 
 def test_heuristic_aggregate_with_equal_heights():
@@ -66,7 +68,7 @@ def test_heuristic_aggregate_with_equal_heights():
 
 
 def test_heuristic_high_line_heights():
-    
+
     initBoard = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -98,7 +100,7 @@ def test_heuristic_high_line_heights():
 
 
 def test_heuristic_different_heights():
-    
+
     initBoard = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -156,7 +158,9 @@ def test_max_height_empty_board():
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ]
     board = Tetris(initBoard)
-    assert calculate_heights(board)[1] == 0, "Expected max height of 0 for an empty board"
+    assert (
+        calculate_heights(board)[1] == 0
+    ), "Expected max height of 0 for an empty board"
 
 
 def test_max_height_equal_heights():
@@ -372,11 +376,11 @@ def test_bumpiness_empty():
     ]
 
     assert calculate_heights(board)[2] == 0
-    #assert bumpiness(board) == 0
+    # assert bumpiness(board) == 0
 
 
 def test_bumpiness_five():
-    
+
     initBoard = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -407,7 +411,7 @@ def test_bumpiness_five():
 
 
 def test_bumpiness_nine():
-    
+
     initBoard = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -438,7 +442,7 @@ def test_bumpiness_nine():
 
 
 def test_bumpiness_with_holes():
-    
+
     initBoard = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -469,7 +473,7 @@ def test_bumpiness_with_holes():
 
 
 def test_bumpiness_40():
-    
+
     initBoard = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -500,7 +504,7 @@ def test_bumpiness_40():
 
 
 def test_aggregate_height_zero():
-    
+
     initBoard = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -531,7 +535,7 @@ def test_aggregate_height_zero():
 
 
 def test_aggregate_height_full():
-    
+
     initBoard = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -562,7 +566,7 @@ def test_aggregate_height_full():
 
 
 def test_aggregate_height_half():
-    
+
     initBoard = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -593,7 +597,7 @@ def test_aggregate_height_half():
 
 
 def test_no_holes():
-    
+
     initBoard = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -623,9 +627,8 @@ def test_no_holes():
     assert find_holes(board) == 0
 
 
-
 def test_24_holes():
-    
+
     initBoard = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],

@@ -4,6 +4,7 @@ from src.game.tetris import Action, Tetris
 from src.agents.heuristic_agent import HeuristicAgent
 from src.game.block import Block
 
+
 def test_result_heuristic_agent():
 
     initBoard = [
@@ -57,7 +58,7 @@ def test_result_heuristic_agent():
         [1, 1, 1, 1, 1, 2, 2, 1, 1, 1],
         [1, 1, 1, 1, 1, 2, 1, 1, 1, 1],
     ]
-    
+
     block = Block(3, 0, 1)
     board = Tetris(initBoard, block)
 
@@ -67,4 +68,4 @@ def test_result_heuristic_agent():
         board.doAction(result[i])
     print(result)
     board.printBoard()
-    assert (board.board == expected_board)
+    assert board.board == expected_board

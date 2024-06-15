@@ -65,7 +65,7 @@ def test_hard_drop():
     ]
 
     board.doAction(Action.HARD_DROP)
-    
+
     for board_row, expected_row in zip(board.board, expected_board):
         assert board_row == expected_row
 

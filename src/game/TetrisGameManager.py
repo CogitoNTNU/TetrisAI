@@ -22,6 +22,7 @@ SCREEN_HEIGHT = (HEIGHT - START_HEIGHT) * BLOCK_SIZE
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 
+
 class TetrisGameManager:
     currentPiece = None
     nextPiece = None
@@ -43,7 +44,7 @@ class TetrisGameManager:
     def startGame(self):
         pygame.init()
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-        pygame.display.set_caption('Tetris')  # Set window title
+        pygame.display.set_caption("Tetris")  # Set window title
 
         clock = pygame.time.Clock()
 
@@ -51,29 +52,28 @@ class TetrisGameManager:
             self.draw_board(self.board)
             self.inputHandling()
             if self.board.blockHasLanded:
-                self.board.updateBoard()    # Update the board after a block has landed and spawn a new block
+                self.board.updateBoard()  # Update the board after a block has landed and spawn a new block
             self.checkTimer()
             pygame.display.update()
             clock.tick(60)  # Cap the frame rate to 60 FPS
 
         self.stopGame()
-        
+
     def startDemo(self, agent: Agent):
         pygame.init()
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-        pygame.display.set_caption('Tetris')  # Set window title
-        
+        pygame.display.set_caption("Tetris")  # Set window title
+
         clock = pygame.time.Clock()
-        
+
         while not self.board.gameOver:
             self.draw_board(self.board)
             playGameDemoStepByStep(agent, self.board)
             pygame.display.update()
             clock.tick(60)  # Cap the frame rate to 60 FPS
-            
+
         self.stopGame()
-            
-        
+
     def inputHandling(self):
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -97,17 +97,25 @@ class TetrisGameManager:
         if checkTime < newTime:
             self.currentTime = newTime
             self.movePiece(Action.SOFT_DROP)
-            
+
     def draw_board(self, gameState: Tetris):
         self.screen.fill(BLACK)
         temp = deepcopy(gameState)
-        temp_board = temp.board[START_HEIGHT:]        
-        for y in range(HEIGHT-START_HEIGHT):
+        temp_board = temp.board[START_HEIGHT:]
+        for y in range(HEIGHT - START_HEIGHT):
             for x in range(WIDTH):
                 if temp_board[y][x] != 0:
-                    pygame.draw.rect(self.screen, COLORS[temp_board[y][x]-1], (x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE))
-                pygame.draw.rect(self.screen, WHITE, (x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE), 1)
-
+                    pygame.draw.rect(
+                        self.screen,
+                        COLORS[temp_board[y][x] - 1],
+                        (x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE),
+                    )
+                pygame.draw.rect(
+                    self.screen,
+                    WHITE,
+                    (x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE),
+                    1,
+                )
 
     def stopGame(self):
         pygame.quit()

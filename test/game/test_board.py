@@ -29,9 +29,10 @@ def test_get_possible_moves_for_square():
         assert isinstance(move, Tetris)
 
     assert len(possible_moves) == 9
-    
+
+
 def test_get_possible_moves_complex():
-    
+
     innitBoard = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -57,16 +58,15 @@ def test_get_possible_moves_complex():
         [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
         [1, 1, 1, 1, 1, 1, 0, 0, 1, 1],
     ]
-    
-    innitBlock1 = Block(3, 0, 0) # I
-    innitBlock2 = Block(3, 0, 1) # Z
-    innitBlock3 = Block(3, 0, 2) # S
-    innitBlock4 = Block(3, 0, 3) # L
-    innitBlock5 = Block(3, 0, 4) # J
-    innitBlock6 = Block(3, 0, 5) # T
-    innitBlock7 = Block(3, 0, 6) # O
-    
-    
+
+    innitBlock1 = Block(3, 0, 0)  # I
+    innitBlock2 = Block(3, 0, 1)  # Z
+    innitBlock3 = Block(3, 0, 2)  # S
+    innitBlock4 = Block(3, 0, 3)  # L
+    innitBlock5 = Block(3, 0, 4)  # J
+    innitBlock6 = Block(3, 0, 5)  # T
+    innitBlock7 = Block(3, 0, 6)  # O
+
     possibleBoard1 = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -117,7 +117,7 @@ def test_get_possible_moves_complex():
         [0, 0, 0, 0, 1, 2, 0, 0, 0, 0],
         [1, 1, 1, 1, 1, 1, 0, 0, 1, 1],
     ]
-    
+
     possibleBoard3 = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -143,7 +143,7 @@ def test_get_possible_moves_complex():
         [0, 0, 0, 0, 1, 3, 3, 0, 0, 0],
         [1, 1, 1, 1, 1, 1, 3, 0, 1, 1],
     ]
-    
+
     possibleBoard4 = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -169,7 +169,7 @@ def test_get_possible_moves_complex():
         [0, 0, 0, 0, 1, 0, 4, 0, 0, 0],
         [1, 1, 1, 1, 1, 1, 4, 0, 1, 1],
     ]
-    
+
     possibleBoard5 = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -195,7 +195,7 @@ def test_get_possible_moves_complex():
         [0, 0, 0, 0, 1, 5, 5, 5, 0, 0],
         [1, 1, 1, 1, 1, 1, 0, 5, 1, 1],
     ]
-    
+
     possibleBoard6 = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -221,7 +221,7 @@ def test_get_possible_moves_complex():
         [0, 0, 0, 0, 1, 6, 6, 0, 0, 0],
         [1, 1, 1, 1, 1, 1, 6, 0, 1, 1],
     ]
-    
+
     possibleBoard7 = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -247,26 +247,45 @@ def test_get_possible_moves_complex():
         [0, 0, 0, 0, 1, 7, 7, 0, 0, 0],
         [1, 1, 1, 1, 1, 1, 0, 0, 1, 1],
     ]
-    
-    blocks = [innitBlock1, innitBlock2, innitBlock3, innitBlock4, innitBlock5, innitBlock6, innitBlock7]
-    possibleBoards = [possibleBoard1, possibleBoard2, possibleBoard3, possibleBoard4, possibleBoard5, possibleBoard6, possibleBoard7]
-    
+
+    blocks = [
+        innitBlock1,
+        innitBlock2,
+        innitBlock3,
+        innitBlock4,
+        innitBlock5,
+        innitBlock6,
+        innitBlock7,
+    ]
+    possibleBoards = [
+        possibleBoard1,
+        possibleBoard2,
+        possibleBoard3,
+        possibleBoard4,
+        possibleBoard5,
+        possibleBoard6,
+        possibleBoard7,
+    ]
+
     for i in range(7):
         # Construct the test scenario with the initial board and block
         actualBoard = Tetris(innitBoard, blocks[i])
         possibleMoves = actualBoard.getPossibleBoards()
-        for x in possibleMoves: x.printBoard()
-        
+        for x in possibleMoves:
+            x.printBoard()
+
         # Construct the expected board
         expectedBoard = Tetris()
         expectedBoard.board = possibleBoards[i]
-        
+
         # Check if possible moves contain the expected board
         assert expectedBoard in possibleMoves
+
 
 def test_board_equal_for_the_same_object():
     board1 = Tetris()
     assert board1 == board1
+
 
 def test_board_equal_for_equal_different_objects():
     board1 = Tetris()
@@ -435,7 +454,7 @@ def test_transition_model_x_direction():
     actions = transition_model(current_board, target_board)
     assert isinstance(actions, list)
     assert action in actions
-    assert len(actions) == 1 
+    assert len(actions) == 1
 
 
 def test_transition_model_complex_target():
@@ -455,10 +474,10 @@ def test_transition_model_complex_target():
     actions = transition_model(current_board, target_board)
     print(actions)
     assert isinstance(actions, list)
-    
+
     for action in actual_actions:
         current_board.doAction(action)
-    
+
     assert current_board == target_board
 
 
@@ -476,10 +495,10 @@ def test_transition_model_left_movement():
 
     actions = transition_model(current_board, target_board)
     assert isinstance(actions, list)
-    
+
     for action in actual_actions:
         current_board.doAction(action)
-    
+
     assert current_board == target_board
 
 
@@ -534,7 +553,8 @@ def test_transition_model_execution_of_invalid_move_sequence():
     for action in actions:
         current_board.doAction(action)
     assert current_board == target_board
-    
+
+
 def test_transition_model_result_complex():
 
     innitBoard = [
@@ -562,17 +582,20 @@ def test_transition_model_result_complex():
         [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
         [1, 1, 1, 1, 1, 1, 0, 0, 1, 1],
     ]
-    
-    innitBlock1 = Block(3, 0, 0) # I    
+
+    innitBlock1 = Block(3, 0, 0)  # I
 
     current_board: Tetris = Tetris(innitBoard, innitBlock1)
     target_board: Tetris = copy.deepcopy(current_board)
     settup = [Action.ROTATE_CLOCKWISE]
-    for x in range(3): settup.append(Action.MOVE_RIGHT)  
-    for x in range(18): settup.append(Action.SOFT_DROP)    
-    for x in range(2): settup.append(Action.MOVE_LEFT)  
+    for x in range(3):
+        settup.append(Action.MOVE_RIGHT)
+    for x in range(18):
+        settup.append(Action.SOFT_DROP)
+    for x in range(2):
+        settup.append(Action.MOVE_LEFT)
     settup.append(Action.HARD_DROP)
-    
+
     for action in settup:
         target_board.doAction(action)
 
@@ -580,7 +603,5 @@ def test_transition_model_result_complex():
     actions = transition_model(current_board, target_board)
     for action in actions:
         current_board.doAction(action)
-        
+
     assert current_board == target_board
-    
-    

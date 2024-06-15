@@ -11,7 +11,7 @@ def create_agent(agent_type: str) -> Agent:
     if agent_type.lower() == "random":
         return RandomAgent()
     elif agent_type.lower() == "heuristic":
-        hyperparameters = [1,1,1,1,1]
+        hyperparameters = [1, 1, 1, 1, 1]
         return HeuristicAgent()
     else:
         raise ValueError(f"Unknown agent type: {agent_type}")

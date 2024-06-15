@@ -47,7 +47,7 @@ def play_game(agent: Agent, board: Tetris, actions_per_drop: int = 1) -> Tetris:
     Returns:
         The final state of the board after the game is over.
     """
-    #count = 0
+    # count = 0
 
     while not board.isGameOver():
         # Get the result of the agent's action
@@ -59,15 +59,16 @@ def play_game(agent: Agent, board: Tetris, actions_per_drop: int = 1) -> Tetris:
                     board.doAction(action)
             else:
                 board.doAction(result)
-            
-            #count += 1
+
+            # count += 1
         # Advance the game by one frame
         board.doAction(Action.SOFT_DROP)
         if board.blockHasLanded:
             board.updateBoard()
-        #board.printBoard()
+        # board.printBoard()
 
     return board
+
 
 def playGameDemoStepByStep(agent: Agent, board: Tetris) -> Tetris:
     """
@@ -78,11 +79,11 @@ def playGameDemoStepByStep(agent: Agent, board: Tetris) -> Tetris:
         board (Board): The initial state of the board.
     """
     assert board is not None, "Board is None"
-    
+
     copyBoard = board.copy()
     # Get the result of the agent's action
     result, best_board, nextBestBoard = agent.result(board)
-    
+
     # Check if the result is empty, because its impossible to reach the best board
     if len(result) > 0:
         for action in result:
@@ -92,9 +93,11 @@ def playGameDemoStepByStep(agent: Agent, board: Tetris) -> Tetris:
         result = transition_model(board, nextBestBoard)
         for action in result:
             board.doAction(action, demo=True)
-        
+
     # Error checking
-    assert not board.blockHasLanded, f"Block landed too early \nBoard pre actions:\n{copyBoard.board}\nNum SoftDrops:\n{result.count(Action.SOFT_DROP)}\nBoard post actions:\n{board.board}"
+    assert (
+        not board.blockHasLanded
+    ), f"Block landed too early \nBoard pre actions:\n{copyBoard.board}\nNum SoftDrops:\n{result.count(Action.SOFT_DROP)}\nBoard post actions:\n{board.board}"
     if not (board == best_board):
         print("Start Board:")
         copyBoard.printBoard()
@@ -105,12 +108,11 @@ def playGameDemoStepByStep(agent: Agent, board: Tetris) -> Tetris:
         print("Actions:")
         print(result)
         raise AssertionError(f"Boards are not the same.")
-    
+
     # Advance the game by one frame
     board.doAction(Action.SOFT_DROP)
     assert board.blockHasLanded, "Block has not landed"
     if board.blockHasLanded:
         board.updateBoard()
-        
+
     # assert that board is the same as best_board if not print both boards
-    

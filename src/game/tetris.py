@@ -62,7 +62,12 @@ class Tetris:
     START_X = 3
     START_Y = 0
 
-    def __init__(self, board: list[list[int]] = None, block: Block = None, nextBlock: Block = None):
+    def __init__(
+        self,
+        board: list[list[int]] = None,
+        block: Block = None,
+        nextBlock: Block = None,
+    ):
         """
         Initializes a new game board instance, setting up an empty board, placing the first block, and selecting the next block.
         """
@@ -77,7 +82,7 @@ class Tetris:
             self.block = Block(self.START_X, self.START_Y, 0)
         else:
             self.block = block
-        
+
         if nextBlock == None:
             self.nextBlock = Block(self.START_X, self.START_Y, random.randint(0, 6))
         else:
@@ -102,7 +107,7 @@ class Tetris:
 
     def getBoard(self) -> list[list[int]]:
         return self.deep_copy_list_of_lists(self.board)
-    
+
     def deep_copy_list_of_lists(self, original: list[list[int]]) -> list[list[int]]:
         copied = [row[:] for row in original]
         return copied
@@ -133,10 +138,10 @@ class Tetris:
             new_block.moveDown()
 
         # For blocks reaching the bottom of the board, place the block and introduce a new one
-        if (
-            action in [Action.HARD_DROP, Action.SOFT_DROP]
-            and not self.isValidBlockPosition(new_block)
-        ):
+        if action in [
+            Action.HARD_DROP,
+            Action.SOFT_DROP,
+        ] and not self.isValidBlockPosition(new_block):
             new_block.moveUp()
             self.blockHasLanded = True
         if self.isValidBlockPosition(new_block):
@@ -145,7 +150,6 @@ class Tetris:
             if demo:
                 sleep(DEMO_SLEEP)
 
-        
     def updateBoard(self):
         self.blockHasLanded = False
         self._checkForFullRows()
@@ -166,12 +170,19 @@ class Tetris:
         Returns:
             bool: True if the block's position is valid, False otherwise.
         """
-        return not (self._outOfBounds(block) or self._intersects(block) or self.isGameOver())
+        return not (
+            self._outOfBounds(block) or self._intersects(block) or self.isGameOver()
+        )
 
     def _outOfBounds(self, block: Block) -> bool:
         """Checks if the block is out of bounds"""
         for cord in block.getListCoordinates():
-            if cord[0] < 0 or cord[0] >= self.COLUMNS or cord[1] >= self.ROWS or cord[1] < 0:
+            if (
+                cord[0] < 0
+                or cord[0] >= self.COLUMNS
+                or cord[1] >= self.ROWS
+                or cord[1] < 0
+            ):
                 return True
 
         return False
@@ -192,10 +203,9 @@ class Tetris:
         for i in range(4):
             for j in range(4):
                 if i * 4 + j in self.block.image():
-                    self.board[i + self.block.y][
-                        j + self.block.x
-                    ] = self.block.type + 1  # implicit color 1 to 7
-        
+                    self.board[i + self.block.y][j + self.block.x] = (
+                        self.block.type + 1
+                    )  # implicit color 1 to 7
 
     def _shiftToNewBlock(self):
         """Places the current block on the board and sets the next block as the current block"""
@@ -235,42 +245,43 @@ class Tetris:
         self.board = newMatrix
         self.rowsRemoved += 1
         self.prevBoard = self.deep_copy_list_of_lists(self.board)
-        
+
     def checkBlockFits(self, block: Block, x, y) -> "Tetris":
         """Places the given block at the specified position on the board"""
         tetris = self.copy()
         tetris.block = block.copy()
         tetris.block.x = x
         tetris.block.y = y
-        
+
         valid = tetris.isValidBlockPosition(tetris.block)
-        
+
         if not valid:
             return None
-        
+
         onTop = False
         for cord in tetris.block.getListCoordinates():
-            if cord[1] == self.ROWS - 1: # if the block is on the bottom
+            if cord[1] == self.ROWS - 1:  # if the block is on the bottom
                 onTop = True
                 break
-            elif self.prevBoard[cord[1] + 1][cord[0]] != 0: # if the block is on top of another block
+            elif (
+                self.prevBoard[cord[1] + 1][cord[0]] != 0
+            ):  # if the block is on top of another block
                 onTop = True
                 break
-            
+
         if onTop:
             tetris._placeBlock()
             return tetris
-        
+
         return None
-        
-    
+
     def getPossibleBoards(self) -> list["Tetris"]:
         possible_boards = []
         blockCopy = self.block.copy()
-                
-        if self.block.type <= 2: # I Z S
+
+        if self.block.type <= 2:  # I Z S
             rotations = 2
-        elif self.block.type == 6: # O
+        elif self.block.type == 6:  # O
             rotations = 1
         else:
             rotations = 4
@@ -278,25 +289,30 @@ class Tetris:
         for rotation in range(rotations):
             blockCopy.rotation = rotation
             for y in range(self.ROWS, 0, -1):
-                for x in range(-blockCopy.getLeftmostImageCoordinate(), self.COLUMNS - blockCopy.getLeftmostImageCoordinate()):
+                for x in range(
+                    -blockCopy.getLeftmostImageCoordinate(),
+                    self.COLUMNS - blockCopy.getLeftmostImageCoordinate(),
+                ):
                     # if self.prevBoard[y][x] == 0:
                     tetris = self.checkBlockFits(blockCopy, x, y)
                     if tetris is not None:
                         tetris.prevBoard = self.deep_copy_list_of_lists(tetris.board)
                         possible_boards.append(tetris)
-        
+
         return possible_boards
-
-
 
     def __eq__(self, other: "Tetris") -> bool:
         if not isinstance(other, Tetris):
             return False
 
         return self.board == other.board
-    
+
     def copy(self) -> "Tetris":
-        tetris = Tetris(self.deep_copy_list_of_lists(self.prevBoard), self.block.copy(), self.nextBlock.copy())
+        tetris = Tetris(
+            self.deep_copy_list_of_lists(self.prevBoard),
+            self.block.copy(),
+            self.nextBlock.copy(),
+        )
         return tetris
 
     def printBoard(self):
@@ -317,6 +333,7 @@ class Tetris:
 def heuristic(a: Block, b: Block) -> int:
     return abs(a.x - b.x) + abs(a.y - b.y)
 
+
 def get_neighbors(board: Tetris, block: Block) -> List[Tuple[Block, Action]]:
     neighbors = []
     potential_moves = [
@@ -326,7 +343,7 @@ def get_neighbors(board: Tetris, block: Block) -> List[Tuple[Block, Action]]:
         (block.copy(), Action.MOVE_RIGHT),
         (block.copy(), Action.SOFT_DROP),
     ]
-    
+
     potential_moves[0][0].rotateRight()
     potential_moves[1][0].rotateLeft()
     potential_moves[2][0].moveLeft()
@@ -339,12 +356,15 @@ def get_neighbors(board: Tetris, block: Block) -> List[Tuple[Block, Action]]:
     return neighbors
 
 
-def reconstruct_path(came_from: Dict[Block, Tuple[Block, Action]], current: Block) -> List[Action]:
+def reconstruct_path(
+    came_from: Dict[Block, Tuple[Block, Action]], current: Block
+) -> List[Action]:
     path = []
     while current in came_from:
         current, action = came_from[current]
         path.append(action)
     return path[::-1]
+
 
 def transition_model(current_state: Tetris, target_state: Tetris) -> List[Action]:
     start = current_state.block

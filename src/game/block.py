@@ -3,27 +3,24 @@ import random
 
 FIGURES = [
     # Definitions for each Tetris block rotation
-
-    [[4, 5, 6, 7],  [2, 6, 10, 14], [8, 9, 10, 11], [1, 5, 9, 13]],     # I
-    [[0, 1, 5, 6],  [2, 5, 6, 9],   [4, 5, 9, 10],  [5, 8, 9, 12]],     # Z
-    [[4, 5, 1, 2],  [1, 5, 6, 10],  [8, 9, 5, 6],   [0, 4, 5, 9]],      # S
-    [[2, 4, 5, 6],  [1, 5, 9, 10],  [4, 5, 6, 8],   [0, 1, 5, 9]],      # L
-    [[0, 4, 5, 6],  [1, 2, 5, 9],   [4, 5, 6, 10],  [1, 5, 8, 9]],      # J
-    [[1, 4, 5, 6],  [1, 5, 6, 9],   [4, 5, 6, 9],   [1, 4, 5, 9]],      # T
-    [[1, 2, 5, 6]],                                                     # O
+    [[4, 5, 6, 7], [2, 6, 10, 14], [8, 9, 10, 11], [1, 5, 9, 13]],  # I
+    [[0, 1, 5, 6], [2, 5, 6, 9], [4, 5, 9, 10], [5, 8, 9, 12]],  # Z
+    [[4, 5, 1, 2], [1, 5, 6, 10], [8, 9, 5, 6], [0, 4, 5, 9]],  # S
+    [[2, 4, 5, 6], [1, 5, 9, 10], [4, 5, 6, 8], [0, 1, 5, 9]],  # L
+    [[0, 4, 5, 6], [1, 2, 5, 9], [4, 5, 6, 10], [1, 5, 8, 9]],  # J
+    [[1, 4, 5, 6], [1, 5, 6, 9], [4, 5, 6, 9], [1, 4, 5, 9]],  # T
+    [[1, 2, 5, 6]],  # O
 ]
-
-
 
 
 # Colors for the blocks
 COLORS = [
     # RGB color definitions for each block type
     (0, 255, 255),  # I
-    (255, 0, 0),    # Z
-    (0, 255, 0),    # S
+    (255, 0, 0),  # Z
+    (0, 255, 0),  # S
     (255, 165, 0),  # L
-    (0, 0, 255),    # J
+    (0, 0, 255),  # J
     (128, 0, 128),  # T
     (255, 255, 0),  # O
 ]
@@ -94,7 +91,6 @@ class Block:
 
     def image(self):
         return FIGURES[self.type][self.rotation]
-    
 
     def getListCoordinates(self) -> list[tuple[int, int]]:
         """
@@ -108,7 +104,6 @@ class Block:
             x = i % 4
             y = i // 4
             listCoordinates.append((self.x + x, self.y + y))
-          
 
         return listCoordinates
 
@@ -123,7 +118,7 @@ class Block:
             if x < leftmost:
                 leftmost = x
         return leftmost
-    
+
     def getRightmostImageCoordinate(self) -> int:
         """
         Returns:
@@ -135,7 +130,7 @@ class Block:
             if x > rightmost:
                 rightmost = x
         return rightmost
-    
+
     def getLowestImageCoordinate(self) -> int:
         """
         Returns:
@@ -147,24 +142,48 @@ class Block:
             if y > botmost:
                 botmost = y
         return botmost
-    
+
     def __eq__(self, other):
         if not isinstance(other, Block):
             return False
-        return (self.x, self.y, self.rotation, self.type) == (other.x, other.y, other.rotation, other.type)
+        return (self.x, self.y, self.rotation, self.type) == (
+            other.x,
+            other.y,
+            other.rotation,
+            other.type,
+        )
 
     def __lt__(self, other):
-        return (self.x, self.y, self.rotation, self.type) < (other.x, other.y, other.rotation, other.type)
+        return (self.x, self.y, self.rotation, self.type) < (
+            other.x,
+            other.y,
+            other.rotation,
+            other.type,
+        )
 
     def __le__(self, other):
-        return (self.x, self.y, self.rotation, self.type) <= (other.x, other.y, other.rotation, other.type)
+        return (self.x, self.y, self.rotation, self.type) <= (
+            other.x,
+            other.y,
+            other.rotation,
+            other.type,
+        )
 
     def __gt__(self, other):
-        return (self.x, self.y, self.rotation, self.type) > (other.x, other.y, other.rotation, other.type)
+        return (self.x, self.y, self.rotation, self.type) > (
+            other.x,
+            other.y,
+            other.rotation,
+            other.type,
+        )
 
     def __ge__(self, other):
-        return (self.x, self.y, self.rotation, self.type) >= (other.x, other.y, other.rotation, other.type)
-    
+        return (self.x, self.y, self.rotation, self.type) >= (
+            other.x,
+            other.y,
+            other.rotation,
+            other.type,
+        )
+
     def __hash__(self):
         return hash((self.x, self.y, self.rotation, self.type))
-    
