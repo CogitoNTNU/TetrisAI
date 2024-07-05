@@ -3,6 +3,7 @@
 from src.agents.agent import Agent
 from src.agents.random_agent import RandomAgent
 from src.agents.heuristic_agent import HeuristicAgent
+from src.agents.geneticAlgAgentJon import GeneticAlgAgentJM
 
 
 def create_agent(agent_type: str) -> Agent:
@@ -11,7 +12,8 @@ def create_agent(agent_type: str) -> Agent:
     if agent_type.lower() == "random":
         return RandomAgent()
     elif agent_type.lower() == "heuristic":
-        hyperparameters = [1,1,1,1,1]
         return HeuristicAgent()
+    elif agent_type.lower() == "genetic":
+        return GeneticAlgAgentJM()
     else:
         raise ValueError(f"Unknown agent type: {agent_type}")
