@@ -223,7 +223,7 @@ def test_max_height_takes_highest():
     ), "Expected max height of 20 for a single column with height 20"
 
 
-def test_lines_cleared():
+def test_lines_cleaned():
     initBoard = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -250,10 +250,10 @@ def test_lines_cleared():
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     ]
     board = Tetris(initBoard)
-    assert lines_cleared(board) == 1
+    assert lines_cleaned(board) == 1
 
 
-def test_no_lines_cleared():
+def test_no_lines_cleaned():
     board = Tetris()
     board.board = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -280,10 +280,10 @@ def test_no_lines_cleared():
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ]
-    assert lines_cleared(board) == 0
+    assert lines_cleaned(board) == 0
 
 
-def test_twenty_lines_cleared():
+def test_twenty_lines_cleaned():
     initBoard = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -310,10 +310,10 @@ def test_twenty_lines_cleared():
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     ]
     board = Tetris(initBoard)
-    assert lines_cleared(board) == 20
+    assert lines_cleaned(board) == 20
 
 
-def test_ten_lines_cleared():
+def test_ten_lines_cleaned():
     initBoard = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -340,7 +340,7 @@ def test_ten_lines_cleared():
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     ]
     board = Tetris(initBoard)
-    assert lines_cleared(board) == 10
+    assert lines_cleaned(board) == 10
 
 
 def test_bumpiness_empty():

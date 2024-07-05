@@ -4,14 +4,14 @@ from src.game.tetris import Tetris
 
 
 def utility(gameState: Tetris, aggregate_heights_weight: float, max_height_weight: float, 
-            lines_cleared_weight: float, bumpiness_weight: float, holes_weight: float) -> float:
+            lines_cleaned_weight: float, bumpiness_weight: float, holes_weight: float) -> float:
     """Returns the utility of the given game state."""
     sum = 0
     aggregate, max_height, bumpiness = calculate_heights(gameState)
 
     sum += aggregate_heights_weight * aggregate
     sum += max_height_weight * max_height
-    sum += lines_cleared_weight * lines_cleaned(gameState)
+    sum += lines_cleaned_weight * lines_cleaned(gameState)
     sum += bumpiness_weight * bumpiness
     sum += holes_weight * find_holes(gameState)
 
