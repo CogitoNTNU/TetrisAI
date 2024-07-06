@@ -12,7 +12,7 @@ from math import sqrt
 from src.agents.agent import Agent, play_game
 from src.game.tetris import Action, Tetris, transition_model, get_all_actions
 from src.agents.heuristic import utility
-
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 class GeneticAgent(Agent):
 
@@ -26,6 +26,8 @@ class GeneticAgent(Agent):
 
     def result(self, board: Tetris) -> list[Action]:
         possible_boards = board.getPossibleBoards()
+        if len(possible_boards) == 0:
+            raise ValueError("No possible boards")
         best_board = possible_boards[0]
         best_utility = utility(possible_boards[0], self.weight_vector[0], self.weight_vector[1], self.weight_vector[2], self.weight_vector[3], self.weight_vector[4])
         # Check which board has the best outcome based on the heuristic
@@ -43,15 +45,21 @@ class GeneticAgent(Agent):
 
     def get_weight_vector(self):
         return self.weight_vector
-            
 
-    def _fitness(self, board: Tetris) -> float:
-        fitness = 0
-        for _ in range(self.NUMBER_OF_GAMES):
-            end_board = play_game(self, board, max_pieces_dropped=1500)
-            fitness += end_board.rowsRemoved / self.NUMBER_OF_GAMES
-        return fitness
+    def _fitness(self) -> float:
+        def play_and_get_fitness():
+            copyBoard = Tetris()
+            end_board = play_game(self, copyBoard, max_pieces_dropped=1500)
+            return end_board.rowsRemoved
+
+        with ThreadPoolExecutor() as executor:
+            futures = [executor.submit(play_and_get_fitness) for _ in range(self.NUMBER_OF_GAMES)]
+            
+            total_fitness = sum(future.result() for future in as_completed(futures))
         
+        return total_fitness / self.NUMBER_OF_GAMES
+
+            
     def _normalize_weights(self):
         self.weight_vector /= np.linalg.norm(self.weight_vector)
         
@@ -89,8 +97,7 @@ def calculate_fitnesses(candidates):
     fitness = np.array([])
     for candidate in candidates:
         agent = GeneticAgent(candidate)
-        board = Tetris()
-        fitness = np.append(fitness, agent._fitness(board))
+        fitness = np.append(fitness, agent._fitness())
     print("Parents fitnesses: ", fitness[np.argsort(-fitness)])
     return fitness
 
@@ -103,8 +110,7 @@ def train_genetic_algorithm(init_population_size: int, tol = 1e-6):
     for i in range(init_population_size):
         print("Creating candidate ", i)
         candidate = GeneticAgent(weight_candidates[i])
-        board = Tetris()
-        fitness = candidate._fitness(board)
+        fitness = candidate._fitness()
         weight_fitnesses = np.append(weight_fitnesses, fitness)
     # Sort the candidates based on their fitness
     print("Initial population done")
@@ -127,7 +133,7 @@ def train_genetic_algorithm(init_population_size: int, tol = 1e-6):
             parent_fitness = calculate_fitnesses(parent_candidates)
             parent_candidates = parent_candidates[np.argsort(-parent_fitness)]
             parent_fitness = parent_fitness[np.argsort(-parent_fitness)]
-            child, child_fitness = make_offspring(board, parent_candidates[0], parent_fitness[0], parent_candidates[1], parent_fitness[1])
+            child, child_fitness = make_offspring(parent_candidates[0], parent_fitness[0], parent_candidates[1], parent_fitness[1])
             child_candidates = np.append(child_candidates, child).reshape(-1, 5)
             child_fitnesses = np.append(child_fitnesses, child_fitness)
             print("Child ", len(child_candidates), " done")
@@ -176,32 +182,24 @@ def select_random_parents(init_population_size: int):
     
 
 
-def make_offspring(board: Tetris,  parent1, parent1_fitness : float, parent2, parent2_fitness : float):
+def make_offspring(parent1, parent1_fitness : float, parent2, parent2_fitness : float):
     child = GeneticAgent()
     child._crossover(parent1, parent1_fitness, parent2, parent2_fitness)
     child.mutate_child()
     child._normalize_weights()
-    board = Tetris()
-    child_fitness = child._fitness(board)
+    child_fitness = child._fitness()
     return child.weight_vector, child_fitness
 
-# def mutate_child(child: geneticAgent) -> geneticAgent:
-#     for i in range(len(child.get_weight_vector())):
-#         if random.random() < 0.05:
-#             child.get_weight_vector()[i] +=  random.uniform(-0.20, 0.20)
-#     return child
 
+# weights = np.array([
+#         [0.0, 0.0, 0.0, 0.0, 1.0],
+#         [0.1, 0.0, 0.0, 1.0, 0.0],
+#         [0.0, 0.0, 0.0, 1.0, 1.0],
+#         [0.1, 0.0, 1.0, 0.0, 0.0],
+#         [0.0, 0.0, 1.0, 0.0, 1.0]
+#     ])
+#     fitness = np.array([3, 4, 2, 6, 4])
 
-"""""""""
-weights = np.array([
-        [0.0, 0.0, 0.0, 0.0, 1.0],
-        [0.1, 0.0, 0.0, 1.0, 0.0],
-        [0.0, 0.0, 0.0, 1.0, 1.0],
-        [0.1, 0.0, 1.0, 0.0, 0.0],
-        [0.0, 0.0, 1.0, 0.0, 1.0]
-    ])
-    fitness = np.array([3, 4, 2, 6, 4])
+#     weights = weights[np.argsort(-fitness)]
 
-    weights = weights[np.argsort(-fitness)]
-
-    print(weights)"""
+#     print(weights)
