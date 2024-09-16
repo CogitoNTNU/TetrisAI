@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Tetris WebSocket</title>
+    </head>
+    <body>
+        <h1>Tetris Game</h1>
+        <canvas id="game-canvas" width="400" height="920"></canvas>
+        <script>
+            const ws = new WebSocket("ws://127.0.0.1:8000/ws/game");
+
+            const canvas = document.getElementById("game-canvas");
+            const ctx = canvas.getContext("2d");
+
+
+            ws.onopen = function() {
+                console.log("WebSocket connection established");
+            };
+
+            ws.onmessage = function(event) {
+                const gameState = JSON.parse(event.data);
+                console.log("Game state received from server:", gameState);
+                drawBoard(gameState.board);  // Render the updated board
+            };
+
+            ws.onclose = function() {
+                console.log("WebSocket connection closed");
+            };
+
+            ws.onerror = function(error) {
+                console.error("WebSocket error:", error);
+            };
+
+            // Sending input events
+            window.addEventListener('keydown', function(e) {
+                if (e.key === "ArrowDown") {
+                    ws.send("SOFT_DROP");
+                } else if (e.key === "ArrowLeft") {
+                    ws.send("MOVE_LEFT");
+                } else if (e.key === "ArrowRight") {
+                    ws.send("MOVE_RIGHT");
+                } else if (e.key === " ") {
+                    ws.send("HARD_DROP");
+                } else if (e.key === "ArrowUp") {
+                    ws.send("ROTATE_CLOCKWISE");
+                }
+            });
+
+
+            function drawBoard(board) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                for (let y = 0; y < board.length; y++) {
+                    for (let x = 0; x < board[y].length; x++) {
+                        if (board[y][x] != 0) {
+                            ctx.fillStyle = "blue"; // Set color based on block type
+                            ctx.fillRect(x * 40, y * 40, 40, 40);
+                        }
+                    }
+                }
+            }
+
+        </script>
+    </body>
+</html>
