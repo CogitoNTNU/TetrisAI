@@ -1,6 +1,6 @@
 const agentSelect = document.getElementById("agent-select");
 const startDemoBtn = document.getElementById("start-demo");
-let wsAgent = null; // WebSocket connection for agent demo
+let agentWebSocket = null;
 
 // Fetch available agents from the server and populate the dropdown
 async function loadAgents() {
@@ -20,27 +20,30 @@ function startDemo() {
   const selectedAgent = agentSelect.value;
 
   // Close the existing WebSocket connection if any
-  if (wsAgent) {
-    wsAgent.close();
+  if (agentWebSocket) {
+    agentWebSocket.close();
   }
 
-  wsAgent = new WebSocket(`ws://127.0.0.1:8000/ws/demo/${selectedAgent}`);
+  agentWebSocket = new WebSocket(
+    `ws://127.0.0.1:8000/ws/demo/${selectedAgent}`
+  );
 
-  wsAgent.onopen = function () {
+  agentWebSocket.onopen = function () {
     console.log(`WebSocket connection established with ${selectedAgent} agent`);
   };
 
-  wsAgent.onmessage = function (event) {
+  agentWebSocket.onmessage = function (event) {
     const gameState = JSON.parse(event.data);
     console.log("Game state received from server:", gameState);
-    drawBoard(gameState.board); // Render the updated board using shared function
+    // Render the updated board using shared function
+    drawBoard(gameState.board);
   };
 
-  wsAgent.onclose = function () {
+  agentWebSocket.onclose = function () {
     console.log("WebSocket connection closed");
   };
 
-  wsAgent.onerror = function (error) {
+  agentWebSocket.onerror = function (error) {
     console.error("WebSocket error:", error);
   };
 }
