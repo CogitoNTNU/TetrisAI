@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Tetris AI Demo</title>
+    </head>
+    <body>
+        <h1>Tetris AI Demo</h1>
+
+        <label for="agent-select">Select Agent:</label>
+        <select id="agent-select">
+            <!-- Agents will be dynamically populated -->
+        </select>
+        <button id="start-demo">Start Demo</button>
+
+        <canvas id="game-canvas" width="400" height="920"></canvas>
+
+        <!-- Include the common shared logic -->
+        <script src="tetris-common.js"></script>
+
+        <!-- Include the single player logic -->
+        <script src="singleplayer.js"></script>
+
+        <!-- Include the agent demo logic -->
+        <script src="agentplayer.js"></script>
+    </body>
+</html>
