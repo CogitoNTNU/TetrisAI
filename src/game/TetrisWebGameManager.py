@@ -14,18 +14,16 @@ class TetrisGameManager:
         self.board = board  # Ensure board is of type Tetris
         self.websocket = websocket  # WebSocket connection for real-time communication
         self.score = 0
-        self.currentTime = int(round(time.time() * 1000))
-        self.updateTimer = 1  # Timer to control piece dropping
-        self.base_fall_delay = (
-            1  # Base delay for blocks to fall automatically (in seconds)
-        )
-        self.fall_delay = self.base_fall_delay  # The actual delay for the current speed
-        self.last_fall_time = time.time()  # Track the last time the block fell
+        self.current_time = int(round(time.time() * 1000))
+        self.update_timer = 1  # Timer to control piece dropping
+        self.start_fall_delay_in_seconds = 1
+        self.current_fall_delay = self.start_fall_delay_in_seconds
+        self.last_fall_time = time.time()
 
     async def movePiece(self, direction: Action):
         """Move the Tetris block in a given direction and send updated game state via WebSocket."""
         self.board.doAction(direction)
-        await self.send_game_state()  # Send updated state after action
+        await self.send_game_state()
 
     def isGameOver(self):
         """Check if the game is over."""
@@ -35,18 +33,21 @@ class TetrisGameManager:
         """Update the fall delay based on the score."""
         # For every 10 rows removed (or points scored), decrease the fall delay
         # Ensure it does not go below a minimum fall delay (e.g., 0.1 seconds)
-        self.fall_delay = max(self.base_fall_delay - (self.score // 10) * 0.1, 0.1)
-        print(f"Updated fall delay: {self.fall_delay}")
+        self.current_fall_delay = max(
+            self.start_fall_delay_in_seconds - (self.score // 10) * 0.1, 0.1
+        )
+        print(f"Updated fall delay: {self.current_fall_delay}")
 
     async def startGame(self):
         """Start the game loop for a normal game, receiving inputs and sending game state via WebSocket."""
-        await self.send_game_state()  # Send initial game state
+        # Send initial game state
+        await self.send_game_state()
 
         while not self.board.gameOver:
             try:
                 # Track the time and automatically move the block down if enough time has passed
                 current_time = time.time()
-                if current_time - self.last_fall_time >= self.fall_delay:
+                if current_time - self.last_fall_time >= self.current_fall_delay:
                     await self.movePiece(Action.SOFT_DROP)
                     self.last_fall_time = current_time
 
@@ -57,15 +58,16 @@ class TetrisGameManager:
                     )
                     await self.handle_input(input_action)
                 except asyncio.TimeoutError:
-                    pass  # No input received within 0.1 seconds, keep the block falling
+                    # No input received within 0.1 seconds, keep the block falling
+                    pass
 
                 # Update the board after block lands
                 if self.board.blockHasLanded:
                     self.board.updateBoard()
-                    self.score += 1  # Increase score each time a block lands
-                    self.update_fall_delay()  # Adjust fall speed based on the new score
+                    self.score += 1
+                    self.update_fall_delay()
 
-                await self.send_game_state()  # Send updated state
+                await self.send_game_state()
 
             except Exception as e:
                 print(f"Error in game loop: {e}")
@@ -75,11 +77,12 @@ class TetrisGameManager:
 
     async def startDemo(self, agent: Agent):
         """Start the game loop for a demo game with an agent, sending updates via WebSocket."""
-        await self.send_game_state()  # Send game state to client
+        # Send game state to client
+        await self.send_game_state()
         while not self.board.gameOver:
-            playGameDemoStepByStep(agent, self.board)  # Agent plays step by step
+            playGameDemoStepByStep(agent, self.board)
             await asyncio.sleep(0.1)  # Small delay to simulate gameplay
-            await self.send_game_state()  # Send updated state
+            await self.send_game_state()
 
         await self.stopGame()
 
@@ -99,7 +102,10 @@ class TetrisGameManager:
     async def send_game_state(self):
         """Send the current game state to the client via WebSocket."""
         temp = deepcopy(self.board)
-        temp_board = temp.board[3:]  # Skip the top hidden rows
+
+        # Skip the top hidden rows
+        temp_board = temp.board[3:]
+
         game_state = {
             "board": temp_board,
             "score": self.score,
