@@ -20,7 +20,7 @@ This project is our attempt at making an AI that can play Tetris. First of all w
 - Heuristic agent with set weights
 - Genetic algorithm to find the best weights for the heuristic agent
 
-The game is playable/viable both in the terminal and in a GUI. The GUI is made with Pygame.
+The game is playable/viable both in the terminal, in a GUI and Web. The GUI is made with Pygame.
 
 ## How to run and install
 
@@ -38,6 +38,7 @@ pip install -r requirements.txt
 
 ## Usage
 
+### GUI version
 To play the game yourself, run the following command:
   
 ```bash
@@ -57,6 +58,14 @@ To train the genetic agent, run the following command:
 ```bash
 python main.py train
 ```
+
+### Web version
+To run the web version of the game, run the following command:
+
+```bash
+docker compose up --build
+```
+Then go to `http://localhost:80` in your browser.
 
 ## Testing
 
