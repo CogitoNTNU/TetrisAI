@@ -1,24 +1,26 @@
-from copy import deepcopy
 import time
 import asyncio
 import json
+from fastapi import WebSocket
+
 from src.agents.agent import Agent, playGameDemoStepByStep
 from src.game.tetris import Action, Tetris
 
 
 class TetrisGameManager:
-    def __init__(self, board: Tetris, websocket):
+    def __init__(self, board: Tetris, websocket: WebSocket):
         """
         Initialize the game manager with a board of type Tetris and a WebSocket connection.
         """
-        self.board = board  # Ensure board is of type Tetris
+        self.board = board
         self.websocket = websocket  # WebSocket connection for real-time communication
-        self.score = 0
         self.current_time = int(round(time.time() * 1000))
         self.update_timer = 1  # Timer to control piece dropping
+
         self.start_fall_delay_in_seconds = 1
         self.current_fall_delay = self.start_fall_delay_in_seconds
         self.last_fall_time = time.time()
+        self.fastest_fall_delay = 0.1
 
     async def movePiece(self, direction: Action):
         """Move the Tetris block in a given direction and send updated game state via WebSocket."""
@@ -31,10 +33,14 @@ class TetrisGameManager:
 
     def update_fall_delay(self):
         """Update the fall delay based on the score."""
-        # For every 10 rows removed (or points scored), decrease the fall delay
-        # Ensure it does not go below a minimum fall delay (e.g., 0.1 seconds)
+        # Speed up the block falling speed based on the number of lines cleared
+        LINES_CLEAR_FOR_LEVEL = 10
+        LEVEL_SPEEDUP_FACTOR = 0.1
+
         self.current_fall_delay = max(
-            self.start_fall_delay_in_seconds - (self.score // 10) * 0.1, 0.1
+            self.start_fall_delay_in_seconds
+            - (self.board.rowsRemoved // LINES_CLEAR_FOR_LEVEL) * LEVEL_SPEEDUP_FACTOR,
+            self.fastest_fall_delay,
         )
         print(f"Updated fall delay: {self.current_fall_delay}")
 
@@ -64,7 +70,6 @@ class TetrisGameManager:
                 # Update the board after block lands
                 if self.board.blockHasLanded:
                     self.board.updateBoard()
-                    self.score += 1
                     self.update_fall_delay()
 
                 await self.send_game_state()
@@ -101,14 +106,12 @@ class TetrisGameManager:
 
     async def send_game_state(self):
         """Send the current game state to the client via WebSocket."""
-        temp = deepcopy(self.board)
 
         # Skip the top hidden rows
-        temp_board = temp.board[3:]
-
+        visible_board = self.board.board[3:]
         game_state = {
-            "board": temp_board,
-            "score": self.score,
+            "board": visible_board,
+            "score": self.board.rowsRemoved,
             "gameOver": self.isGameOver(),
         }
         await self.websocket.send_text(json.dumps(game_state))
@@ -117,4 +120,4 @@ class TetrisGameManager:
         """Handle game over logic."""
         await self.websocket.close()
         print("Game Over")
-        print(self.board.board)
+        print(f"Final Score: {self.board.rowsRemoved}")
