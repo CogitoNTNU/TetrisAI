@@ -1,4 +1,5 @@
 from fastapi import FastAPI, WebSocket
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from src.game.tetris import Tetris
 from src.game.TetrisWebGameManager import TetrisGameManager
@@ -81,6 +82,7 @@ async def websocket_game_info():
     }
     ```
     """
+
     return JSONResponse(
         {"info": "This is the documentation for the /ws/game WebSocket endpoint."}
     )
