@@ -3,10 +3,13 @@ from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from src.game.tetris import Tetris
 from src.game.TetrisWebGameManager import TetrisGameManager
-from src.agents.agent_factory import create_agent
+from src.agents.agent_factory import create_agent, AVAILABLE_AGENTS
 
-
-app = FastAPI()
+app = FastAPI(
+    title="Cogito TetrisAI API",
+    description="This API provides a WebSocket interface to play Tetris and watch a Tetris AI agent play the game.",
+    version="1.0.0",
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -15,6 +18,14 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.get("/agents", response_model=list)
+async def get_available_agents():
+    """
+    Returns a list of available agents for playing the game.
+    """
+    return AVAILABLE_AGENTS
 
 
 @app.websocket("/ws/game")
