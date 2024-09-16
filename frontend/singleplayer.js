@@ -1,5 +1,6 @@
 // WebSocket connection for single-player mode
 const singleplayerWebSocket = new WebSocket("ws://127.0.0.1:8000/ws/game");
+const canvasSinglePlayerId = "singleplayer-canvas";
 
 singleplayerWebSocket.onopen = () => {
   console.log("Single-player WebSocket connection established");
@@ -8,7 +9,7 @@ singleplayerWebSocket.onopen = () => {
 singleplayerWebSocket.onmessage = (event) => {
   const gameState = JSON.parse(event.data);
   console.log("Game state received from server:", gameState);
-  drawBoard(gameState.board); // Render the updated board using shared function
+  drawBoard(gameState.board, canvasSinglePlayerId);
 };
 
 singleplayerWebSocket.onclose = () => {

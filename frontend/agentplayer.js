@@ -2,6 +2,8 @@ const agentSelect = document.getElementById("agent-select");
 const startDemoBtn = document.getElementById("start-demo");
 let agentWebSocket = null;
 
+const canvasAgentId = "agentplayer-canvas";
+
 // Fetch available agents from the server and populate the dropdown
 async function loadAgents() {
   const response = await fetch("http://127.0.0.1:8000/agents");
@@ -36,7 +38,7 @@ function startDemo() {
     const gameState = JSON.parse(event.data);
     console.log("Game state received from server:", gameState);
     // Render the updated board using shared function
-    drawBoard(gameState.board);
+    drawBoard(gameState.board, canvasAgentId);
   };
 
   agentWebSocket.onclose = function () {

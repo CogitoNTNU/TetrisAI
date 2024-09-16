@@ -1,6 +1,3 @@
-const canvas = document.getElementById("game-canvas");
-const ctx = canvas.getContext("2d");
-
 // Define block colors
 const COLORS = [
   "rgba(0, 0, 0, 0)", // No color (transparent)
@@ -14,17 +11,25 @@ const COLORS = [
 ];
 
 // Shared function to draw the Tetris board with the correct colors
-function drawBoard(board) {
-  const blockSize = 40; // Size of each block
-  ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
+/**
+ *
+ * @param {number[][]} board - The Tetris board represented as a 2D array
+ */
+function drawBoard(board, canvasId) {
+  const canvas = document.getElementById(canvasId);
+  const ctx = canvas.getContext("2d");
+  const blockSize = 40;
+
+  // Clear the canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   for (let y = 0; y < board.length; y++) {
     for (let x = 0; x < board[y].length; x++) {
       const blockType = board[y][x];
-      const color = COLORS[blockType]; // Get the color based on the block type
+      const color = COLORS[blockType];
 
+      // Only draw the block if it's not an empty block
       if (blockType !== 0) {
-        // Don't draw for empty spaces
         ctx.fillStyle = color;
         ctx.fillRect(x * blockSize, y * blockSize, blockSize, blockSize);
       }
