@@ -1,5 +1,6 @@
 from copy import deepcopy
-import time as t
+import time
+import asyncio
 import json
 from src.agents.agent import Agent, playGameDemoStepByStep
 from src.game.tetris import Action, Tetris
@@ -13,8 +14,13 @@ class TetrisGameManager:
         self.board = board  # Ensure board is of type Tetris
         self.websocket = websocket  # WebSocket connection for real-time communication
         self.score = 0
-        self.currentTime = int(round(t.time() * 1000))
+        self.currentTime = int(round(time.time() * 1000))
         self.updateTimer = 1  # Timer to control piece dropping
+        self.base_fall_delay = (
+            1  # Base delay for blocks to fall automatically (in seconds)
+        )
+        self.fall_delay = self.base_fall_delay  # The actual delay for the current speed
+        self.last_fall_time = time.time()  # Track the last time the block fell
 
     async def movePiece(self, direction: Action):
         """Move the Tetris block in a given direction and send updated game state via WebSocket."""
@@ -25,21 +31,40 @@ class TetrisGameManager:
         """Check if the game is over."""
         return self.board.isGameOver()
 
+    def update_fall_delay(self):
+        """Update the fall delay based on the score."""
+        # For every 10 rows removed (or points scored), decrease the fall delay
+        # Ensure it does not go below a minimum fall delay (e.g., 0.1 seconds)
+        self.fall_delay = max(self.base_fall_delay - (self.score // 10) * 0.1, 0.1)
+        print(f"Updated fall delay: {self.fall_delay}")
+
     async def startGame(self):
         """Start the game loop for a normal game, receiving inputs and sending game state via WebSocket."""
         await self.send_game_state()  # Send initial game state
 
         while not self.board.gameOver:
             try:
-                # Receive input action from the WebSocket
-                input_action = await self.websocket.receive_text()
-                await self.handle_input(input_action)  # Process the input action
+                # Track the time and automatically move the block down if enough time has passed
+                current_time = time.time()
+                if current_time - self.last_fall_time >= self.fall_delay:
+                    await self.movePiece(Action.SOFT_DROP)
+                    self.last_fall_time = current_time
+
+                # Receive player input, but don't reset the fall delay
+                try:
+                    input_action = await asyncio.wait_for(
+                        self.websocket.receive_text(), timeout=0.1
+                    )
+                    await self.handle_input(input_action)
+                except asyncio.TimeoutError:
+                    pass  # No input received within 0.1 seconds, keep the block falling
 
                 # Update the board after block lands
                 if self.board.blockHasLanded:
                     self.board.updateBoard()
+                    self.score += 1  # Increase score each time a block lands
+                    self.update_fall_delay()  # Adjust fall speed based on the new score
 
-                self.checkTimer()
                 await self.send_game_state()  # Send updated state
 
             except Exception as e:
@@ -53,7 +78,7 @@ class TetrisGameManager:
         await self.send_game_state()  # Send game state to client
         while not self.board.gameOver:
             playGameDemoStepByStep(agent, self.board)  # Agent plays step by step
-            await t.sleep(0.1)  # Small delay to simulate gameplay
+            await asyncio.sleep(0.1)  # Small delay to simulate gameplay
             await self.send_game_state()  # Send updated state
 
         await self.stopGame()
@@ -70,14 +95,6 @@ class TetrisGameManager:
             await self.movePiece(Action.HARD_DROP)
         elif input_action == "ROTATE_CLOCKWISE":
             await self.movePiece(Action.ROTATE_CLOCKWISE)
-
-    def checkTimer(self):
-        """Check if the block needs to drop based on the update timer."""
-        checkTime = self.currentTime + 1000 / self.updateTimer
-        newTime = int(round(t.time() * 1000))
-        if checkTime < newTime:
-            self.currentTime = newTime
-            self.board.doAction(Action.SOFT_DROP)
 
     async def send_game_state(self):
         """Send the current game state to the client via WebSocket."""

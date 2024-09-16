@@ -1,9 +1,8 @@
 from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
-from src.agents.agent_factory import create_agent
 from src.game.tetris import Tetris
 from src.game.TetrisWebGameManager import TetrisGameManager
-import json
+from src.agents.agent_factory import create_agent
 
 
 app = FastAPI()
@@ -25,7 +24,7 @@ async def websocket_endpoint(websocket: WebSocket):
     print("WebSocket connection established")
 
     try:
-        await manager.startGame()
+        await manager.startGame()  # Start the game loop with automatic block dropping
     except Exception as e:
         print(f"WebSocket error: {e}")
     finally:
@@ -45,7 +44,7 @@ async def websocket_demo_endpoint(websocket: WebSocket, agent_type: str):
     try:
         await manager.startDemo(agent)
     except Exception as e:
-        print(f"WebSocket error: {e}")
+        print(f"WebSocket demo error: {e}")
     finally:
         print("WebSocket demo connection closed")
         await websocket.close()
