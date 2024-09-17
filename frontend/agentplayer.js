@@ -32,22 +32,22 @@ function startDemo() {
 
   agentWebSocket = new WebSocket(`${WS_BASE_URL}/demo/${selectedAgent}`);
 
-  agentWebSocket.onopen = function () {
+  agentWebSocket.onopen = () => {
     console.log(`WebSocket connection established with ${selectedAgent} agent`);
   };
 
-  agentWebSocket.onmessage = function (event) {
+  agentWebSocket.onmessage = (event) => {
     const gameState = JSON.parse(event.data);
     console.log("Game state received from server:", gameState);
     // Render the updated board using shared function
     drawBoard(gameState.board, canvasAgentId);
   };
 
-  agentWebSocket.onclose = function () {
+  agentWebSocket.onclose = () => {
     console.log("WebSocket connection closed");
   };
 
-  agentWebSocket.onerror = function (error) {
+  agentWebSocket.onerror = (error) => {
     console.error("WebSocket error:", error);
   };
 }
