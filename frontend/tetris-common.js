@@ -1,4 +1,4 @@
-// Define block colors
+/** Define block colors */
 const COLORS = [
   "rgba(0, 0, 0, 0)", // No color (transparent)
   "rgb(0, 255, 255)", // I block (cyan)
@@ -10,10 +10,10 @@ const COLORS = [
   "rgb(255, 255, 0)", // O block (yellow)
 ];
 
-// Shared function to draw the Tetris board with the correct colors
 /**
- *
+ * Draw the Tetris board with the correct colors
  * @param {number[][]} board - The Tetris board represented as a 2D array
+ * @param {string} canvasId - The ID of the canvas element to draw the board on
  */
 function drawBoard(board, canvasId) {
   const canvas = document.getElementById(canvasId);
@@ -36,3 +36,5 @@ function drawBoard(board, canvasId) {
     }
   }
 }
+
+export { drawBoard };

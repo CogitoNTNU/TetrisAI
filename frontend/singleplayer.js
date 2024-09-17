@@ -1,5 +1,9 @@
-// WebSocket connection for single-player mode
-const singleplayerWebSocket = new WebSocket("ws://127.0.0.1:8000/ws/game");
+import { WS_BASE_URL } from "./routes.js";
+import { drawBoard } from "./tetris-common.js";
+
+const singleplayerWebSocket = new WebSocket(`${WS_BASE_URL}/game`);
+console.log(WS_BASE_URL);
+
 const canvasSinglePlayerId = "singleplayer-canvas";
 
 singleplayerWebSocket.onopen = () => {

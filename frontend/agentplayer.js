@@ -1,3 +1,7 @@
+import { BASE_URL, WS_BASE_URL } from "./routes.js";
+import { drawBoard } from "./tetris-common.js";
+
+// DOM elements
 const agentSelect = document.getElementById("agent-select");
 const startDemoBtn = document.getElementById("start-demo");
 let agentWebSocket = null;
@@ -6,7 +10,7 @@ const canvasAgentId = "agentplayer-canvas";
 
 // Fetch available agents from the server and populate the dropdown
 async function loadAgents() {
-  const response = await fetch("http://127.0.0.1:8000/agents");
+  const response = await fetch(`${BASE_URL}/agents`);
   const agents = await response.json();
 
   agents.forEach((agent) => {
@@ -26,9 +30,7 @@ function startDemo() {
     agentWebSocket.close();
   }
 
-  agentWebSocket = new WebSocket(
-    `ws://127.0.0.1:8000/ws/demo/${selectedAgent}`
-  );
+  agentWebSocket = new WebSocket(`${WS_BASE_URL}/demo/${selectedAgent}`);
 
   agentWebSocket.onopen = function () {
     console.log(`WebSocket connection established with ${selectedAgent} agent`);
