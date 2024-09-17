@@ -52,6 +52,11 @@ function startDemo() {
   };
 }
 
+window.addEventListener("keydown", (e) => {
+  if (e.key === " ") {
+    e.preventDefault(); // Prevent default spacebar scrolling
+  }
+});
 // Load the agents when the page is loaded
 window.addEventListener("load", loadAgents);
 
