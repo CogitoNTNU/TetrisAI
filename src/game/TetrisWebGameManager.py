@@ -113,6 +113,7 @@ class TetrisGameManager:
             "board": visible_board,
             "score": self.board.rowsRemoved,
             "gameOver": self.isGameOver(),
+            "nextPiece": self.board.nextBlock.type,
         }
         await self.websocket.send_text(json.dumps(game_state))
 
