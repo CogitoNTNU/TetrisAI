@@ -107,14 +107,31 @@ class TetrisGameManager:
     async def send_game_state(self):
         """Send the current game state to the client via WebSocket."""
 
-        # Skip the top hidden rows
-        visible_board = self.board.board[3:]
+        # Determine the landing position of the block
+        simulated_board = self.board.copy()
+        while simulated_board.isValidBlockPosition(simulated_board.block):
+            simulated_board.block.moveDown()
+        simulated_board.block.moveUp()
+
+        # Mark the landing position of the block on the board
+        LANDING_BLOCK_COLOR = -1
+        for i in range(4):
+            for j in range(4):
+                if i * 4 + j in simulated_board.block.image():
+                    simulated_board.board[i + simulated_board.block.y][
+                        j + simulated_board.block.x
+                    ] = LANDING_BLOCK_COLOR
+
+        # Skip the top hidden rows for the visible board
+        visible_board = simulated_board.board[3:]
+
         game_state = {
             "board": visible_board,
             "score": self.board.rowsRemoved,
             "gameOver": self.isGameOver(),
             "nextPiece": self.board.nextBlock.type,
         }
+
         await self.websocket.send_text(json.dumps(game_state))
 
     async def stopGame(self):
