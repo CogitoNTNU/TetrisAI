@@ -126,6 +126,7 @@ class TetrisGameManager:
         visible_board = simulated_board.board[3:]
 
         game_state = {
+            "nextBlock": self.board.nextBlock.type,
             "board": visible_board,
             "score": self.board.rowsRemoved,
             "gameOver": self.isGameOver(),
