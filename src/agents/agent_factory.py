@@ -5,6 +5,8 @@ from src.agents.random_agent import RandomAgent
 from src.agents.heuristic_agent import HeuristicAgent
 from src.agents.geneticAlgAgentJon import GeneticAlgAgentJM
 
+AVAILABLE_AGENTS = ["random", "heuristic", "genetic"]
+
 
 def create_agent(agent_type: str) -> Agent:
     """Create an agent of the specified type."""

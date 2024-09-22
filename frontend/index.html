@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TetrisAI</title>
+    </head>
+    <body>
+        <h1>TetrisAI</h1>
+
+        <label for="agent-select">Select Agent:</label>
+        <!-- Get the options from endpoint -->
+        <select id="agent-select"></select>
+        <button id="start-demo">Start Demo</button>
+        <canvas id="agentplayer-canvas" width="400" height="920"></canvas>
+        <canvas id="singleplayer-canvas" width="400" height="920"></canvas>
+        
+        <script type="module" src="routes.js"></script>
+        <script type="module" src="tetris-common.js"></script>
+        <script type="module" src="singleplayer.js"></script>
+        <script type="module" src="agentplayer.js"></script>
+    </body>
+</html>
